@@ -1,0 +1,30 @@
+{
+  "name": "petcare-api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test test/app.test.ts test/auth.test.ts",
+    "db:migrate": "tsx src/db/migrate.ts up",
+    "db:migrate:status": "tsx src/db/migrate.ts status",
+    "db:verify": "tsx src/db/verify.ts",
+    "db:verify:cursor": "tsx src/db/verify-cursor.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.3",
+    "jose": "^6.2.16",
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^22.10.2",
+    "@types/pg": "^8.11.10",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

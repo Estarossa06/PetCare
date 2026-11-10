@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "PetCare",
+    "slug": "petcare",
+    "scheme": "petcare",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "bundleIdentifier": "com.petcare.mobile",
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.petcare.mobile"
+    },
+    "plugins": [
+      [
+        "expo-router",
+        {
+          "headers": {
+            "Cross-Origin-Embedder-Policy": "credentialless",
+            "Cross-Origin-Opener-Policy": "same-origin"
+          }
+        }
+      ],
+      "expo-secure-store"
+    ]
+  }
+}
