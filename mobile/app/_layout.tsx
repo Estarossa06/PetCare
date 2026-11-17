@@ -2,19 +2,22 @@ import { useEffect } from "react";
 import { Stack } from "expo-router";
 import { AppState, Platform, StatusBar } from "react-native";
 import { colors } from "../src/theme/tokens";
-import { reconcileCalendarNotifications } from "../src/calendar/calendarNotifications";
-import { AuthProvider } from "../src/auth/AuthProvider";
+import { reconcileCalendarNotifications } from "../src/features/calendar/calendarNotifications";
+import { useNotificationNavigation } from "../src/features/calendar/notifications/useNotificationNavigation";
+import { AuthProvider } from "../src/features/auth/AuthProvider";
 
 export default function RootLayout() {
-  useEffect(() => {
-    if (Platform.OS === "web") return;
+  useNotificationNavigation();
 
+  useEffect(() => {
     const reconcile = () => {
       void reconcileCalendarNotifications().catch((error: unknown) => {
         console.error("Calendar notification reconciliation failed.", error);
       });
     };
     reconcile();
+    if (Platform.OS === "web") return;
+
     const subscription = AppState.addEventListener("change", (state) => {
       if (state === "active") reconcile();
     });

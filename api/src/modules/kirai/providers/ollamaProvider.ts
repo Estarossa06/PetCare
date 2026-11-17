@@ -1,4 +1,4 @@
-import type { KiraiOllamaConfig } from "../../../config/kiraiOllama.js";
+import type { KiraiOllamaConfig } from "../config.js";
 import type { ModelRequest, ModelResponse } from "../types/agent.js";
 import type {
   ModelGenerationOptions,
@@ -105,6 +105,9 @@ export class OllamaProvider implements ModelProvider {
           model: this.config.model,
           messages: request.messages,
           stream: false,
+          ...(this.config.model.toLowerCase().startsWith("qwen3")
+            ? { think: false }
+            : {}),
           ...(request.temperature === undefined || request.maxOutputTokens === undefined
             ? {
                 options: {

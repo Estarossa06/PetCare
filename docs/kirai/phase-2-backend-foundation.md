@@ -11,7 +11,7 @@ una conexión hasta que se ejecuta una consulta. Arrancar el proceso no ejecuta
 migraciones. El cierre por `SIGINT` o `SIGTERM` deja de aceptar solicitudes y
 cierra el pool.
 
-Las rutas de infraestructura viven en `src/routes/system.ts`; la carpeta
+Las rutas de infraestructura viven en `src/modules/system/routes.ts`; la carpeta
 `src/modules/` queda reservada para futuros módulos de negocio. La configuración
 se valida en `src/config/env.ts`. El módulo PostgreSQL de migraciones y
 verificación conserva su estructura y comandos; sus scripts reutilizan ahora

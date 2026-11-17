@@ -94,7 +94,7 @@ test("application starts and returns health with a generated request ID", async 
       corsOrigins: [],
       accessTokenSecret: Buffer.from(defaultEnvironment.AUTH_ACCESS_TOKEN_SECRET),
     },
-    database: { query: async () => ({}) },
+    database: { query: async () => ({ rows: [] }) },
     authStore: new MemoryAuthStore(),
     logger,
   });
@@ -141,7 +141,7 @@ test("readiness checks the database and returns only generic failure details", a
     database: {
       query: async (text) => {
         query = text;
-        return {};
+        return { rows: [] };
       },
     },
     authStore: new MemoryAuthStore(),
@@ -165,7 +165,9 @@ test("readiness checks the database and returns only generic failure details", a
       corsOrigins: [],
       accessTokenSecret: Buffer.from(defaultEnvironment.AUTH_ACCESS_TOKEN_SECRET),
     },
-    database: { query: async () => Promise.reject(new Error("private connection detail")) },
+    database: {
+      query: async () => Promise.reject(new Error("private connection detail")),
+    },
     authStore: new MemoryAuthStore(),
     logger,
   });
@@ -210,7 +212,7 @@ test("HTTP errors cover unknown routes, malformed JSON, unsupported content type
       corsOrigins: [],
       accessTokenSecret: Buffer.from(defaultEnvironment.AUTH_ACCESS_TOKEN_SECRET),
     },
-    database: { query: async () => ({}) },
+    database: { query: async () => ({ rows: [] }) },
     authStore: new MemoryAuthStore(),
     logger,
   });
@@ -254,7 +256,7 @@ test("CORS allows configured origins and rejects disallowed preflights", async (
       corsOrigins: ["https://petcare.example"],
       accessTokenSecret: Buffer.from(defaultEnvironment.AUTH_ACCESS_TOKEN_SECRET),
     },
-    database: { query: async () => ({}) },
+    database: { query: async () => ({ rows: [] }) },
     authStore: new MemoryAuthStore(),
     logger,
   });

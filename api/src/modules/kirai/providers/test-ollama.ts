@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { loadKiraiOllamaConfig } from "../../../config/kiraiOllama.js";
+import { loadKiraiOllamaConfig } from "../config.js";
 import { buildSystemMessage } from "../prompts/system.js";
 import type { ModelMessage } from "../types/agent.js";
 import { OllamaProvider } from "./ollamaProvider.js";

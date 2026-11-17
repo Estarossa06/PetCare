@@ -150,6 +150,14 @@ revisión del 10 de noviembre de 2026. **No se volvió a consultar Neon para
 crear esta guía**; ese estado puede cambiar y debe revalidarse antes de
 cualquier operación.
 
+Actualización del 16 de noviembre de 2026: se comprobó el ledger y los
+checksums en `petcare_db`; 0001–0003 estaban aplicadas y 0004 pendiente.
+Después de una inspección de solo lectura que confirmó cero sesiones existentes,
+se aplicó la migración 0004 existente y `db:migrate:status` confirmó las cuatro
+versiones aplicadas con checksums coincidentes. Esta actualización no modifica
+el informe histórico de Fase 4.3. La prueba de autenticación PostgreSQL sigue
+pendiente de ejecutarse en una base desechable identificada como test.
+
 ## 7. Preparación futura de KIRAI
 
 La integración de proveedores de IA aún no está configurada por variables en
@@ -174,6 +182,6 @@ implementa KIRAI.
 - [Configuración API](../../api/src/config/env.ts)
 - [Runner de migraciones](../../api/src/db/migrate.ts)
 - [Ejemplo de entorno API](../../api/.env.example)
-- [Cliente HTTP móvil](../../mobile/src/auth/apiClient.ts)
+- [Cliente HTTP móvil](../../mobile/src/features/auth/apiClient.ts)
 - [Configuración de base de datos](../database-setup.md)
 - [Estado verificado en Fase 4.3](../sync/phase-4-3-neon-verification.md)

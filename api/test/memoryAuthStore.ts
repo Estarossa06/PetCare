@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
+import { DuplicateEmailError } from "../src/modules/auth/errors.js";
 import {
-  DuplicateEmailError,
   type AuthSession,
   type AuthStore,
   type AuthUser,
@@ -66,6 +66,11 @@ export class MemoryAuthStore implements AuthStore {
   ): Promise<(AuthUser & { passwordHash: string }) | undefined> {
     const user = [...this.users.values()].find((item) => item.email === email);
     return user ? { ...publicUser(user), passwordHash: user.passwordHash } : undefined;
+  }
+
+  async findUserById(id: string): Promise<AuthUser | undefined> {
+    const user = this.users.get(id);
+    return user ? publicUser(user) : undefined;
   }
 
   async createSession(input: {

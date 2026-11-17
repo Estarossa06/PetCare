@@ -373,14 +373,14 @@ deben filtrar por ese user. No convertir automáticamente el
   [0002_sync_support.ts](../../api/src/db/migrations/0002_sync_support.ts),
   [0003_ordered_sync_cursors.ts](../../api/src/db/migrations/0003_ordered_sync_cursors.ts),
   [0004_auth_refresh_token_history.ts](../../api/src/db/migrations/0004_auth_refresh_token_history.ts).
-- Repositorios: [petRepository.ts](../../mobile/src/pets/petRepository.ts),
-  [medicalRepository.ts](../../mobile/src/medical/medicalRepository.ts),
-  [careRepository.ts](../../mobile/src/care/careRepository.ts),
-  [calendarRepository.ts](../../mobile/src/calendar/calendarRepository.ts).
+- Repositorios: [petRepository.ts](../../mobile/src/features/pets/petRepository.ts),
+  [medicalRepository.ts](../../mobile/src/features/medical/medicalRepository.ts),
+  [careRepository.ts](../../mobile/src/features/care/careRepository.ts),
+  [calendarRepository.ts](../../mobile/src/features/calendar/calendarRepository.ts).
 - Recuperación local: [migrate.ts](../../mobile/src/db/migrate.ts),
   [localAccount.ts](../../mobile/src/db/localAccount.ts).
 - API y aislamiento: [app.ts](../../api/src/app.ts),
-  [authenticate.ts](../../api/src/middleware/authenticate.ts),
+  [authenticate.ts](../../api/src/modules/auth/middleware/authenticate.ts),
   [ownerScopedQueries.ts](../../api/src/modules/auth/ownerScopedQueries.ts).
 - Referencia documental: [data-model.md](../data-model.md); sus tablas remotas
   `calendar_events` y `calendar_reminders` no están en las migraciones

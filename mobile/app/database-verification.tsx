@@ -1,1 +1,1 @@
-export { default } from "../src/screens/DatabaseVerificationScreen";
+export { default } from "../src/devtools/DatabaseVerificationScreen";

@@ -1,4 +1,4 @@
-import CalendarEventFormScreen from "../../src/screens/CalendarEventFormScreen";
+import CalendarEventFormScreen from "../../src/features/calendar/screens/CalendarEventFormScreen";
 
 export default function NewCalendarEventRoute() {
   return <CalendarEventFormScreen />;
