@@ -1,4 +1,4 @@
-import CalendarReminderFormScreen from "../../../../src/screens/CalendarReminderFormScreen";
+import CalendarReminderFormScreen from "../../../../src/features/calendar/screens/CalendarReminderFormScreen";
 
 export default function EditCalendarReminderRoute() {
   return <CalendarReminderFormScreen />;

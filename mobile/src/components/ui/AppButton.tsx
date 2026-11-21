@@ -54,14 +54,14 @@ export function AppButton({
 
 const styles = StyleSheet.create({
   button: {
-    minHeight: 48,
+    minHeight: 44,
     paddingHorizontal: spacing.lg,
     borderRadius: radius.sm,
     alignItems: "center",
     justifyContent: "center",
   },
   small: {
-    minHeight: 40,
+    minHeight: 36,
     paddingHorizontal: spacing.md,
   },
   primary: {

@@ -77,7 +77,7 @@ La documentación oficial de SDK 58 indica `expo-notifications` recomendado `~58
 
 Antes de esta auditoría, la app programaba o cancelaba la notificación al guardar/cambiar un recordatorio, pero no revisaba el estado del sistema al iniciar ni al volver a primer plano. Una interrupción entre commit SQLite y operación del SO podía dejar un aviso desactualizado o faltar un aviso después de reinicio.
 
-Se implementó reconciliación en [calendarNotifications.ts](../../mobile/src/calendar/calendarNotifications.ts) y se conecta desde [\_layout.tsx](../../mobile/app/_layout.tsx):
+Se implementó reconciliación en [calendarNotifications.ts](../../mobile/src/features/calendar/calendarNotifications.ts) y se conecta desde [\_layout.tsx](../../mobile/app/_layout.tsx):
 
 1. Al iniciar y cada vez que `AppState` vuelve a `active`, obtiene los recordatorios activos de SQLite y las notificaciones pendientes del SO.
 2. Solo considera notificaciones etiquetadas con `content.data.reminderId`, que identifica avisos propios de PetCare.
@@ -232,7 +232,7 @@ Informar modelo/OS, versión de Expo Go, estado de permiso y hora esperada/recib
 
 ## 12. Cambios realizados en esta auditoría
 
-- Se actualizó el flujo de notificaciones en [calendarNotifications.ts](../../mobile/src/calendar/calendarNotifications.ts): reconciliación idempotente al inicio/retorno a primer plano y creación anticipada del canal Android.
+- Se actualizó el flujo de notificaciones en [calendarNotifications.ts](../../mobile/src/features/calendar/calendarNotifications.ts): reconciliación idempotente al inicio/retorno a primer plano y creación anticipada del canal Android.
 - Se conectó la reconciliación en [\_layout.tsx](../../mobile/app/_layout.tsx), con registro explícito de errores.
 - No se modificaron paquetes, migraciones, esquema remoto ni datos legítimos.
 - No se hizo stage ni commit de Git.

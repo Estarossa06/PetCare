@@ -1,5 +1,5 @@
-import SectionPreviewScreen from "../../src/screens/SectionPreviewScreen";
+import KiraiScreen from "../../src/features/kirai/screens/KiraiScreen";
 
 export default function AssistantRoute() {
-  return <SectionPreviewScreen kind="assistant" />;
+  return <KiraiScreen />;
 }

@@ -18,12 +18,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: radius.md,
     shadowColor: "#172554",
-    shadowOpacity: 0.035,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 2,
+    shadowOpacity: 0.02,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 1,
   },
   padded: {
-    padding: spacing.lg,
+    padding: spacing.md,
   },
 });

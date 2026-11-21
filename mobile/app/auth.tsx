@@ -1,4 +1,4 @@
-import AuthScreen from "../src/screens/AuthScreen";
+import AuthScreen from "../src/features/auth/screens/AuthScreen";
 
 export default function AuthRoute() {
   return <AuthScreen />;

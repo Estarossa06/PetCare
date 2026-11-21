@@ -1,5 +1,5 @@
 import { useLocalSearchParams } from "expo-router";
-import CareDashboardScreen from "../../../../src/screens/CareDashboardScreen";
+import CareDashboardScreen from "../../../../src/features/care/screens/CareDashboardScreen";
 
 export default function CareRoute() {
   const { id } = useLocalSearchParams<{ id: string }>();

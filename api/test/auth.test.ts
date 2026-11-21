@@ -48,7 +48,7 @@ async function createHarness() {
   const { logger, entries } = createTestLogger();
   const app = createApp({
     config: { corsOrigins: [], accessTokenSecret: SECRET },
-    database: { query: async () => ({}) },
+    database: { query: async () => ({ rows: [] }) },
     authStore: store,
     logger,
   });

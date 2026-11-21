@@ -100,7 +100,7 @@ Esta fase no agrega CRUD remoto de mascotas ni expone recursos de negocio.
 
 ## Integración móvil
 
-- El cliente HTTP centralizado está en `mobile/src/auth/apiClient.ts`; adjunta
+- El cliente HTTP centralizado está en `mobile/src/features/auth/apiClient.ts`; adjunta
   access tokens, coordina refresh concurrente dentro del proceso y reintenta
   una vez tras un `401`.
 - Registro y login persisten el conjunto de tokens en una sola entrada.

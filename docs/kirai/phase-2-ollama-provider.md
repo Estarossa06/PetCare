@@ -1,10 +1,11 @@
 # KIRAI — Fase 2: proveedor local Ollama
 
-**Estado:** adaptador y prueba funcional implementados.
+**Estado:** adaptador implementado y primera etapa conversacional integrada.
 **Proveedor inicial:** Ollama por HTTP local.
 **Modelo predeterminado:** `qwen3:8b`.
-**Alcance:** generación de una respuesta; sin endpoints, memoria, RAG ni
-integración con datos de PetCare.
+**Alcance:** conversación autenticada de varios turnos con contexto reciente
+solo en memoria, sin persistencia, RAG, herramientas ni integración con datos de
+PetCare.
 
 ## 1. Arquitectura
 
@@ -28,7 +29,7 @@ acceso público.
 
 Archivos principales:
 
-- `api/src/config/kiraiOllama.ts`: variables, valores por defecto y
+- `api/src/modules/kirai/config.ts`: variables, valores por defecto y
   validación de configuración local.
 - `api/src/modules/kirai/providers/model-provider.ts`: contrato común,
   ampliado para soportar `AbortSignal`.
@@ -36,11 +37,27 @@ Archivos principales:
   extracción de respuesta final y errores sanitizados.
 - `api/src/modules/kirai/providers/test-ollama.ts`: prueba manual separada del
   arranque Express.
-- `api/test/kirai.test.ts`: pruebas automáticas con fetch simulado.
+- `api/src/modules/kirai/service.ts`, `validation.ts` y `routes.ts`: orquestación
+  de respuestas con historial acotado, validación y endpoint HTTP.
+- `mobile/src/features/kirai/`: cliente y pantalla de consulta de KIRAI.
+- `api/test/kirai.test.ts`: pruebas automáticas con proveedor simulado y ruta HTTP.
 
-No se modifica el módulo Express, las rutas de autenticación ni la identidad
-ni las reglas de KIRAI. No se conecta a Neon o SQLite ni se envía contexto de
-mascotas.
+Express monta `GET /kirai/availability` y `POST /kirai/chat`, protegidos por el
+middleware de sesión actual. El primero consulta Ollama y verifica que el modelo
+configurado aparezca en `/api/tags`; no genera texto ni consume el límite de
+consultas. El segundo está limitado a 10 consultas por IP cada 15 minutos. No se
+modifican las rutas de autenticación ni la identidad o las reglas de KIRAI. No
+se conecta a Neon o SQLite ni se envía contexto de mascotas.
+El historial se envía desde Mobile en cada consulta y solo incluye turnos
+completos recientes. No se guarda en la API ni en el almacenamiento móvil.
+
+La comprobación devuelve `200 { "available": true }` si Ollama y el modelo están
+disponibles. Devuelve `503 KIRAI_CONNECTION_ERROR` ante conexión/timeout con
+Ollama y `503 KIRAI_UNAVAILABLE` si el proveedor responde pero el modelo o su
+respuesta no está disponible. Ambos endpoints continúan diferenciando
+`401 UNAUTHENTICATED`. Mobile comprueba disponibilidad al abrir la pantalla,
+presenta una acción para reintentar y no habilita consultas hasta que el
+chequeo tenga éxito.
 
 ## 2. Configuración
 
@@ -52,9 +69,9 @@ El adaptador lee estas variables opcionales:
 | `KIRAI_OLLAMA_MODEL` | `qwen3:8b` | Nombre no vacío, sin espacios y de hasta 120 caracteres. |
 | `KIRAI_OLLAMA_TIMEOUT_MS` | `60000` | Entero entre 1 y 300000 ms. |
 
-No se requieren credenciales. No se añadió ninguna variable `EXPO_PUBLIC_*`.
-El adaptador no se instancia durante el arranque normal de Express; configurar
-Ollama no habilita por sí solo un endpoint.
+No se requieren credenciales de Ollama. No se añadió ninguna variable
+`EXPO_PUBLIC_*`. El adaptador se instancia al crear la aplicación Express; la
+generación solo se ejecuta en una solicitud autenticada a `/kirai/chat`.
 
 El proceso de prueba manual importa `dotenv/config`, de modo que puede usar
 las variables del entorno o el archivo local ignorado de API cuando se ejecuta
@@ -66,6 +83,8 @@ Ollama ni habilitar el servicio en una interfaz de red pública.
 - Envía los roles y contenidos del contrato `ModelRequest`, incluyendo el
   mensaje de sistema ya construido.
 - Solicita una única respuesta no streaming.
+- Desactiva el modo de razonamiento oculto cuando el modelo configurado es
+  Qwen3, para reservar el límite de salida para la respuesta visible.
 - Devuelve solo `message.content` final como mensaje `assistant`. No propaga
   el objeto de respuesta original del proveedor.
 - Normaliza `done_reason` a `stop`, `length` u `other`.
@@ -76,6 +95,15 @@ Ollama ni habilitar el servicio en una interfaz de red pública.
 - No registra prompts, conversaciones ni respuestas.
 - Timeout y cancelación abortan la petición. El timeout también cubre la
   lectura de la respuesta.
+- El endpoint acepta una pregunta no vacía de hasta 2000 caracteres y hasta
+  10 mensajes históricos (5 turnos completos), con un máximo acumulado de 8000
+  caracteres. Solo acepta roles alternos `user`/`assistant`; el prompt de
+  sistema se agrega exclusivamente en el backend. Cada respuesta se limita a
+  512 tokens y solo devuelve el texto final y si fue truncado.
+- Los errores del proveedor se registran sin prompt, respuesta, URL ni detalles
+  de red. La API distingue errores de conexión/timeout
+  (`KIRAI_CONNECTION_ERROR`) de proveedor o modelo no disponible
+  (`KIRAI_UNAVAILABLE`).
 
 Una respuesta HTTP exitosa sin JSON válido, sin `message` de rol `assistant`
 o sin contenido final no se convierte en una respuesta vacía exitosa: se
@@ -113,26 +141,51 @@ simuladas; no requiere Ollama real. Comprueba:
 - Error HTTP sin exponer body, fallo de conexión y timeout.
 - Cancelación del llamador.
 - JSON malformado, forma inválida y contenido final vacío.
+- Autenticación, contexto en orden, límite de 10 mensajes/8000 caracteres,
+  roles alternos, límite de solicitudes, uso del prompt de seguridad, ausencia
+  de datos de mascotas y sanitización de errores.
 
-La suite está incluida en `npm test --prefix api`.
+`mobile/test/kirai-conversation.test.mjs` comprueba el recorte de turnos,
+presupuesto de caracteres, eliminación del contexto y separación de datos
+visuales del historial enviado.
+
+La suite API está incluida en `npm test --prefix api`. Ejecutar las pruebas
+Mobile con `api/node_modules/.bin/tsx --test mobile/test/kirai-conversation.test.mjs`.
 
 ## 6. Validación ejecutada
 
+Validación del proveedor realizada en la fase anterior:
+
 - `npm run typecheck --prefix api` — aprobado.
-- `npm test --prefix api` — aprobado, 22/22 pruebas.
 - `npm run build --prefix api` — aprobado.
 - `npm run kirai:ollama:test --prefix api` — aprobado contra Ollama local y
-  `qwen3:8b` ya instalado.
+  `qwen3:8b` instalado en ese entorno.
+
+Validación de la etapa conversacional:
+
+- `npm run typecheck --prefix api` — aprobado.
+- `npm test --prefix api` — 30 aprobadas, 0 fallidas y 2 omitidas porque no se
+  habilitaron las pruebas PostgreSQL de integración.
+- `npm run typecheck --prefix mobile` — aprobado.
+- Exportación Expo Web — aprobada; se eliminó el directorio temporal generado.
+- Las pruebas HTTP de KIRAI usan un `ModelProvider` simulado. No validan una
+  inferencia real con Ollama en esta etapa.
 
 No se instalaron dependencias.
 
 ## 7. Limitaciones y trabajo pendiente
 
-- KIRAI no está expuesta mediante un endpoint y no está conectada a Express.
+- No hay memoria persistente ni resumen de conversación. Mobile conserva hasta
+  5 turnos completos en memoria y los borra al iniciar una conversación nueva,
+  cambiar de cuenta o cerrar la app.
+- La pantalla requiere una cuenta PetCare, pero no asocia ni sincroniza los
+  datos locales de la cuenta.
+- La persistencia de sesión con SecureStore no se ha verificado en dispositivos
+  Android o iOS en esta validación.
 - No hay selector de proveedor en runtime ni adaptadores para llama.cpp u
   otros motores.
-- No se implementan memoria, RAG, herramientas, historial de conversación,
-  moderación adicional, streaming ni contexto de mascotas.
+- No se implementan memoria, RAG, herramientas, moderación adicional, streaming
+  ni contexto de mascotas.
 - Las instrucciones del prompt no garantizan por sí solas seguridad clínica;
   se necesita evaluación veterinaria y de seguridad antes del uso por
   usuarios.
@@ -140,5 +193,7 @@ No se instalaron dependencias.
   no disponibilidad, rendimiento ni compatibilidad en todos los sistemas.
 - Ollama local puede no estar disponible en despliegues backend remotos; el
   alojamiento/red y la estrategia de fallback requieren una decisión futura.
-
-No comenzar otra fase hasta recibir autorización.
+- Las pruebas API de disponibilidad usan un proveedor simulado. La prueba
+  manual `npm run kirai:ollama:test --prefix api` verifica inferencia real con
+  el modelo configurado; el endpoint autenticado comprueba conectividad y
+  presencia del modelo sin ejecutar inferencia.

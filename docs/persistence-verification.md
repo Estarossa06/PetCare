@@ -110,7 +110,7 @@ PostgreSQL owner isolation currently means owner-aware composite foreign keys in
 
 ## SQLite / Expo validation
 
-The single Expo SDK 58 project in `mobile/` uses `app/index.tsx` and the shared `src/screens/DatabaseVerificationScreen.tsx` route for Android, iOS and Web. The temporary verification harness is not a product screen. Its actual Web runtime was exercised in the integrated browser:
+The single Expo SDK 58 project in `mobile/` uses `app/(tabs)/index.tsx` and the shared `src/devtools/DatabaseVerificationScreen.tsx` route for Android, iOS and Web. The temporary verification harness is not a product screen. Its actual Web runtime was exercised in the integrated browser:
 
 1. Expo SQLite opened `petcare-verification.db` through its WebAssembly implementation.
 2. The migration runner applied migration 0001 and then ran again successfully.

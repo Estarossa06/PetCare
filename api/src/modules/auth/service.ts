@@ -9,12 +9,17 @@ import {
 import {
   InvalidCredentialsError,
   InvalidRequestError,
+} from "./errors.js";
+import {
   type AuthStore,
   type AuthUser,
   type Principal,
 } from "./types.js";
-
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+import {
+  validateLoginInput,
+  validateRefreshToken,
+  validateRegisterInput,
+} from "./validation.js";
 const DUMMY_PASSWORD_HASH =
   "scrypt$32768$8$1$AAAAAAAAAAAAAAAAAAAAAA$AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
@@ -36,9 +41,7 @@ export class AuthService {
     password: unknown;
     name: unknown;
   }): Promise<TokenPair> {
-    const email = normalizeEmail(input.email);
-    const password = validatePasswordInput(input.password);
-    const name = validateName(input.name);
+    const { email, password, name } = validateRegisterInput(input);
     const passwordHash = await hashPassword(password);
     const sessionId = randomUUID();
     const refreshToken = createRefreshToken();
@@ -64,8 +67,7 @@ export class AuthService {
     email: unknown;
     password: unknown;
   }): Promise<TokenPair> {
-    const email = normalizeEmail(input.email);
-    const password = validatePasswordInput(input.password);
+    const { email, password } = validateLoginInput(input);
     const user = await this.store.findUserByEmail(email);
     const matches = await verifyPassword(
       password,
@@ -78,16 +80,10 @@ export class AuthService {
   }
 
   async refresh(rawRefreshToken: unknown): Promise<TokenPair> {
-    if (
-      typeof rawRefreshToken !== "string" ||
-      rawRefreshToken.length < 32 ||
-      rawRefreshToken.length > 128
-    ) {
-      throw new InvalidCredentialsError();
-    }
+    const refreshToken = validateRefreshToken(rawRefreshToken);
     const nextRefreshToken = createRefreshToken();
     const result = await this.store.rotateRefreshToken({
-      presentedTokenHash: hashRefreshToken(rawRefreshToken),
+      presentedTokenHash: hashRefreshToken(refreshToken),
       nextTokenHash: hashRefreshToken(nextRefreshToken),
       nextExpiresAt: refreshTokenExpiry(),
     });
@@ -111,6 +107,10 @@ export class AuthService {
     await this.store.revokeSession(principal);
   }
 
+  getUser(userId: string): Promise<AuthUser | undefined> {
+    return this.store.findUserById(userId);
+  }
+
   private async createSession(user: AuthUser): Promise<TokenPair> {
     const sessionId = randomUUID();
     const refreshToken = createRefreshToken();
@@ -128,38 +128,4 @@ export class AuthService {
       user,
     };
   }
-}
-
-export function normalizeEmail(value: unknown): string {
-  if (typeof value !== "string") {
-    throw new InvalidRequestError("A valid email is required.");
-  }
-  const email = value.trim().toLowerCase();
-  if (email.length > 254 || !EMAIL_PATTERN.test(email)) {
-    throw new InvalidRequestError("A valid email is required.");
-  }
-  return email;
-}
-
-function validatePasswordInput(value: unknown): string {
-  if (typeof value !== "string") {
-    throw new InvalidRequestError("Password must be between 12 and 128 characters.");
-  }
-  try {
-    validatePassword(value);
-  } catch {
-    throw new InvalidRequestError("Password must be between 12 and 128 characters.");
-  }
-  return value;
-}
-
-function validateName(value: unknown): string {
-  if (typeof value !== "string") {
-    throw new InvalidRequestError("Name must be between 1 and 100 characters.");
-  }
-  const name = value.trim();
-  if (name.length < 1 || name.length > 100) {
-    throw new InvalidRequestError("Name must be between 1 and 100 characters.");
-  }
-  return name;
 }

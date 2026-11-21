@@ -24,7 +24,7 @@ npm run db:migrate --prefix api
 npm run db:migrate:status --prefix api
 ```
 
-There are three backend migrations. The migration ledger is `schema_migrations`; the tables are listed in `docs/data-model.md`.
+There are four backend migrations, including `0004_auth_refresh_token_history`. The migration ledger is `schema_migrations`; the tables are listed in `docs/data-model.md`.
 
 4. On that same disposable database, run the database assertions:
 

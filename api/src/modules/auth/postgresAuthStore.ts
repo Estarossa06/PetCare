@@ -1,6 +1,6 @@
 import type { Pool, PoolClient, QueryResultRow } from "pg";
+import { DuplicateEmailError } from "./errors.js";
 import {
-  DuplicateEmailError,
   type AuthSession,
   type AuthStore,
   type AuthUser,
@@ -120,6 +120,16 @@ export class PostgresAuthStore implements AuthStore {
     return row
       ? { ...toAuthUser(row), passwordHash: row.password_hash ?? "" }
       : undefined;
+  }
+
+  async findUserById(id: string): Promise<AuthUser | undefined> {
+    const result = await this.pool.query<DatabaseUser>(
+      `SELECT id, email, name
+       FROM users
+       WHERE id = $1 AND deleted_at IS NULL`,
+      [id],
+    );
+    return result.rows[0] ? toAuthUser(result.rows[0]) : undefined;
   }
 
   async createSession(input: {

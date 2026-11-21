@@ -3,7 +3,7 @@ import { colors, spacing } from "../../theme/tokens";
 
 type ScreenHeaderProps = {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   eyebrow?: string;
 };
 
@@ -13,7 +13,7 @@ export function ScreenHeader({ title, subtitle, eyebrow }: ScreenHeaderProps) {
       <View style={styles.copy}>
         {eyebrow ? <Text style={styles.eyebrow}>{eyebrow}</Text> : null}
         <Text style={styles.title}>{title}</Text>
-        <Text style={styles.subtitle}>{subtitle}</Text>
+        {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
       </View>
     </View>
   );
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: spacing.lg,
+    marginBottom: spacing.md,
   },
   copy: {
     flex: 1,
@@ -39,9 +39,9 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.text,
-    fontSize: 28,
-    fontWeight: "800",
-    letterSpacing: -0.8,
+    fontSize: 26,
+    fontWeight: "700",
+    letterSpacing: -0.6,
   },
   subtitle: {
     color: colors.textMuted,

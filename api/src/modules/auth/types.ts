@@ -28,6 +28,7 @@ export interface AuthStore {
     refreshTokenHash: string;
     expiresAt: Date;
   }): Promise<AuthUser>;
+  findUserById(id: string): Promise<AuthUser | undefined>;
   findUserByEmail(email: string): Promise<
     | (AuthUser & { passwordHash: string })
     | undefined
@@ -51,28 +52,4 @@ export interface AuthStore {
     sessionId: string;
     userId: string;
   }): Promise<boolean>;
-}
-
-export class DuplicateEmailError extends Error {
-  constructor() {
-    super("An account with this email already exists.");
-    this.name = "DuplicateEmailError";
-  }
-}
-
-export class InvalidCredentialsError extends Error {
-  constructor() {
-    super("Email or password is incorrect.");
-    this.name = "InvalidCredentialsError";
-  }
-}
-
-export class InvalidRequestError extends Error {
-  readonly statusCode = 400;
-  readonly code = "VALIDATION_ERROR";
-
-  constructor(message: string) {
-    super(message);
-    this.name = "InvalidRequestError";
-  }
 }

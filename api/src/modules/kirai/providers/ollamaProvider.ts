@@ -1,4 +1,4 @@
-import type { KiraiOllamaConfig } from "../../../config/kiraiOllama.js";
+import type { KiraiOllamaConfig } from "../config.js";
 import type { ModelRequest, ModelResponse } from "../types/agent.js";
 import type {
   ModelGenerationOptions,
@@ -73,6 +73,72 @@ export class OllamaProvider implements ModelProvider {
     private readonly fetcher: Fetcher = fetch,
   ) {}
 
+  async checkAvailability(): Promise<void> {
+    const controller = new AbortController();
+    let timedOut = false;
+    const timeout = setTimeout(() => {
+      timedOut = true;
+      controller.abort();
+    }, this.config.timeoutMs);
+
+    try {
+      const response = await this.fetcher(`${this.config.baseUrl}/api/tags`, {
+        method: "GET",
+        signal: controller.signal,
+      });
+      if (!response.ok) {
+        throw new OllamaProviderError(
+          "http",
+          `Ollama availability check failed with HTTP ${response.status}.`,
+          response.status,
+        );
+      }
+
+      let payload: unknown;
+      try {
+        payload = await response.json();
+      } catch {
+        if (timedOut) {
+          throw new OllamaProviderError("timeout", "Ollama availability check timed out.");
+        }
+        throw new OllamaProviderError(
+          "invalid_response",
+          "Ollama returned invalid model data.",
+        );
+      }
+
+      if (!isRecord(payload) || !Array.isArray(payload.models)) {
+        throw new OllamaProviderError(
+          "invalid_response",
+          "Ollama returned invalid model data.",
+        );
+      }
+      const modelAvailable = payload.models.some(
+        (model) =>
+          isRecord(model) &&
+          (model.name === this.config.model || model.model === this.config.model),
+      );
+      if (!modelAvailable) {
+        throw new OllamaProviderError(
+          "http",
+          "The configured Ollama model is not available.",
+          404,
+        );
+      }
+    } catch (error) {
+      if (error instanceof OllamaProviderError) throw error;
+      if (timedOut) {
+        throw new OllamaProviderError("timeout", "Ollama availability check timed out.");
+      }
+      throw new OllamaProviderError(
+        "connection",
+        "Could not connect to the local Ollama service.",
+      );
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
   async generate(
     request: ModelRequest,
     options: ModelGenerationOptions = {},
@@ -105,6 +171,9 @@ export class OllamaProvider implements ModelProvider {
           model: this.config.model,
           messages: request.messages,
           stream: false,
+          ...(this.config.model.toLowerCase().startsWith("qwen3")
+            ? { think: false }
+            : {}),
           ...(request.temperature === undefined || request.maxOutputTokens === undefined
             ? {
                 options: {

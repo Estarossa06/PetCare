@@ -141,29 +141,33 @@ Documentación: `docs/kirai/`
 
 ```text
 PetCare/
-│
-├── mobile/                  # Aplicación multiplataforma
-│   ├── app/                 # Rutas y pantallas Expo Router
-│   ├── components/          # Componentes reutilizables
-│   └── ...
-│
-├── api/                     # Backend Node.js + Express
+├── api/
 │   ├── src/
-│   │   └── modules/
-│   │       └── kirai/       # Módulo de inteligencia artificial
-│   ├── migrations/          # Migraciones PostgreSQL
-│   └── ...
-│
+│   │   ├── config/          # Configuración global
+│   │   ├── db/              # PostgreSQL y migraciones
+│   │   ├── middleware/      # Middleware HTTP común
+│   │   └── modules/         # Auth, mascotas, KIRAI y system
+│   └── test/                # Pruebas API
+├── mobile/
+│   ├── app/                 # Rutas Expo Router
+│   └── src/
+│       ├── features/        # Auth, mascotas, médico, cuidado,
+│       │                    # calendario, dashboard, perfil y previews
+│       ├── components/ui/   # UI compartida
+│       ├── db/              # SQLite y migraciones locales
+│       ├── devtools/        # Verificaciones locales
+│       ├── navigation/
+│       └── theme/
 ├── docs/
-│   ├── architecture/        # Decisiones de arquitectura
-│   ├── kirai/               # Documentación de KIRAI
-│   ├── sync/                # Diseño de sincronización
-│   └── ...
-│
+│   ├── architecture/
+│   ├── backend/
+│   ├── audits/
+│   ├── kirai/
+│   └── sync/
 └── README.md
 ```
 
-La estructura representa la organización general del proyecto y puede evolucionar conforme avance su implementación.
+Expo Router conserva las rutas públicas bajo `mobile/app/`; las pantallas, servicios, repositorios y tipos de cada dominio móvil se agrupan en `mobile/src/features/`. El backend organiza autenticación y mascotas en módulos separados; las migraciones permanecen en `api/src/db/migrations/`. La sincronización del backend aún no está implementada. Consulta la [estructura arquitectónica](docs/architecture/project-structure.md) para más detalle.
 
 ## Configuración del entorno
 
@@ -254,9 +258,9 @@ PetCare se desarrolla de manera incremental. Las funcionalidades se implementan 
 | Rutinas de cuidado | Implementadas inicialmente |
 | Calendario y recordatorios | Implementados inicialmente |
 | Persistencia SQLite | Implementada y verificada en Web y Android |
-| Backend Express | Implementado inicialmente |
-| Autenticación | Implementada inicialmente |
-| Migraciones PostgreSQL | Implementadas parcialmente |
+| Backend Express | API con autenticación PostgreSQL y endpoints de sistema |
+| Autenticación | Implementada y probada con PostgreSQL en base de pruebas |
+| Migraciones PostgreSQL | 0001–0004 aplicadas; checksums verificados |
 | Sincronización local-remota | Diseño aprobado; implementación pendiente |
 | KIRAI — fundamentos | Completados |
 | KIRAI — proveedor Ollama | Integrado y probado |
@@ -267,11 +271,10 @@ PetCare se desarrolla de manera incremental. Las funcionalidades se implementan 
 - Validación nativa completa en iOS.
 - Verificación de notificaciones en dispositivos físicos.
 - Validación del alojamiento Web con las cabeceras de aislamiento requeridas.
-- Finalización y verificación de las migraciones pendientes en Neon.
 - Implementación y pruebas integrales del sistema de sincronización.
 - Integración progresiva de KIRAI con el contexto y los datos de PetCare.
 
-**Nota:** la ruta de entrada actual de Expo Router conserva temporalmente un entorno de verificación de SQLite. No representa todavía la pantalla definitiva de inicio del producto.
+**Nota:** la ruta `app/database-verification.tsx` conserva temporalmente una pantalla de diagnóstico de SQLite. No es la pantalla de inicio del producto.
 
 ## Documentación técnica
 
@@ -280,6 +283,28 @@ La documentación se mantiene separada del código fuente para facilitar su cons
 | Documento | Descripción |
 |---|---|
 | `docs/database-setup.md` | Configuración de las bases de datos. |
+| `docs/backend/authentication.md` | Rutas y autenticación persistente del backend. |
 | `docs/data-model.md` | Modelo de datos. |
 | `docs/multiplatform-architecture.md` | Arquitectura multiplataforma. |
-|
+| `docs/architecture/project-structure.md` | Organización modular del repositorio. |
+| `docs/persistence-phase-2.md` | Alcance de la segunda fase de persistencia. |
+| `docs/persistence-verification.md` | Informe de verificación de persistencia. |
+| `docs/architecture/database-decision.md` | Decisiones sobre la arquitectura de bases de datos. |
+| `docs/deployment/environment-configuration.md` | Configuración de entornos. |
+| `docs/kirai/` | Documentación del desarrollo de KIRAI. |
+| `docs/sync/` | Diseño y planificación de sincronización. |
+
+## Seguridad
+
+- La API es el único componente autorizado para acceder a Neon.
+- Las operaciones remotas deben estar autenticadas y restringidas al propietario de los datos.
+- Las contraseñas se almacenan mediante funciones de derivación seguras.
+- Los tokens de actualización se gestionan mediante rotación.
+- Las credenciales y secretos no deben almacenarse en el cliente ni publicarse en Git.
+- KIRAI debe respetar sus límites de seguridad y no sustituir la valoración de un profesional veterinario.
+
+## Objetivo del proyecto
+
+Construir una plataforma escalable y multiplataforma que facilite la administración del cuidado de animales domésticos, integrando persistencia *offline-first*, sincronización de información y asistencia mediante inteligencia artificial.
+
+PetCare se desarrolla de forma incremental, priorizando la comprensión de cada componente, la validación técnica y la documentación de las decisiones de arquitectura.
