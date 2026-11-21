@@ -10,6 +10,10 @@ import {
   loadKiraiOllamaConfig,
 } from "../src/modules/kirai/config.js";
 import { buildSystemMessage } from "../src/modules/kirai/prompts/system.js";
+import {
+  MAX_KIRAI_HISTORY_CHARACTERS,
+  MAX_KIRAI_HISTORY_MESSAGES,
+} from "../src/modules/kirai/validation.js";
 import type { ModelMessage, ModelRequest } from "../src/modules/kirai/types/agent.js";
 import type { ModelProvider } from "../src/modules/kirai/providers/model-provider.js";
 import {
@@ -81,6 +85,42 @@ test("sends the system message to /api/chat and returns only final content", asy
     finishReason: "stop",
   });
   assert.equal(JSON.stringify(response).includes("thinking"), false);
+});
+
+test("checks Ollama connectivity and the configured model", async () => {
+  let requestUrl = "";
+  const provider = new OllamaProvider(
+    config,
+    async (input) => {
+      requestUrl = String(input);
+      return Response.json({ models: [{ name: "qwen3:8b" }] });
+    },
+  );
+  await provider.checkAvailability();
+  assert.equal(requestUrl, "http://127.0.0.1:11434/api/tags");
+
+  const missingModelProvider = new OllamaProvider(
+    config,
+    async () => Response.json({ models: [{ name: "other-model" }] }),
+  );
+  await assert.rejects(
+    missingModelProvider.checkAvailability(),
+    (error: unknown) =>
+      error instanceof OllamaProviderError &&
+      error.code === "http" &&
+      error.status === 404,
+  );
+
+  const unavailableProvider = new OllamaProvider(config, async () => {
+    throw new Error("private connection detail");
+  });
+  await assert.rejects(
+    unavailableProvider.checkAvailability(),
+    (error: unknown) =>
+      error instanceof OllamaProviderError &&
+      error.code === "connection" &&
+      !error.message.includes("private"),
+  );
 });
 
 test("reports HTTP status without exposing the response body", async () => {
@@ -222,12 +262,74 @@ async function createKiraiHarness(provider: ModelProvider) {
         body: JSON.stringify(body),
       });
     },
+    async availability(accessToken?: string): Promise<Response> {
+      return fetch(`${running.baseUrl}/kirai/availability`, {
+        headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
+      });
+    },
   };
 }
+
+test("KIRAI availability requires authentication and confirms the provider", async () => {
+  let checks = 0;
+  const harness = await createKiraiHarness({
+    async checkAvailability() {
+      checks += 1;
+    },
+    async generate() {
+      return { message: { role: "assistant", content: "respuesta" } };
+    },
+  });
+  try {
+    const unauthenticated = await harness.availability();
+    assert.equal(unauthenticated.status, 401);
+    assert.equal(checks, 0);
+
+    const accessToken = await harness.register();
+    const response = await harness.availability(accessToken);
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get("cache-control"), "no-store");
+    assert.deepEqual(await response.json(), { available: true });
+    assert.equal(checks, 1);
+  } finally {
+    const closed = once(harness.server, "close");
+    harness.server.close();
+    await closed;
+  }
+});
+
+test("KIRAI availability distinguishes provider connection from missing model", async () => {
+  for (const testCase of [
+    { error: new OllamaProviderError("connection", "private detail"), code: "KIRAI_CONNECTION_ERROR" },
+    { error: new OllamaProviderError("http", "private detail", 404), code: "KIRAI_UNAVAILABLE" },
+  ]) {
+    const harness = await createKiraiHarness({
+      async checkAvailability() {
+        throw testCase.error;
+      },
+      async generate() {
+        return { message: { role: "assistant", content: "respuesta" } };
+      },
+    });
+    try {
+      const accessToken = await harness.register();
+      const response = await harness.availability(accessToken);
+      assert.equal(response.status, 503);
+      const result = await response.text();
+      assert.match(result, new RegExp(testCase.code));
+      assert.equal(result.includes("private detail"), false);
+    } finally {
+      const closed = once(harness.server, "close");
+      harness.server.close();
+      await closed;
+    }
+  }
+});
 
 test("KIRAI chat requires an active authenticated session", async () => {
   let calls = 0;
   const harness = await createKiraiHarness({
+    async checkAvailability() {},
     async generate() {
       calls += 1;
       return { message: { role: "assistant", content: "respuesta" } };
@@ -244,10 +346,15 @@ test("KIRAI chat requires an active authenticated session", async () => {
   }
 });
 
-test("KIRAI chat sends only one trimmed question with the existing safety prompt", async () => {
+test("KIRAI chat sends recent context and the current question with the safety prompt", async () => {
   let received: ModelRequest | undefined;
   const question = "¿Cómo ayudo a mi perro a adaptarse a una rutina?";
+  const history: ModelMessage[] = [
+    { role: "user", content: "Mi perro se altera con los cambios." },
+    { role: "assistant", content: "Mantén las rutinas graduales." },
+  ];
   const harness = await createKiraiHarness({
+    async checkAvailability() {},
     async generate(request) {
       received = request;
       return {
@@ -259,7 +366,11 @@ test("KIRAI chat sends only one trimmed question with the existing safety prompt
   try {
     const accessToken = await harness.register();
     const response = await harness.chat(
-      { message: `  ${question}  `, petRecords: "must not be forwarded" },
+      {
+        message: `  ${question}  `,
+        history,
+        petRecords: "must not be forwarded",
+      },
       accessToken,
     );
     assert.equal(response.status, 200);
@@ -267,10 +378,13 @@ test("KIRAI chat sends only one trimmed question with the existing safety prompt
       answer: "Mantén horarios consistentes.",
       truncated: true,
     });
-    assert.equal(received?.messages.length, 2);
+    assert.equal(received?.messages.length, 4);
     assert.equal(received?.messages[0].role, "system");
     assert.match(received?.messages[0].content ?? "", /No prescribas medicamentos/);
-    assert.deepEqual(received?.messages[1], { role: "user", content: question });
+    assert.deepEqual(received?.messages.slice(1), [
+      ...history,
+      { role: "user", content: question },
+    ]);
     assert.equal(JSON.stringify(harness.entries).includes(question), false);
     assert.equal(JSON.stringify(received).includes("must not be forwarded"), false);
   } finally {
@@ -283,6 +397,7 @@ test("KIRAI chat sends only one trimmed question with the existing safety prompt
 test("KIRAI chat validates non-empty bounded messages before calling the model", async () => {
   let calls = 0;
   const harness = await createKiraiHarness({
+    async checkAvailability() {},
     async generate() {
       calls += 1;
       return { message: { role: "assistant", content: "respuesta" } };
@@ -295,6 +410,44 @@ test("KIRAI chat validates non-empty bounded messages before calling the model",
       { message: "  " },
       { message: "x".repeat(2_001) },
       { message: 42 },
+      {
+        message: "Pregunta",
+        history: Array.from({ length: MAX_KIRAI_HISTORY_MESSAGES + 2 }, (_, index) => ({
+          role: index % 2 === 0 ? "user" : "assistant",
+          content: "contexto",
+        })),
+      },
+      {
+        message: "Pregunta",
+        history: [
+          { role: "assistant", content: "No debe comenzar con assistant." },
+          { role: "user", content: "turno inválido" },
+        ],
+      },
+      {
+        message: "Pregunta",
+        history: [
+          { role: "user", content: "pregunta sin respuesta" },
+        ],
+      },
+      {
+        message: "Pregunta",
+        history: [
+          { role: "user", content: "x".repeat(800) },
+          { role: "assistant", content: "x".repeat(800) },
+          { role: "user", content: "x".repeat(800) },
+          { role: "assistant", content: "x".repeat(800) },
+          { role: "user", content: "x".repeat(800) },
+          { role: "assistant", content: "x".repeat(800) },
+          { role: "user", content: "x".repeat(800) },
+          { role: "assistant", content: "x".repeat(800) },
+          { role: "user", content: "x".repeat(800) },
+          {
+            role: "assistant",
+            content: "x".repeat(MAX_KIRAI_HISTORY_CHARACTERS - 7_200 + 1),
+          },
+        ],
+      },
     ]) {
       const response = await harness.chat(body, accessToken);
       assert.equal(response.status, 400);
@@ -302,6 +455,30 @@ test("KIRAI chat validates non-empty bounded messages before calling the model",
       assert.equal(result.error.code, "VALIDATION_ERROR");
     }
     assert.equal(calls, 0);
+
+    const boundaryHistory = Array.from({ length: 10 }, (_, index) => ({
+      role: index % 2 === 0 ? "user" : "assistant",
+      content: "x".repeat(MAX_KIRAI_HISTORY_CHARACTERS / 10),
+    }));
+    const boundaryResponse = await harness.chat(
+      { message: "Pregunta", history: boundaryHistory },
+      accessToken,
+    );
+    assert.equal(boundaryResponse.status, 200);
+    assert.equal(calls, 1);
+
+    const longAnswerResponse = await harness.chat(
+      {
+        message: "Otra pregunta",
+        history: [
+          { role: "user", content: "x".repeat(2_000) },
+          { role: "assistant", content: "y".repeat(2_500) },
+        ],
+      },
+      accessToken,
+    );
+    assert.equal(longAnswerResponse.status, 200);
+    assert.equal(calls, 2);
   } finally {
     const closed = once(harness.server, "close");
     harness.server.close();
@@ -312,6 +489,7 @@ test("KIRAI chat validates non-empty bounded messages before calling the model",
 test("KIRAI chat sanitizes provider failures", async () => {
   const privateDetail = "private Ollama response detail";
   const harness = await createKiraiHarness({
+    async checkAvailability() {},
     async generate() {
       throw new OllamaProviderError("timeout", privateDetail);
     },
@@ -324,7 +502,7 @@ test("KIRAI chat sanitizes provider failures", async () => {
     );
     assert.equal(response.status, 503);
     const result = await response.text();
-    assert.match(result, /KIRAI_UNAVAILABLE/);
+    assert.match(result, /KIRAI_CONNECTION_ERROR/);
     assert.equal(result.includes(privateDetail), false);
     assert.equal(JSON.stringify(harness.entries).includes(privateDetail), false);
   } finally {
@@ -337,6 +515,7 @@ test("KIRAI chat sanitizes provider failures", async () => {
 test("KIRAI chat rate-limits authenticated generation requests", async () => {
   let calls = 0;
   const harness = await createKiraiHarness({
+    async checkAvailability() {},
     async generate() {
       calls += 1;
       return { message: { role: "assistant", content: "respuesta" } };

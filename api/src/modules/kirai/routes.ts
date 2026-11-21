@@ -6,7 +6,11 @@ import type { Logger } from "../../observability/logger.js";
 import { OllamaProviderError } from "./providers/ollamaProvider.js";
 import type { ModelProvider } from "./providers/model-provider.js";
 import { KiraiConversationService } from "./service.js";
-import { validateKiraiMessage } from "./validation.js";
+import { validateKiraiRequest } from "./validation.js";
+
+type KiraiAvailabilityErrorCode =
+  | "KIRAI_CONNECTION_ERROR"
+  | "KIRAI_UNAVAILABLE";
 
 function createKiraiRateLimit(logger: Logger): RequestHandler {
   return rateLimit({
@@ -32,6 +36,16 @@ function createKiraiRateLimit(logger: Logger): RequestHandler {
   });
 }
 
+function availabilityErrorCode(error: unknown): KiraiAvailabilityErrorCode {
+  if (
+    error instanceof OllamaProviderError &&
+    (error.code === "connection" || error.code === "timeout")
+  ) {
+    return "KIRAI_CONNECTION_ERROR";
+  }
+  return "KIRAI_UNAVAILABLE";
+}
+
 export function createKiraiRouter(
   provider: ModelProvider,
   authStore: AuthStore,
@@ -42,14 +56,40 @@ export function createKiraiRouter(
   const service = new KiraiConversationService(provider);
   const authenticate = createAuthenticateMiddleware(authStore, accessTokenSecret);
 
+  router.get("/availability", authenticate, async (_request, response) => {
+    response.set("Cache-Control", "no-store");
+    try {
+      await provider.checkAvailability();
+      response.status(200).json({ available: true });
+    } catch (error) {
+      const code = availabilityErrorCode(error);
+      logger.error({
+        event: "kirai_availability_check_failed",
+        requestId: String(response.getHeader("X-Request-Id") ?? ""),
+        code:
+          error instanceof OllamaProviderError ? error.code : "unexpected",
+      });
+      response.status(503).json({
+        error: {
+          code,
+          message:
+            code === "KIRAI_CONNECTION_ERROR"
+              ? "KIRAI could not connect to its model provider."
+              : "KIRAI or its configured model is unavailable.",
+          requestId: String(response.getHeader("X-Request-Id") ?? ""),
+        },
+      });
+    }
+  });
+
   router.post(
     "/chat",
     authenticate,
     createKiraiRateLimit(logger),
     async (request, response, next) => {
-      let message: string;
+      let chatRequest: ReturnType<typeof validateKiraiRequest>;
       try {
-        message = validateKiraiMessage(request.body);
+        chatRequest = validateKiraiRequest(request.body);
       } catch (error) {
         next(error);
         return;
@@ -57,20 +97,22 @@ export function createKiraiRouter(
 
       let result: Awaited<ReturnType<KiraiConversationService["answer"]>>;
       try {
-        result = await service.answer(message);
+        result = await service.answer(chatRequest.message, chatRequest.history);
       } catch (error) {
+        const code = availabilityErrorCode(error);
         logger.error({
           event: "kirai_generation_failed",
           requestId: String(response.getHeader("X-Request-Id") ?? ""),
           code:
-            error instanceof OllamaProviderError
-              ? error.code
-              : "unexpected",
+            error instanceof OllamaProviderError ? error.code : "unexpected",
         });
         response.status(503).json({
           error: {
-            code: "KIRAI_UNAVAILABLE",
-            message: "KIRAI is temporarily unavailable.",
+            code,
+            message:
+              code === "KIRAI_CONNECTION_ERROR"
+                ? "KIRAI could not connect to its model provider."
+                : "KIRAI or its configured model is unavailable.",
             requestId: String(response.getHeader("X-Request-Id") ?? ""),
           },
         });

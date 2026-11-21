@@ -1,5 +1,6 @@
 import { buildSystemMessage } from "./prompts/system.js";
 import type { ModelProvider } from "./providers/model-provider.js";
+import type { KiraiHistoryMessage } from "./validation.js";
 
 export interface KiraiAnswer {
   answer: string;
@@ -9,10 +10,14 @@ export interface KiraiAnswer {
 export class KiraiConversationService {
   constructor(private readonly provider: ModelProvider) {}
 
-  async answer(message: string): Promise<KiraiAnswer> {
+  async answer(
+    message: string,
+    history: readonly KiraiHistoryMessage[] = [],
+  ): Promise<KiraiAnswer> {
     const response = await this.provider.generate({
       messages: [
         buildSystemMessage(),
+        ...history,
         { role: "user", content: message },
       ],
       temperature: 0.3,

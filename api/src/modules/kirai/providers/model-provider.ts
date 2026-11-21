@@ -5,6 +5,7 @@ export interface ModelGenerationOptions {
 }
 
 export interface ModelProvider {
+  checkAvailability(): Promise<void>;
   generate(
     request: ModelRequest,
     options?: ModelGenerationOptions,
