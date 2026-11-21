@@ -142,7 +142,7 @@ export class ApiClient {
     }
     const body =
       options.body === undefined ? undefined : JSON.stringify(options.body);
-    return this.fetcher(`${this.baseUrl()}${path}`, {
+    return this.fetcher.call(globalThis, `${this.baseUrl()}${path}`, {
       method: options.method ?? "GET",
       headers,
       ...(body === undefined ? {} : { body }),
@@ -156,11 +156,15 @@ export class ApiClient {
       if (!stored) {
         throw new ApiClientError("Authentication is required.", 401, "UNAUTHENTICATED");
       }
-      const response = await this.fetcher(`${this.baseUrl()}/auth/refresh`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refreshToken: stored.refreshToken }),
-      });
+      const response = await this.fetcher.call(
+        globalThis,
+        `${this.baseUrl()}/auth/refresh`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ refreshToken: stored.refreshToken }),
+        },
+      );
       if (!response.ok) {
         const error = await this.createError(response);
         if (response.status === 401) await tokenStorage.clear();
