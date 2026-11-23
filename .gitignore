@@ -1,0 +1,14 @@
+node_modules/
+**/node_modules/
+/.env
+api/.env
+api/.env.*
+!api/.env.example
+dist/
+coverage/
+*.db
+*.db-shm
+*.db-wal
+.expo/
+mobile/android/
+mobile/ios/
