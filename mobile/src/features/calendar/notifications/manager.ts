@@ -1,11 +1,11 @@
 import type { CalendarReminder } from "../types";
-import { cancelReminderNotifications } from "./cancellation";
+import { cancelReminderNotifications } from "./cancellation.ts";
 import {
   isCalendarNotification,
   reminderIdFromNotification,
   stableNotificationId,
-} from "./ids";
-import { resolveNotificationPermission } from "./permissions";
+} from "./ids.ts";
+import { resolveNotificationPermission } from "./permissions.ts";
 import type {
   CalendarNotificationPlatform,
   CalendarNotificationStore,
@@ -50,6 +50,7 @@ function hasCurrentSchedule(
 export function createCalendarNotificationManager(
   platform: CalendarNotificationPlatform,
   store: CalendarNotificationStore,
+  notificationsEnabled: () => Promise<boolean> = async () => true,
 ) {
   const inFlight = new Map<string, Promise<ScheduleResult | void>>();
   let reconciliation: Promise<void> | undefined;
@@ -90,6 +91,16 @@ export function createCalendarNotificationManager(
       const state = isActive(reminder) ? "unsupported" : "disabled";
       await store.setNotificationState(reminder.id, state);
       return state;
+    }
+    if (!(await notificationsEnabled())) {
+      try {
+        await cancelReminderNotifications(reminder.id, platform, store);
+        await store.setNotificationState(reminder.id, "disabled");
+        return "disabled";
+      } catch {
+        await store.setNotificationState(reminder.id, "failed", genericCancelError);
+        return "failed";
+      }
     }
     if (!isActive(reminder)) return markInactive(reminder, "disabled");
 
@@ -186,6 +197,15 @@ export function createCalendarNotificationManager(
           ),
         ),
       );
+      return;
+    }
+
+    if (!(await notificationsEnabled())) {
+      const scheduled = await platform.getScheduled();
+      for (const request of scheduled) {
+        if (isCalendarNotification(request)) await platform.cancel(request.identifier);
+      }
+      await Promise.all(reminders.map((reminder) => store.setNotificationState(reminder.id, "disabled")));
       return;
     }
 

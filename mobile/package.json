@@ -33,6 +33,7 @@
     "android": "expo start --android --go",
     "ios": "expo start --ios --go",
     "web": "expo start --web",
+    "test": "node --experimental-strip-types test/auth-route-access.test.mjs && node --experimental-strip-types test/authenticated-local-account-migration.test.mjs && node --experimental-strip-types test/pet-sync-migration.test.mjs && node --experimental-strip-types test/domain-sync-migration.test.mjs && node --experimental-strip-types test/kirai-migration.test.mjs && node --experimental-strip-types test/media-storage-migration.test.mjs && node --experimental-strip-types test/kirai-message-state.test.mjs && node --experimental-strip-types test/domain-queue-state.test.mjs && node --experimental-strip-types test/pet-sync-recovery.test.mjs && node --experimental-strip-types test/sync-recovery.test.mjs && node --experimental-strip-types test/pet-sync-policy.test.mjs && node --experimental-strip-types src/features/calendar/notifications/navigation.test.mjs && node --experimental-strip-types src/features/calendar/notifications/targetLifecycle.test.mjs && node --experimental-strip-types src/features/calendar/notifications/manager.test.mjs",
     "typecheck": "tsc --noEmit"
   },
   "private": true

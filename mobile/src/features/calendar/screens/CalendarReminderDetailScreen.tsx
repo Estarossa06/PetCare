@@ -4,6 +4,7 @@ import { ArrowLeft, Bell, BellOff, Check, Clock3, Pencil, Trash2 } from "lucide-
 import { Platform, Pressable, ScrollView, StyleSheet, Switch, Text, View, useWindowDimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppButton } from "../../../components/ui/AppButton";
+import { ConfirmActionModal } from "../../../components/ui/ConfirmActionModal";
 import { SurfaceCard } from "../../../components/ui/SurfaceCard";
 import { calendarRepository } from "../calendarRepository";
 import {
@@ -134,16 +135,15 @@ export default function CalendarReminderDetailScreen() {
                   <AppButton label="Editar" icon={Pencil} variant="secondary" onPress={() => router.push(`/calendar/reminder/${reminder.id}/edit`)} />
                   <AppButton label="Eliminar" icon={Trash2} variant="quiet" onPress={() => setConfirmDelete(true)} disabled={busy} />
                 </View>
-                {confirmDelete ? (
-                  <View style={styles.confirm}>
-                    <Text style={styles.confirmTitle}>¿Eliminar este recordatorio?</Text>
-                    <Text style={styles.meta}>Se conservará como eliminación lógica.</Text>
-                    <View style={styles.actions}>
-                      <AppButton label="Conservar" variant="secondary" onPress={() => setConfirmDelete(false)} disabled={busy} />
-                      <AppButton label="Confirmar eliminación" icon={Trash2} onPress={() => void change({ deleted: true })} loading={busy} />
-                    </View>
-                  </View>
-                ) : null}
+                <ConfirmActionModal
+                  visible={confirmDelete}
+                  title="¿Eliminar este recordatorio?"
+                  message="Se conservará como eliminado."
+                  confirmLabel="Eliminar"
+                  busy={busy}
+                  onCancel={() => setConfirmDelete(false)}
+                  onConfirm={() => void change({ deleted: true })}
+                />
                 {reminder.status !== "pending" ? <Text style={styles.meta}>Estado · {reminder.status}</Text> : null}
                 {!reminder.enabled ? <View style={styles.disabledIcon}><BellOff size={16} color={colors.textMuted} /><Text style={styles.meta}>El recordatorio permanece guardado en SQLite.</Text></View> : null}
               </SurfaceCard>
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   notificationState: { color: colors.blue, fontSize: 13, fontWeight: "800" },
   switchRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   actions: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
-  confirm: { gap: spacing.sm, padding: spacing.md, backgroundColor: "#FFF7ED", borderRadius: radius.md },
+  confirm: { gap: spacing.sm, padding: spacing.md, backgroundColor: colors.orangeSoft, borderRadius: radius.md },
   confirmTitle: { color: colors.blueDark, fontSize: 16, fontWeight: "800" },
   disabledIcon: { flexDirection: "row", alignItems: "center", gap: 8 },
   error: { color: colors.orange, fontSize: 13 },

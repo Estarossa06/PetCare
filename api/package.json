@@ -7,9 +7,16 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test test/app.test.ts test/auth.test.ts test/auth.postgres.integration.test.ts test/pets.test.ts test/pets.postgres.integration.test.ts test/kirai.test.ts",
+    "test": "tsx --test test/app.test.ts test/auth.test.ts test/auth.postgres.integration.test.ts test/pets.test.ts test/pets.postgres.integration.test.ts test/sync.postgres.integration.test.ts test/domain-sync.postgres.integration.test.ts test/kirai.test.ts test/kirai.postgres.integration.test.ts test/pet-identification.test.ts test/media-validation.test.ts test/media.postgres.integration.test.ts test/pet-vision.local.integration.test.ts",
+    "test:vision:local": "tsx --test test/pet-vision.local.integration.test.ts",
     "test:integration:auth": "tsx --test test/auth.postgres.integration.test.ts",
     "test:integration:pets": "tsx --test test/pets.postgres.integration.test.ts",
+    "test:integration:sync": "tsx --test test/sync.postgres.integration.test.ts",
+    "test:integration:kirai": "tsx --test test/kirai.postgres.integration.test.ts",
+    "test:integration:media": "tsx --test test/media.postgres.integration.test.ts",
+    "test:migration-lineage": "npm run build && node test/migration-lineage.check.mjs",
+    "test:migration-lineage:postgres": "tsx test/migration-lineage.postgres.mjs",
+    "test:kirai:e2e": "npm run build && node test/kirai.e2e.local.mjs",
     "kirai:ollama:test": "tsx src/modules/kirai/providers/test-ollama.ts",
     "db:migrate": "tsx src/db/migrate.ts up",
     "db:migrate:status": "tsx src/db/migrate.ts status",
@@ -17,11 +24,13 @@
     "db:verify:cursor": "tsx src/db/verify-cursor.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1176.0",
     "dotenv": "^16.4.7",
     "express": "^5.3.0",
     "express-rate-limit": "^8.7.3",
     "jose": "^6.2.16",
-    "pg": "^8.13.1"
+    "pg": "^8.13.1",
+    "sharp": "^0.35.5"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",

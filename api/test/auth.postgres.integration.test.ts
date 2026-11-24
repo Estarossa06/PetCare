@@ -1,3 +1,4 @@
+import "dotenv/config";
 import assert from "node:assert/strict";
 import { createHash, randomUUID } from "node:crypto";
 import { once } from "node:events";
@@ -27,26 +28,37 @@ test(
   {
     skip:
       !integrationEnabled &&
-      "Set PETCARE_TEST_DATABASE_URL and PETCARE_RUN_AUTH_DB_TESTS=1 for a disposable *_test database.",
+      "Set PETCARE_TEST_DATABASE_URL and PETCARE_RUN_AUTH_DB_TESTS=1 for the disposable petcare_test database.",
   },
   async () => {
+    const databaseUrlParsed = new URL(databaseUrl!);
+    assert.ok(
+      databaseUrlParsed.protocol === "postgres:" ||
+        databaseUrlParsed.protocol === "postgresql:",
+      "Refusing to connect unless PETCARE_TEST_DATABASE_URL is a PostgreSQL URL.",
+    );
+    assert.equal(
+      decodeURIComponent(databaseUrlParsed.pathname.replace(/^\//, "")),
+      "petcare_test",
+      "Refusing to connect unless PETCARE_TEST_DATABASE_URL names petcare_test.",
+    );
     const pool = createDatabasePool(databaseUrl!);
     let server: Server | undefined;
     let fixturesStarted = false;
-    const userIds: string[] = [];
+    const runId = randomUUID();
     const emails: string[] = [
-      `auth-integration-${randomUUID()}@example.test`,
-      `auth-integration-${randomUUID()}@example.test`,
+      `auth-integration-${runId}-a@example.test`,
+      `auth-integration-${runId}-b@example.test`,
     ];
 
     try {
       const databaseInfo = await pool.query<{ database: string }>(
         "SELECT current_database() AS database",
       );
-      assert.match(
+      assert.equal(
         databaseInfo.rows[0].database,
-        /(^|[_-])test($|[_-])/i,
-        "Refusing to write auth fixtures outside a database with a test name.",
+        "petcare_test",
+        `Refusing to write auth fixtures outside petcare_test (run ${runId}).`,
       );
 
       const appliedResult = await pool.query<{
@@ -87,7 +99,6 @@ test(
       });
       assert.equal(registerA.status, 201);
       const tokensA = await registerA.json();
-      userIds.push(tokensA.user.id);
       assert.equal("password" in tokensA.user, false);
 
       const duplicate = await postJson(baseUrl, "/auth/register", {
@@ -139,50 +150,123 @@ test(
       });
       assert.equal(registerB.status, 201);
       const tokensB = await registerB.json();
-      userIds.push(tokensB.user.id);
       assert.notEqual(tokensB.user.id, tokensA.user.id);
+
+    const updatedEmail = `auth-updated-${runId}@example.test`;
+    emails[1] = updatedEmail;
+    const profileUpdate = await fetch(`${baseUrl}/auth/me`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${tokensB.accessToken}` },
+      body: JSON.stringify({
+        name: "Updated Integration B", email: updatedEmail, currentPassword: testPassword,
+      }),
+    });
+    assert.equal(profileUpdate.status, 200);
+    assert.equal((await profileUpdate.json()).user.name, "Updated Integration B");
+
+    const changedPassword = "new postgres integration password";
+    const passwordChange = await postJson(baseUrl, "/auth/password", {
+      currentPassword: testPassword, newPassword: changedPassword,
+    }, tokensB.accessToken);
+    assert.equal(passwordChange.status, 204);
+    const bStillAuthenticated = await fetch(`${baseUrl}/auth/me`, {
+      headers: { Authorization: `Bearer ${tokensB.accessToken}` },
+    });
+    assert.equal(bStillAuthenticated.status, 200);
+    assert.equal((await postJson(baseUrl, "/auth/login", {
+      email: tokensB.user.email, password: testPassword,
+    })).status, 401);
+    const newPasswordLogin = await postJson(baseUrl, "/auth/login", {
+      email: updatedEmail, password: changedPassword,
+    });
+    assert.equal(newPasswordLogin.status, 200);
+    const newSession = await newPasswordLogin.json();
+
+    const deletionEmail = `auth-deletion-${runId}@example.test`;
+    emails.push(deletionEmail);
+    const deletionRegister = await postJson(baseUrl, "/auth/register", {
+      email: deletionEmail, password: testPassword, name: "Deletion Integration Owner",
+    });
+    assert.equal(deletionRegister.status, 201);
+    const deletionTokens = await deletionRegister.json();
+    const deletionRequest = await postJson(baseUrl, "/auth/deletion-request", {
+      currentPassword: testPassword,
+    }, deletionTokens.accessToken);
+    assert.equal(deletionRequest.status, 202);
+    assert.deepEqual(await deletionRequest.json(), { status: "pending_permanent_deletion" });
+    assert.equal((await fetch(`${baseUrl}/auth/me`, {
+      headers: { Authorization: `Bearer ${deletionTokens.accessToken}` },
+    })).status, 401);
 
       const logout = await postJson(
         baseUrl,
         "/auth/logout",
         {},
-        tokensB.accessToken,
+        newSession.accessToken,
       );
       assert.equal(logout.status, 204);
       const loggedOutIdentity = await fetch(`${baseUrl}/auth/me`, {
-        headers: { Authorization: `Bearer ${tokensB.accessToken}` },
+        headers: { Authorization: `Bearer ${newSession.accessToken}` },
       });
       assert.equal(loggedOutIdentity.status, 401);
 
       const stored = await pool.query<{ count: string }>(
-        "SELECT count(*)::text AS count FROM users WHERE id = ANY($1::uuid[])",
-        [userIds],
+        "SELECT count(*)::text AS count FROM users WHERE email = ANY($1::text[])",
+        [emails],
       );
-      assert.equal(Number(stored.rows[0].count), userIds.length);
+      assert.equal(Number(stored.rows[0].count), emails.length);
     } finally {
-      if (server) {
-        const closed = once(server, "close");
-        server.close();
-        await closed;
+      try {
+        if (server) {
+          const closed = once(server, "close");
+          server.close();
+          await closed;
+        }
+        if (fixturesStarted) {
+          await pool.query(
+            `DELETE FROM auth_refresh_tokens AS token
+             USING auth_sessions AS session, users
+             WHERE token.session_id = session.id
+               AND session.user_id = users.id
+               AND users.email = ANY($1::text[])`,
+            [emails],
+          );
+          await pool.query(
+            `DELETE FROM account_deletion_requests AS request
+             USING users
+             WHERE request.user_id = users.id AND users.email = ANY($1::text[])`,
+            [emails],
+          );
+          await pool.query(
+            `DELETE FROM auth_sessions AS session
+             USING users
+             WHERE session.user_id = users.id AND users.email = ANY($1::text[])`,
+            [emails],
+          );
+          await pool.query("DELETE FROM users WHERE email = ANY($1::text[])", [emails]);
+          const residual = await pool.query<{ users: string; sessions: string; refresh_tokens: string; deletion_requests: string }>(
+            `SELECT
+               (SELECT count(*)::text FROM users WHERE email = ANY($1::text[])) AS users,
+               (SELECT count(*)::text FROM account_deletion_requests AS request
+                 JOIN users ON users.id = request.user_id
+                 WHERE users.email = ANY($1::text[])) AS deletion_requests,
+               (SELECT count(*)::text FROM auth_sessions AS session
+                 JOIN users ON users.id = session.user_id
+                 WHERE users.email = ANY($1::text[])) AS sessions,
+               (SELECT count(*)::text FROM auth_refresh_tokens AS token
+                 JOIN auth_sessions AS session ON session.id = token.session_id
+                 JOIN users ON users.id = session.user_id
+                 WHERE users.email = ANY($1::text[])) AS refresh_tokens`,
+            [emails],
+          );
+          assert.equal(Number(residual.rows[0].users), 0, `User fixture cleanup failed for run ${runId}.`);
+          assert.equal(Number(residual.rows[0].deletion_requests), 0, `Deletion-request cleanup failed for run ${runId}.`);
+          assert.equal(Number(residual.rows[0].sessions), 0, `Session fixture cleanup failed for run ${runId}.`);
+          assert.equal(Number(residual.rows[0].refresh_tokens), 0, `Refresh-token fixture cleanup failed for run ${runId}.`);
+        }
+      } finally {
+        await pool.end();
       }
-      if (fixturesStarted) {
-        await pool.query(
-          `DELETE FROM auth_refresh_tokens AS token
-           USING auth_sessions AS session, users
-           WHERE token.session_id = session.id
-             AND session.user_id = users.id
-             AND users.email = ANY($1::text[])`,
-          [emails],
-        );
-        await pool.query(
-          `DELETE FROM auth_sessions AS session
-           USING users
-           WHERE session.user_id = users.id AND users.email = ANY($1::text[])`,
-          [emails],
-        );
-        await pool.query("DELETE FROM users WHERE email = ANY($1::text[])", [emails]);
-      }
-      await pool.end();
     }
   },
 );

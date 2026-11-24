@@ -2,6 +2,7 @@ import * as Crypto from "expo-crypto";
 import { getPetCareDatabase } from "../../db/database";
 import { getLocalAccountId, withLocalWriteTransaction } from "../../db/localAccount";
 import type { Pet, PetFilters, PetInput } from "./types";
+import { enqueueMediaDelete, enqueueMediaUpload } from "../sync/mediaQueue";
 
 const entityType = "pet";
 const fieldMappings = [
@@ -16,12 +17,12 @@ const fieldMappings = [
   ["notes", "notes"],
   ["photo_storage_key", "photoStorageKey"],
 ] as const;
-const mutableFields = fieldMappings.map(([field]) => field);
+const syncFieldMappings = fieldMappings.filter(([field]) => field !== "photo_storage_key");
+const mutableFields = syncFieldMappings.map(([field]) => field);
 
 function toPayload(pet: Pet): string {
   return JSON.stringify({
     id: pet.id,
-    owner_id: pet.owner_id,
     name: pet.name,
     species: pet.species,
     breed: pet.breed,
@@ -31,8 +32,6 @@ function toPayload(pet: Pet): string {
     weight_kg: pet.weight_kg,
     color: pet.color,
     notes: pet.notes,
-    photo_storage_key: pet.photo_storage_key,
-    version: pet.version,
     created_at: pet.created_at,
     updated_at: pet.updated_at,
     deleted_at: pet.deleted_at,
@@ -46,8 +45,8 @@ async function queueOperation(
   changedFields: readonly string[],
 ): Promise<void> {
   const operationId = Crypto.randomUUID().toLowerCase();
-  const latest = await tx.getFirstAsync<{ operation_id: string }>(
-    `SELECT operation_id FROM sync_queue
+  const latest = await tx.getFirstAsync<{ operation_id: string; action: string; base_version: number }>(
+    `SELECT operation_id, action, base_version FROM sync_queue
      WHERE account_id = ? AND entity_type = ? AND entity_id = ?
      ORDER BY rowid DESC LIMIT 1`,
     pet.owner_id,
@@ -55,18 +54,22 @@ async function queueOperation(
     pet.id,
   );
   const timestamp = new Date().toISOString();
+  const baseVersion = latest
+    ? latest.action === "create" ? 1 : latest.base_version + 1
+    : pet.server_version;
   await tx.runAsync(
     `INSERT INTO sync_queue
       (operation_id, account_id, entity_type, entity_id, action, payload,
-       base_version, changed_fields, status, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)`,
+       base_version, local_revision, changed_fields, status, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)`,
     operationId,
     pet.owner_id,
     entityType,
     pet.id,
     action,
     toPayload(pet),
-    pet.version,
+    baseVersion,
+    pet.local_revision,
     JSON.stringify(changedFields),
     timestamp,
     timestamp,
@@ -136,7 +139,7 @@ export const petRepository = {
     );
   },
 
-  async save(input: PetInput, id?: string): Promise<Pet> {
+  async save(input: PetInput, id?: string, photo?: { assetId: string; mimeType: string; size: number; sha256: string }): Promise<Pet> {
     const fields = normalizeInput(input);
     if (!fields.name) throw new Error("Escribe el nombre de tu mascota.");
     if (!fields.species) throw new Error("Selecciona o indica la especie.");
@@ -148,8 +151,8 @@ export const petRepository = {
         await tx.runAsync(
           `INSERT INTO pets
             (id, owner_id, name, species, breed, sex, birth_date, approximate_age_months,
-             weight_kg, color, notes, photo_storage_key, version, created_at, updated_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)`,
+             weight_kg, color, notes, photo_storage_key, version, local_revision, created_at, updated_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 1, ?, ?)`,
           petId,
           ownerId,
           fields.name,
@@ -172,6 +175,13 @@ export const petRepository = {
         );
         if (!created) throw new Error("No se pudo leer el perfil guardado.");
         await queueOperation(tx, created, "create", mutableFields);
+        if (photo && fields.photo_storage_key) {
+          await tx.runAsync("UPDATE pets SET photo_remote_asset_id = ? WHERE owner_id = ? AND id = ?", photo.assetId, ownerId, petId);
+          await enqueueMediaUpload(tx, { accountId: ownerId, assetId: photo.assetId, resourceType: "pet_photo", resourceId: petId, petId, localStorageKey: fields.photo_storage_key, filename: fields.photo_storage_key.split("/").at(-1) ?? "photo.jpg", mimeType: photo.mimeType, size: photo.size, sha256: photo.sha256 });
+          const updated = await tx.getFirstAsync<Pet>("SELECT * FROM pets WHERE owner_id = ? AND id = ?", ownerId, petId);
+          if (!updated) throw new Error("No se pudo actualizar la foto de la mascota.");
+          return updated;
+        }
         return created;
       }
 
@@ -181,17 +191,23 @@ export const petRepository = {
         id,
       );
       if (!existing) throw new Error("No encontramos esta mascota o ya fue eliminada.");
-      const changedFields = fieldMappings
+      if (existing.photo_storage_key !== fields.photo_storage_key && existing.photo_remote_asset_id) {
+        await enqueueMediaDelete(tx, { accountId: ownerId, assetId: existing.photo_remote_asset_id, resourceType: "pet_photo", resourceId: id, petId: id, filename: existing.photo_storage_key?.split("/").at(-1) ?? "photo.jpg", mimeType: "image/jpeg" });
+      }
+      const locallyChangedFields = fieldMappings
         .filter(([field]) => existing[field] !== fields[field])
         .map(([field]) => field);
-      if (changedFields.length === 0) {
+      if (locallyChangedFields.length === 0) {
         return existing;
       }
+      const changedFields = syncFieldMappings
+        .filter(([field]) => existing[field] !== fields[field])
+        .map(([field]) => field);
 
       await tx.runAsync(
         `UPDATE pets SET name = ?, species = ?, breed = ?, sex = ?, birth_date = ?,
           approximate_age_months = ?, weight_kg = ?, color = ?, notes = ?,
-          photo_storage_key = ?, updated_at = ?
+          photo_storage_key = ?, photo_remote_asset_id = ?, local_revision = local_revision + ?, updated_at = ?
          WHERE owner_id = ? AND id = ? AND deleted_at IS NULL`,
         fields.name,
         fields.species,
@@ -203,6 +219,8 @@ export const petRepository = {
         fields.color,
         fields.notes,
         fields.photo_storage_key,
+        photo ? photo.assetId : fields.photo_storage_key === existing.photo_storage_key ? existing.photo_remote_asset_id : null,
+        changedFields.length > 0 ? 1 : 0,
         timestamp,
         ownerId,
         id,
@@ -213,7 +231,8 @@ export const petRepository = {
         id,
       );
       if (!saved) throw new Error("No se pudo leer el perfil actualizado.");
-      await queueOperation(tx, saved, "update", changedFields);
+      if (changedFields.length > 0) await queueOperation(tx, saved, "update", changedFields);
+      if (photo && fields.photo_storage_key) await enqueueMediaUpload(tx, { accountId: ownerId, assetId: photo.assetId, resourceType: "pet_photo", resourceId: id, petId: id, localStorageKey: fields.photo_storage_key, filename: fields.photo_storage_key.split("/").at(-1) ?? "photo.jpg", mimeType: photo.mimeType, size: photo.size, sha256: photo.sha256 });
       return saved;
     });
   },
@@ -226,9 +245,10 @@ export const petRepository = {
         id,
       );
       if (!existing) throw new Error("No encontramos esta mascota o ya fue eliminada.");
+      await tx.runAsync("DELETE FROM media_upload_queue WHERE account_id=? AND resource_type='pet_photo' AND pet_id=?", ownerId, id);
       const timestamp = new Date().toISOString();
       await tx.runAsync(
-        "UPDATE pets SET deleted_at = ?, updated_at = ? WHERE owner_id = ? AND id = ? AND deleted_at IS NULL",
+        "UPDATE pets SET deleted_at = ?, local_revision = local_revision + 1, updated_at = ? WHERE owner_id = ? AND id = ? AND deleted_at IS NULL",
         timestamp,
         timestamp,
         ownerId,

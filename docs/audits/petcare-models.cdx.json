@@ -1,0 +1,45 @@
+{
+  "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-11-23T18:13:00Z",
+    "component": {
+      "type": "application",
+      "name": "petcare-local-vision-models",
+      "version": "1.0.0"
+    },
+    "properties": [
+      { "name": "petcare:ollama-runtime-version", "value": "0.40.13" },
+      { "name": "petcare:ollama-manifest-digest", "value": "sha256:5ced39dfa4bac325dc183dd1e4febaa1c46b3ea28bce48896c8e69c1e79611cc" },
+      { "name": "petcare:ollama-config-digest", "value": "sha256:83b9da835d9f13632a97e550cc8fd02ff7f39b88a843f0a8923330890682977a" },
+      { "name": "petcare:quantization", "value": "Q4_K_M" },
+      { "name": "petcare:parameter-count", "value": "8.3B" },
+      { "name": "petcare:model-validation", "value": "real dog and cat photographs; local Ollama inference" }
+    ]
+  },
+  "components": [
+    {
+      "type": "machine-learning-model",
+      "name": "qwen2.5vl",
+      "version": "7b",
+      "description": "Qwen2.5-VL 7B, Ollama Q4_K_M artifact used for local pet photo identification.",
+      "licenses": [{ "license": { "id": "Apache-2.0" } }],
+      "hashes": [{ "alg": "SHA-256", "content": "a99b7f834d754b88f122d865f32758ba9f0994a83f8363df2c1e71c17605a025" }],
+      "externalReferences": [
+        { "type": "distribution", "url": "https://ollama.com/library/qwen2.5vl" },
+        { "type": "website", "url": "https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct" },
+        { "type": "vcs", "url": "https://github.com/QwenLM/Qwen2.5-VL" }
+      ],
+      "properties": [
+        { "name": "petcare:artifact-size-bytes", "value": "5969233408" },
+        { "name": "petcare:ollama-model-tag", "value": "qwen2.5vl:7b" },
+        { "name": "petcare:license-layer-digest", "value": "sha256:832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e" },
+        { "name": "petcare:license-layer-size-bytes", "value": "11343" },
+        { "name": "petcare:license-layer-title", "value": "Apache License 2.0 (verified from downloaded Ollama license layer)" },
+        { "name": "petcare:source", "value": "Ollama registry artifact; not bundled in the repository or npm lockfiles" }
+      ]
+    }
+  ]
+}

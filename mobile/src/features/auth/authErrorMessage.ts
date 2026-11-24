@@ -19,12 +19,12 @@ export function authErrorMessage(error: unknown): string {
   }
 
   if (error instanceof TypeError) {
-    return "No se pudo conectar con PetCare. Comprueba tu conexión e inténtalo nuevamente.";
+    return "No se pudo completar la solicitud. Inténtalo nuevamente en unos momentos.";
   }
 
   if (error instanceof Error) {
     if (error.message.includes("EXPO_PUBLIC_API_URL")) {
-      return "La conexión con el servicio de PetCare no está configurada.";
+      return "No se pudo completar la solicitud. Inténtalo nuevamente en unos momentos.";
     }
     if (error.message === "Stored authentication data is invalid.") {
       return "La sesión guardada no es válida. Inicia sesión nuevamente.";

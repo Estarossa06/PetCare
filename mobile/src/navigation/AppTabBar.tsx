@@ -8,6 +8,7 @@ import {
   type LucideIcon,
 } from "lucide-react-native";
 import { Tabs } from "expo-router";
+import { usePathname, useRouter, type Href } from "expo-router";
 import { Pressable, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, radius, spacing } from "../theme/tokens";
@@ -23,19 +24,19 @@ const navigationItems: Record<string, { label: string; icon: LucideIcon }> = {
 };
 
 function NavigationItem({
-  route,
-  index,
+  routeName,
+  itemKey,
   selected,
   wide,
   onPress,
 }: {
-  route: TabBarProps["state"]["routes"][number];
-  index: number;
+  routeName: string;
+  itemKey: string;
   selected: boolean;
   wide: boolean;
   onPress: () => void;
 }) {
-  const item = navigationItems[route.name];
+  const item = navigationItems[routeName];
   if (!item) return null;
   const Icon = item.icon;
 
@@ -51,7 +52,7 @@ function NavigationItem({
         selected && styles.selectedItem,
         pressed && styles.pressed,
       ]}
-      key={`${route.key}-${index}`}
+      key={itemKey}
     >
       <Icon
         size={21}
@@ -73,9 +74,9 @@ export function AppTabBar({ state, emitter, navigateToTab }: TabBarProps) {
 
   const renderItem = (route: TabBarProps["state"]["routes"][number], index: number) => (
     <NavigationItem
-      key={route.key}
-      route={route}
-      index={index}
+      itemKey={route.key}
+      routeName={route.name}
+
       selected={state.index === index}
       wide={wide}
       onPress={() => {
@@ -112,6 +113,40 @@ export function AppTabBar({ state, emitter, navigateToTab }: TabBarProps) {
   return (
     <View style={[styles.mobileBar, { paddingBottom: Math.max(insets.bottom, 8) }]}>
       {state.routes.map(renderItem)}
+    </View>
+  );
+}
+
+const persistentRoutes: Record<string, Href> = {
+  index: "/(tabs)",
+  pets: "/(tabs)/pets",
+  calendar: "/(tabs)/calendar",
+  assistant: "/(tabs)/assistant",
+  profile: "/(tabs)/profile",
+};
+
+export function PersistentAppTabBar() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const activeRoute = pathname.startsWith("/pet") ? "pets"
+    : pathname.startsWith("/calendar") ? "calendar"
+      : pathname.startsWith("/assistant") ? "assistant"
+        : pathname.startsWith("/profile") || pathname.startsWith("/database-verification") || pathname.startsWith("/sync-status") ? "profile"
+          : pathname.startsWith("/pets") ? "pets" : "index";
+  const insets = useSafeAreaInsets();
+
+  return (
+    <View style={[styles.mobileBar, { paddingBottom: Math.max(insets.bottom, 8) }]}>
+      {Object.keys(navigationItems).map((routeName) => (
+        <NavigationItem
+          key={routeName}
+          itemKey={routeName}
+          routeName={routeName}
+          selected={activeRoute === routeName}
+          wide={false}
+          onPress={() => router.navigate(persistentRoutes[routeName])}
+        />
+      ))}
     </View>
   );
 }
@@ -156,7 +191,7 @@ const styles = StyleSheet.create({
     marginTop: 1,
   },
   sectionLabel: {
-    color: "#94A3B8",
+    color: colors.textMuted,
     fontSize: 10,
     fontWeight: "800",
     letterSpacing: 1.1,
@@ -236,11 +271,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   mobileBar: {
-    position: "absolute",
-    zIndex: 5,
-    bottom: 0,
-    left: 0,
-    right: 0,
     minHeight: 66,
     flexDirection: "row",
     alignItems: "center",

@@ -1,10 +1,12 @@
 import { calendarRepository } from "./calendarRepository";
 import { createCalendarNotificationManager } from "./notifications/manager";
 import { calendarNotificationPlatform } from "./notifications/platform";
+import { getNotificationsEnabled } from "../profile/preferences";
 
 const manager = createCalendarNotificationManager(
   calendarNotificationPlatform,
   calendarRepository,
+  getNotificationsEnabled,
 );
 
 export const syncCalendarNotification = manager.syncCalendarNotification;

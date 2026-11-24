@@ -13,7 +13,11 @@ export type Pet = {
   color: string | null;
   notes: string | null;
   photo_storage_key: string | null;
+  photo_remote_asset_id: string | null;
   version: number;
+  local_revision: number;
+  server_version: number;
+  acknowledged_local_revision: number;
   created_at: string;
   updated_at: string;
   deleted_at: string | null;

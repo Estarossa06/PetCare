@@ -41,10 +41,10 @@ export const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: "#D97706",
+    backgroundColor: colors.orange,
   },
   demoText: {
-    color: "#92400E",
+    color: colors.yellowText,
     fontSize: 9,
     fontWeight: "800",
     letterSpacing: 0.4,
@@ -104,7 +104,7 @@ export const styles = StyleSheet.create({
     paddingVertical: 7,
   },
   demoNoteText: {
-    color: "#92400E",
+    color: colors.yellowText,
     fontSize: 10,
     fontWeight: "700",
   },
@@ -335,7 +335,7 @@ export const styles = StyleSheet.create({
     borderRadius: radius.pill,
   },
   demoTagText: {
-    color: "#92400E",
+    color: colors.yellowText,
     fontSize: 9,
     fontWeight: "800",
   },
@@ -382,7 +382,7 @@ export const styles = StyleSheet.create({
     fontWeight: "800",
   },
   previewLabel: {
-    color: "#94A3B8",
+    color: colors.textMuted,
     fontSize: 9,
     fontWeight: "800",
     letterSpacing: 0.8,
@@ -428,7 +428,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   footerNote: {
-    color: "#94A3B8",
+    color: colors.textMuted,
     fontSize: 10,
     textAlign: "center",
     marginTop: 2,

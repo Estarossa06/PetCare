@@ -4,6 +4,7 @@ import { AlertCircle, ArrowLeft, CalendarDays, Edit3, FileText, Stethoscope, Tra
 import { ActivityIndicator, Image, Linking, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppButton } from "../../../components/ui/AppButton";
+import { ConfirmActionModal } from "../../../components/ui/ConfirmActionModal";
 import { SurfaceCard } from "../../../components/ui/SurfaceCard";
 import { medicalCategoryLabels, medicalService } from "../medicalService";
 import { medicalFileStorage } from "../medicalFileStorage";
@@ -135,17 +136,14 @@ export default function MedicalRecordDetailScreen({ petId, recordId }: { petId: 
             </SurfaceCard>
           )}
           {error && record ? <Text accessibilityRole="alert" style={styles.error}>{error}</Text> : null}
-          {confirmDelete && record ? (
-            <SurfaceCard style={styles.confirm}>
-              <View style={styles.confirmIcon}><Trash2 size={21} color={colors.orange} /></View>
-              <Text style={styles.confirmTitle}>¿Eliminar este registro?</Text>
-              <Text style={styles.secondary}>Se ocultará del historial y conservará su marca de eliminación para sincronización futura.</Text>
-              <View style={styles.actions}>
-                <AppButton label="Cancelar" variant="secondary" onPress={() => setConfirmDelete(false)} disabled={deleting} />
-                <AppButton label="Eliminar" onPress={() => void deleteRecord()} loading={deleting} />
-              </View>
-            </SurfaceCard>
-          ) : null}
+          <ConfirmActionModal
+            visible={confirmDelete && Boolean(record)}
+            title="¿Eliminar este registro?"
+            message="Se ocultará del historial guardado en este dispositivo."
+            busy={deleting}
+            onCancel={() => setConfirmDelete(false)}
+            onConfirm={() => void deleteRecord()}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -87,4 +87,5 @@ export type PickedMedicalFile = {
 export type PreparedMedicalFile = PickedMedicalFile & {
   id: string;
   storageKey: string;
+  sha256: string;
 };

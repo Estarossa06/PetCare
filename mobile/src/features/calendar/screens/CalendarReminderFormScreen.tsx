@@ -4,6 +4,7 @@ import { ArrowLeft, Bell, Clock3 } from "lucide-react-native";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppButton } from "../../../components/ui/AppButton";
+import { CalendarDateField } from "../../../components/ui/CalendarDateField";
 import { AppTextField } from "../../../components/ui/TextField";
 import { SurfaceCard } from "../../../components/ui/SurfaceCard";
 import { isoToLocalDateTime } from "../../care/recurrence";
@@ -124,7 +125,7 @@ export default function CalendarReminderFormScreen() {
                 {relative ? (
                   <AppTextField label="Minutos antes del evento" value={leadMinutes} onChangeText={setLeadMinutes} keyboardType="number-pad" placeholder="30" hint="Para acontecimientos médicos de día completo se toma como referencia las 09:00 locales." />
                 ) : (
-                  <AppTextField label="Avisar el (fecha y hora local)" value={remindLocal} onChangeText={setRemindLocal} placeholder="AAAA-MM-DDTHH:mm" />
+                  <CalendarDateField label="Avisar el (fecha y hora local)" value={remindLocal} onChange={setRemindLocal} mode="datetime" />
                 )}
                 <AppTextField label="Notas (opcional)" value={notes} onChangeText={setNotes} placeholder="Información útil para el aviso" multiline />
                 <View style={styles.info}><Clock3 size={15} color={colors.blue} /><Text style={styles.muted}>Se guardará aunque el permiso de avisos esté denegado.</Text></View>
@@ -155,7 +156,7 @@ const styles = StyleSheet.create({
   body: { color: colors.blueDark, fontSize: 15, fontWeight: "800" },
   muted: { color: colors.textMuted, fontSize: 12, lineHeight: 18 },
   choiceRow: { flexDirection: "row", gap: spacing.sm },
-  choice: { paddingHorizontal: 13, paddingVertical: 10, borderRadius: radius.pill, backgroundColor: "#F1F5F9" },
+  choice: { paddingHorizontal: 13, paddingVertical: 10, borderRadius: radius.pill, backgroundColor: colors.blueSoft },
   choiceSelected: { backgroundColor: colors.blue },
   choiceText: { color: colors.textMuted, fontSize: 12, fontWeight: "700" },
   choiceTextSelected: { color: colors.surface },

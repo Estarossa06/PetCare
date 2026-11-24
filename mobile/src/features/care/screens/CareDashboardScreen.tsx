@@ -17,7 +17,7 @@ import {
   Footprints,
   type LucideIcon,
 } from "lucide-react-native";
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions, type ColorValue } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppButton } from "../../../components/ui/AppButton";
 import { AppTextField } from "../../../components/ui/TextField";
@@ -30,16 +30,16 @@ import { colors, radius, spacing } from "../../../theme/tokens";
 
 type HistoryItem = CareExecution & { task_title: string; category: CareCategory; timezone: string };
 
-const categoryVisuals: Record<CareCategory, { icon: LucideIcon; color: string; background: string }> = {
+const categoryVisuals: Record<CareCategory, { icon: LucideIcon; color: ColorValue; background: ColorValue }> = {
   feeding: { icon: Utensils, color: "#A16207", background: colors.yellowSoft },
   walk: { icon: Footprints, color: colors.blue, background: colors.blueSoft },
-  bath: { icon: Bath, color: "#0369A1", background: "#E0F2FE" },
-  hygiene: { icon: Droplets, color: "#0F766E", background: "#CCFBF1" },
-  medication: { icon: Pill, color: "#7C3AED", background: "#EDE9FE" },
+  bath: { icon: Bath, color: "#0369A1", background: colors.blueSoft },
+  hygiene: { icon: Droplets, color: "#0F766E", background: colors.greenSoft },
+  medication: { icon: Pill, color: "#7C3AED", background: colors.lavenderSoft },
   vaccination: { icon: Syringe, color: "#15803D", background: colors.greenSoft },
-  deworming: { icon: ShieldPlus, color: "#0F766E", background: "#CCFBF1" },
-  exercise: { icon: Dumbbell, color: "#0369A1", background: "#E0F2FE" },
-  custom: { icon: Heart, color: "#BE123C", background: "#FFE4E6" },
+  deworming: { icon: ShieldPlus, color: "#0F766E", background: colors.greenSoft },
+  exercise: { icon: Dumbbell, color: "#0369A1", background: colors.blueSoft },
+  custom: { icon: Heart, color: "#BE123C", background: colors.dangerSoft },
 };
 
 const categoryFilters: { value: CareCategory | ""; label: string }[] = [

@@ -2,7 +2,7 @@ import type {
   CalendarNotificationPlatform,
   CalendarNotificationStore,
 } from "./types";
-import { reminderIdFromNotification } from "./ids";
+import { reminderIdFromNotification } from "./ids.ts";
 
 export async function cancelReminderNotifications(
   reminderId: string,

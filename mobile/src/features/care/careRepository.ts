@@ -2,6 +2,7 @@ import * as Crypto from "expo-crypto";
 import { getLocalAccountId, withLocalWriteTransaction } from "../../db/localAccount";
 import { getPetCareDatabase } from "../../db/database";
 import { refreshTarget } from "../calendar/calendarService";
+import { advanceDomainQueueRevision } from "../sync/domainQueueState";
 import { isoToLocalDateTime, localDateTimeToIso, nextOccurrence } from "./recurrence";
 import type {
   CareCategory,
@@ -86,20 +87,22 @@ async function queueOperation(
   changedFields: string[],
   dependencies: string[],
 ): Promise<string> {
+  const syncState = await advanceDomainQueueRevision(tx, ownerId, entityType, entityId, action);
   const operationId = Crypto.randomUUID().toLowerCase();
   const timestamp = new Date().toISOString();
   await tx.runAsync(
     `INSERT INTO sync_queue
       (operation_id, account_id, entity_type, entity_id, action, payload,
-       base_version, changed_fields, status, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)`,
+       base_version, local_revision, changed_fields, status, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)`,
     operationId,
     ownerId,
     entityType,
     entityId,
     action,
     payload,
-    baseVersion,
+    syncState.baseVersion,
+    syncState.localRevision,
     JSON.stringify(changedFields),
     timestamp,
     timestamp,

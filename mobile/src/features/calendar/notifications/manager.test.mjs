@@ -56,6 +56,7 @@ function createHarness(permissionGranted = true, platformName = "ios") {
     scheduling_status: "pending",
   };
   let permissionRequests = 0;
+  let notificationsEnabled = true;
   const platform = {
     platform: platformName,
     ensureAndroidChannel: async () => {
@@ -123,7 +124,8 @@ function createHarness(permissionGranted = true, platformName = "ios") {
     triggerDates: () => triggerDates,
     androidChannelCreations: () => androidChannelCreations,
     permissionRequests: () => permissionRequests,
-    manager: createCalendarNotificationManager(platform, store),
+    setNotificationsEnabled: (enabled) => { notificationsEnabled = enabled; },
+    manager: createCalendarNotificationManager(platform, store, async () => notificationsEnabled),
   };
 }
 
@@ -236,4 +238,16 @@ test("web reports local notifications as unsupported without calling native APIs
   assert.equal(result, "unsupported");
   assert.equal(harness.state().scheduling_status, "unsupported");
   assert.equal(harness.scheduled().length, 0);
+});
+
+test("disabling the device preference cancels scheduled PetCare reminders", async () => {
+  const harness = createHarness();
+  await harness.manager.syncCalendarNotification(harness.reminder, true);
+  assert.equal(harness.scheduled().length, 1);
+
+  harness.setNotificationsEnabled(false);
+  await harness.manager.reconcileCalendarNotifications();
+
+  assert.equal(harness.scheduled().length, 0);
+  assert.equal(harness.state().scheduling_status, "disabled");
 });

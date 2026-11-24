@@ -9,6 +9,7 @@ import {
 
 interface StoredUser extends AuthUser {
   passwordHash: string;
+  deleted: boolean;
 }
 
 interface StoredSession {
@@ -28,6 +29,7 @@ export class MemoryAuthStore implements AuthStore {
   readonly users = new Map<string, StoredUser>();
   readonly sessions = new Map<string, StoredSession>();
   readonly tokens = new Map<string, StoredRefreshToken>();
+  readonly deletionRequests = new Set<string>();
 
   async createUserAndSession(input: {
     email: string;
@@ -45,6 +47,7 @@ export class MemoryAuthStore implements AuthStore {
       email: input.email,
       name: input.name,
       passwordHash: input.passwordHash,
+      deleted: false,
     };
     this.users.set(user.id, user);
     this.sessions.set(input.sessionId, {
@@ -64,13 +67,51 @@ export class MemoryAuthStore implements AuthStore {
   async findUserByEmail(
     email: string,
   ): Promise<(AuthUser & { passwordHash: string }) | undefined> {
-    const user = [...this.users.values()].find((item) => item.email === email);
+    const user = [...this.users.values()].find((item) => item.email === email && !item.deleted);
     return user ? { ...publicUser(user), passwordHash: user.passwordHash } : undefined;
   }
 
   async findUserById(id: string): Promise<AuthUser | undefined> {
     const user = this.users.get(id);
-    return user ? publicUser(user) : undefined;
+    return user && !user.deleted ? publicUser(user) : undefined;
+  }
+
+  async findUserCredentialsById(id: string): Promise<(AuthUser & { passwordHash: string }) | undefined> {
+    const user = this.users.get(id);
+    return user && !user.deleted ? { ...publicUser(user), passwordHash: user.passwordHash } : undefined;
+  }
+
+  async updateUserProfile(input: { userId: string; email: string; name: string }): Promise<AuthUser> {
+    const user = this.users.get(input.userId);
+    if (!user || user.deleted) throw new Error("User is unavailable.");
+    if ([...this.users.values()].some((candidate) => candidate.id !== input.userId && !candidate.deleted && candidate.email === input.email)) {
+      throw new DuplicateEmailError();
+    }
+    user.email = input.email;
+    user.name = input.name;
+    return publicUser(user);
+  }
+
+  async updatePassword(input: { userId: string; currentSessionId: string; passwordHash: string }): Promise<void> {
+    const user = this.users.get(input.userId);
+    if (!user || user.deleted) throw new Error("User is unavailable.");
+    user.passwordHash = input.passwordHash;
+    for (const session of this.sessions.values()) {
+      if (session.userId === input.userId && session.id !== input.currentSessionId) {
+        session.revoked = true;
+        for (const token of this.tokens.values()) if (token.sessionId === session.id) token.revoked = true;
+      }
+    }
+  }
+
+  async deactivateUser(userId: string): Promise<void> {
+    this.users.get(userId)!.deleted = true;
+    this.revokeEverySession(userId);
+  }
+
+  async requestPermanentDeletion(userId: string): Promise<void> {
+    this.deletionRequests.add(userId);
+    await this.deactivateUser(userId);
   }
 
   async createSession(input: {
@@ -116,7 +157,7 @@ export class MemoryAuthStore implements AuthStore {
       return { kind: "invalid" };
     }
     const user = this.users.get(session.userId);
-    if (!user) {
+    if (!user || user.deleted) {
       return { kind: "invalid" };
     }
     token.consumed = true;
@@ -152,8 +193,16 @@ export class MemoryAuthStore implements AuthStore {
       session &&
         session.userId === input.userId &&
         !session.revoked &&
-        session.expiresAt > new Date(),
+        session.expiresAt > new Date() && !this.users.get(input.userId)?.deleted,
     );
+  }
+
+  private revokeEverySession(userId: string): void {
+    for (const session of this.sessions.values()) {
+      if (session.userId !== userId) continue;
+      session.revoked = true;
+      for (const token of this.tokens.values()) if (token.sessionId === session.id) token.revoked = true;
+    }
   }
 }
 

@@ -132,6 +132,71 @@ export class PostgresAuthStore implements AuthStore {
     return result.rows[0] ? toAuthUser(result.rows[0]) : undefined;
   }
 
+  async findUserCredentialsById(id: string): Promise<(AuthUser & { passwordHash: string }) | undefined> {
+    const result = await this.pool.query<DatabaseUser>(
+      `SELECT id, email, name, password_hash FROM users WHERE id = $1 AND deleted_at IS NULL`,
+      [id],
+    );
+    const row = result.rows[0];
+    return row ? { ...toAuthUser(row), passwordHash: row.password_hash ?? "" } : undefined;
+  }
+
+  async updateUserProfile(input: { userId: string; email: string; name: string }): Promise<AuthUser> {
+    try {
+      const result = await this.pool.query<DatabaseUser>(
+        `UPDATE users SET email = $2, name = $3, updated_at = now()
+         WHERE id = $1 AND deleted_at IS NULL RETURNING id, email, name`,
+        [input.userId, input.email, input.name],
+      );
+      if (!result.rows[0]) throw new Error("User is unavailable.");
+      return toAuthUser(result.rows[0]);
+    } catch (error) {
+      if (isEmailUniqueViolation(error)) throw new DuplicateEmailError();
+      throw error;
+    }
+  }
+
+  async updatePassword(input: { userId: string; currentSessionId: string; passwordHash: string }): Promise<void> {
+    await transaction(this.pool, async (client) => {
+      const result = await client.query(
+        `UPDATE users SET password_hash = $2, updated_at = now() WHERE id = $1 AND deleted_at IS NULL`,
+        [input.userId, input.passwordHash],
+      );
+      if (result.rowCount !== 1) throw new Error("User is unavailable.");
+      await client.query(
+        `UPDATE auth_sessions SET revoked_at = COALESCE(revoked_at, now()), updated_at = now()
+         WHERE user_id = $1 AND id <> $2`,
+        [input.userId, input.currentSessionId],
+      );
+      await client.query(
+        `UPDATE auth_refresh_tokens AS token SET revoked_at = COALESCE(token.revoked_at, now())
+         FROM auth_sessions AS session
+         WHERE token.session_id = session.id AND session.user_id = $1 AND session.id <> $2`,
+        [input.userId, input.currentSessionId],
+      );
+    });
+  }
+
+  async deactivateUser(userId: string): Promise<void> {
+    await transaction(this.pool, async (client) => {
+      await client.query(`UPDATE users SET deleted_at = COALESCE(deleted_at, now()), updated_at = now() WHERE id = $1`, [userId]);
+      await revokeAllUserSessions(client, userId);
+    });
+  }
+
+  async requestPermanentDeletion(userId: string): Promise<void> {
+    await transaction(this.pool, async (client) => {
+      await client.query(
+        `INSERT INTO account_deletion_requests (user_id, status)
+         VALUES ($1, 'pending')
+         ON CONFLICT (user_id) DO UPDATE SET requested_at = now(), status = 'pending', completed_at = NULL`,
+        [userId],
+      );
+      await client.query(`UPDATE users SET deleted_at = COALESCE(deleted_at, now()), updated_at = now() WHERE id = $1`, [userId]);
+      await revokeAllUserSessions(client, userId);
+    });
+  }
+
   async createSession(input: {
     id: string;
     userId: string;
@@ -267,6 +332,22 @@ export class PostgresAuthStore implements AuthStore {
     );
     return result.rowCount === 1;
   }
+}
+
+async function revokeAllUserSessions(client: PoolClient, userId: string): Promise<void> {
+  await client.query(
+    `UPDATE auth_sessions SET revoked_at = COALESCE(revoked_at, now()), updated_at = now() WHERE user_id = $1`,
+    [userId],
+  );
+  await client.query(
+    `UPDATE auth_refresh_tokens AS token SET revoked_at = COALESCE(token.revoked_at, now())
+     FROM auth_sessions AS session WHERE token.session_id = session.id AND session.user_id = $1`,
+    [userId],
+  );
+}
+
+function isEmailUniqueViolation(error: unknown): boolean {
+  return typeof error === "object" && error !== null && "code" in error && error.code === "23505" && "constraint" in error && error.constraint === "users_email_unique_idx";
 }
 
 function toAuthUser(row: DatabaseUser): AuthUser {

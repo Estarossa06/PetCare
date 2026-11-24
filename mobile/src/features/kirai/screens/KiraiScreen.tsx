@@ -1,417 +1,353 @@
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "expo-router";
-import { useCallback, useEffect, useReducer, useRef, useState } from "react";
+import * as Crypto from "expo-crypto";
 import {
-  ActivityIndicator,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-  useWindowDimensions,
+  ActivityIndicator, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView,
+  StyleSheet, Text, TextInput, View, useWindowDimensions, type ScrollViewInstance,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { ArrowLeft, Clock3, MessageCircle, Plus, Send, X } from "lucide-react-native";
 import { AppButton } from "../../../components/ui/AppButton";
-import { AppTextField } from "../../../components/ui/TextField";
-import { ScreenHeader } from "../../../components/ui/ScreenHeader";
-import { SurfaceCard } from "../../../components/ui/SurfaceCard";
-import { ApiClientError } from "../../auth/apiClient";
 import { useAuth } from "../../auth/AuthProvider";
-import { checkKiraiAvailability, askKirai } from "../api";
+import { ApiClientError } from "../../auth/apiClient";
+import { colors, radius, spacing } from "../../../theme/tokens";
+import { readPendingPetContext } from "../localContext";
+import { deliverKiraiQuestion } from "../delivery";
+import { kiraiDeliveryLabel, mergeKiraiMessagePage } from "../messageState";
+import { askKirai, checkKiraiAvailability, loadKiraiConversations, loadKiraiMessagePage } from "../api";
 import {
-  kiraiConversationReducer,
-  kiraiHistoryForRequest,
-} from "../conversation";
-import { colors, spacing } from "../../../theme/tokens";
+  cacheKiraiConversations, cacheKiraiMessages, completePendingKiraiQuestion,
+  failPendingKiraiQuestion, listLocalKiraiConversations, listLocalKiraiMessages,
+  newKiraiId, savePendingKiraiQuestion, type KiraiConversation, type KiraiMessage,
+} from "../storage";
 
-type RequestError = { code: string; message: string };
-type AvailabilityState = "idle" | "checking" | "available" | "unavailable";
-
-function requestErrorMessage(error: unknown): RequestError {
+function requestErrorMessage(error: unknown): string {
   if (error instanceof ApiClientError) {
-    switch (error.code) {
-      case "KIRAI_CONNECTION_ERROR":
-        return {
-          code: error.code,
-          message:
-            "La API no pudo conectarse con Ollama. Revisa el servicio y reintenta.",
-        };
-      case "KIRAI_UNAVAILABLE":
-        return {
-          code: error.code,
-          message:
-            "Ollama o el modelo qwen3:8b no está disponible. Revisa el proveedor y reintenta.",
-        };
-      case "RATE_LIMITED":
-        return {
-          code: error.code,
-          message:
-            "Has alcanzado el límite temporal de consultas. Inténtalo más tarde.",
-        };
-      case "UNAUTHENTICATED":
-      case "INVALID_REFRESH_TOKEN":
-        return {
-          code: "SESSION_INVALID",
-          message: "Tu sesión ya no es válida. Inicia sesión nuevamente.",
-        };
-      case "VALIDATION_ERROR":
-        return {
-          code: error.code,
-          message:
-            "La pregunta no pudo validarse. Revísala e inténtalo de nuevo.",
-        };
-      default:
-        return {
-          code: error.code,
-          message: "No se pudo completar la consulta. Inténtalo nuevamente.",
-        };
-    }
+    if (error.code === "KIRAI_CONNECTION_ERROR") return "KIRAI no pudo conectarse al servicio. Tu mensaje quedó guardado; reinténtalo cuando vuelva la conexión.";
+    if (error.code === "KIRAI_UNAVAILABLE" || error.status >= 500) return "KIRAI no pudo completar la respuesta. Tu mensaje quedó guardado; puedes reintentarlo.";
+    if (error.code === "RATE_LIMITED") return "Has alcanzado el límite temporal de consultas. Inténtalo más tarde.";
+    if (error.code === "SESSION_INVALID" || error.code === "INVALID_REFRESH_TOKEN" || error.status === 401) return "Tu sesión ya no es válida. Inicia sesión nuevamente.";
+    if (error.code === "VALIDATION_ERROR") return "No pudimos enviar ese mensaje. Revísalo e inténtalo de nuevo.";
   }
-  if (error instanceof TypeError) {
-    return {
-      code: "API_CONNECTION_ERROR",
-      message:
-        "No se pudo conectar con la API de PetCare. Comprueba la URL y la conexión e inténtalo nuevamente.",
-    };
-  }
-  return {
-    code: "REQUEST_FAILED",
-    message: "No se pudo completar la consulta. Inténtalo nuevamente.",
-  };
+  return "No pudimos conectar con KIRAI. Tu mensaje quedó guardado y puedes reintentarlo.";
 }
 
 export default function KiraiScreen() {
   const router = useRouter();
+  const { user, loading: authLoading, error: authError, restore } = useAuth();
   const { width } = useWindowDimensions();
-  const { user, loading, error: authError, restore } = useAuth();
   const [question, setQuestion] = useState("");
-  const [conversation, dispatchConversation] = useReducer(
-    kiraiConversationReducer,
-    [],
-  );
-  const [pendingQuestion, setPendingQuestion] = useState<string | null>(null);
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [conversations, setConversations] = useState<KiraiConversation[]>([]);
+  const [messages, setMessages] = useState<KiraiMessage[]>([]);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<RequestError | null>(null);
-  const [availabilityState, setAvailabilityState] =
-    useState<AvailabilityState>("idle");
-  const [availabilityError, setAvailabilityError] =
-    useState<RequestError | null>(null);
-  const conversationRequestId = useRef(0);
+  const [sendingRequestId, setSendingRequestId] = useState<string | null>(null);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+  const [hasOlderMessages, setHasOlderMessages] = useState(false);
+  const [olderOffset, setOlderOffset] = useState(0);
+  const [availability, setAvailability] = useState<"checking" | "available" | "unavailable">("checking");
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [notice, setNotice] = useState("");
+  const scrollRef = useRef<ScrollViewInstance | null>(null);
+  const generationRef = useRef(0);
+  const shouldScrollRef = useRef(true);
+  const activeUserRef = useRef<string | null>(user?.id ?? null);
+  activeUserRef.current = user?.id ?? null;
+  const wide = width >= 760;
 
-  const checkAvailability = useCallback(async () => {
-    setAvailabilityState("checking");
-    setAvailabilityError(null);
+  const loadConversation = useCallback(async (authUserId: string, id: string) => {
+    const generation = ++generationRef.current;
+    setConversationId(id);
+    setLoadingHistory(true);
+    setNotice("");
     try {
-      await checkKiraiAvailability();
-      setAvailabilityState("available");
-    } catch (checkError) {
-      setAvailabilityError(requestErrorMessage(checkError));
-      setAvailabilityState("unavailable");
+      let localBefore: KiraiMessage[] = [];
+      try { localBefore = await listLocalKiraiMessages(authUserId, id); } catch { /* Remote history can still be shown if local storage is unavailable. */ }
+      const page = await loadKiraiMessagePage(id, 0, 100);
+      if (generation !== generationRef.current) return;
+      await cacheKiraiMessages(authUserId, id, page.messages);
+      const localAfter = await listLocalKiraiMessages(authUserId, id).catch(() => localBefore);
+      setMessages(mergeKiraiMessagePage(page.messages, localAfter));
+      setOlderOffset(page.messages.length);
+      setHasOlderMessages(page.hasMore);
+      shouldScrollRef.current = true;
+    } catch {
+      try {
+        const local = await listLocalKiraiMessages(authUserId, id);
+        if (generation !== generationRef.current) return;
+        setMessages(local);
+        setHasOlderMessages(false);
+        setNotice("Mostrando el historial guardado en este dispositivo.");
+        shouldScrollRef.current = true;
+      } catch {
+        setMessages([]);
+        setNotice("No pudimos abrir esta conversación.");
+      }
+    } finally {
+      if (generation === generationRef.current) setLoadingHistory(false);
     }
   }, []);
 
   useEffect(() => {
-    if (loading) return;
-    if (!user) {
-      setAvailabilityState("idle");
-      setAvailabilityError(null);
-      return;
-    }
-    void checkAvailability();
-  }, [loading, user, checkAvailability]);
+    if (!user) return;
+    let active = true;
+    generationRef.current += 1;
+    const generation = generationRef.current;
+    setConversationId(null);
+    setMessages([]);
+    setQuestion("");
+    setBusy(false);
+    setSendingRequestId(null);
+    setNotice("");
+    setAvailability("checking");
+    void checkKiraiAvailability().then(() => {
+      if (active) setAvailability("available");
+    }).catch(() => {
+      if (active) setAvailability("unavailable");
+    });
+    void (async () => {
+      try {
+        const local = await listLocalKiraiConversations(user.id);
+        if (!active || generation !== generationRef.current) return;
+        setConversations(local);
+        try {
+          const remote = await loadKiraiConversations();
+          if (!active || generation !== generationRef.current) return;
+          await cacheKiraiConversations(user.id, remote);
+          const merged = await listLocalKiraiConversations(user.id);
+          setConversations(merged);
+          if (merged[0]) await loadConversation(user.id, merged[0].id);
+        } catch {
+          if (active && local[0]) await loadConversation(user.id, local[0].id);
+          else if (active) setNotice("Tus conversaciones anteriores aparecerán cuando haya conexión.");
+        }
+      } catch {
+        if (active) setNotice("No pudimos cargar el historial guardado en este dispositivo.");
+      }
+    })();
+    return () => { active = false; generationRef.current += 1; };
+  }, [user?.id, loadConversation]);
 
   useEffect(() => {
-    conversationRequestId.current += 1;
-    dispatchConversation({ type: "clear" });
-    setQuestion("");
-    setError(null);
-    setPendingQuestion(null);
-    setBusy(false);
-  }, [user?.id]);
+    if (!shouldScrollRef.current) return;
+    const frame = requestAnimationFrame(() => scrollRef.current?.scrollToEnd({ animated: true }));
+    return () => cancelAnimationFrame(frame);
+  }, [messages, busy]);
 
-  const submit = async () => {
-    const message = question.trim();
-    if (!message) {
-      setError({
-        code: "VALIDATION_ERROR",
-        message: "Escribe una pregunta antes de consultar a KIRAI.",
-      });
-      return;
-    }
-
-    const requestId = ++conversationRequestId.current;
-    setBusy(true);
-    setError(null);
-    setQuestion("");
-    setPendingQuestion(message);
+  const refreshConversations = async (authUserId: string) => {
     try {
-      const result = await askKirai(
-        message,
-        kiraiHistoryForRequest(conversation),
-      );
-      if (conversationRequestId.current !== requestId) return;
-      dispatchConversation({
-        type: "add-turn",
-        question: message,
-        answer: result.answer,
-        truncated: result.truncated,
+      const remote = await loadKiraiConversations();
+      await cacheKiraiConversations(authUserId, remote);
+    } catch { /* Keep the per-account local history available offline. */ }
+    setConversations(await listLocalKiraiConversations(authUserId));
+  };
+
+  const sendQuestion = async (content: string, retryRequestId?: string) => {
+    if (!user || busy || !content.trim()) return;
+    const clean = content.trim();
+    const requestId = retryRequestId ?? newKiraiId();
+    const targetConversation = conversationId ?? newKiraiId();
+    const requestGeneration = generationRef.current;
+    setConversationId(targetConversation);
+    setQuestion("");
+    setNotice("");
+    setBusy(true);
+    setSendingRequestId(requestId);
+    shouldScrollRef.current = true;
+    try {
+      await deliverKiraiQuestion({
+        authUserId: user.id,
+        conversationId: targetConversation,
+        requestId,
+        content: clean,
+        savePending: savePendingKiraiQuestion,
+        onSaved: (pending) => setMessages((current) => current.some((item) => item.requestId === requestId) ? current.map((item) => item.requestId === requestId ? pending : item) : [...current, pending]),
+        readLocalContext: readPendingPetContext,
+        ask: askKirai,
+        complete: completePendingKiraiQuestion,
+        fail: failPendingKiraiQuestion,
       });
-    } catch (requestError) {
-      if (conversationRequestId.current !== requestId) return;
-      setQuestion(message);
-      setError(requestErrorMessage(requestError));
+      if (activeUserRef.current !== user.id || generationRef.current !== requestGeneration) return;
+      const rows = await listLocalKiraiMessages(user.id, targetConversation);
+      setMessages(rows);
+      await refreshConversations(user.id);
+    } catch (sendError) {
+      if (activeUserRef.current !== user.id || generationRef.current !== requestGeneration) return;
+      setMessages((current) => current.map((item) => item.requestId === requestId ? { ...item, requestStatus: "failed" } : item));
+      setNotice(requestErrorMessage(sendError));
     } finally {
-      if (conversationRequestId.current === requestId) {
-        setPendingQuestion(null);
+      if (activeUserRef.current === user.id && generationRef.current === requestGeneration) {
+        setSendingRequestId(null);
         setBusy(false);
       }
     }
   };
 
-  const startNewConversation = () => {
-    dispatchConversation({ type: "clear" });
-    setQuestion("");
-    setError(null);
+  const loadOlder = async () => {
+    if (!user || !conversationId || !hasOlderMessages || loadingHistory) return;
+    const targetConversation = conversationId;
+    const generation = generationRef.current;
+    setLoadingHistory(true);
+    shouldScrollRef.current = false;
+    try {
+      const page = await loadKiraiMessagePage(targetConversation, olderOffset, 100);
+      if (generation !== generationRef.current || conversationId !== targetConversation || activeUserRef.current !== user.id) return;
+      await cacheKiraiMessages(user.id, targetConversation, page.messages);
+      setMessages((current) => [...page.messages, ...current]);
+      setOlderOffset((offset) => offset + page.messages.length);
+      setHasOlderMessages(page.hasMore);
+    } catch { setNotice("No pudimos cargar mensajes anteriores."); }
+    finally { if (generation === generationRef.current) setLoadingHistory(false); }
   };
+
+  const selectConversation = async (item: KiraiConversation) => {
+    if (!user || busy) return;
+    setHistoryOpen(false);
+    setQuestion("");
+    await loadConversation(user.id, item.id);
+  };
+
+  const startNewConversation = () => {
+    if (busy) return;
+    generationRef.current += 1;
+    setConversationId(null);
+    setMessages([]);
+    setQuestion("");
+    setNotice("");
+    setHasOlderMessages(false);
+    setOlderOffset(0);
+    shouldScrollRef.current = true;
+  };
+
+  if (authLoading) return <SafeAreaView style={styles.safeArea}><View style={styles.center}><ActivityIndicator color={colors.blue} /><Text style={styles.muted}>Comprobando tu sesión…</Text></View></SafeAreaView>;
+  if (!user) return (
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.authCard}><Text style={styles.title}>Inicia sesión para conversar con KIRAI</Text><Text style={styles.muted}>{authError ?? "Tus conversaciones se guardan por separado en tu cuenta."}</Text>{authError ? <AppButton label="Reintentar sesión" variant="secondary" onPress={() => void restore()} /> : null}<AppButton label="Iniciar sesión" onPress={() => router.push({ pathname: "/auth", params: { mode: "login" } })} /></View>
+    </SafeAreaView>
+  );
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView
-        contentContainerStyle={styles.content}
-        keyboardShouldPersistTaps="handled"
-      >
-        <View style={[styles.inner, width >= 760 && styles.innerWide]}>
-          <ScreenHeader
-            eyebrow="ASISTENTE DE BIENESTAR"
-            title="KIRAI"
-            subtitle="Orientación general para el cuidado de animales."
-          />
-
-          <View style={styles.notice}>
-            <Text style={styles.noticeTitle}>
-              Contexto de conversación limitado
-            </Text>
-            <Text style={styles.noticeText}>
-              KIRAI conserva en memoria los turnos recientes mientras dure esta
-              sesión. No guarda conversaciones permanentemente ni adjunta datos
-              de tus mascotas.
-            </Text>
+      <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={Platform.OS === "ios" ? 8 : 0}>
+        <View style={[styles.chat, wide && styles.chatWide]}>
+          <View style={styles.header}>
+            <View style={styles.agentAvatar}><MessageCircle size={20} color={colors.surface} /></View>
+            <View style={styles.headerCopy}><Text style={styles.title}>KIRAI</Text><Text numberOfLines={2} style={styles.status}>{availability === "available" ? "Asistente de bienestar · En línea" : availability === "checking" ? "Preparando el chat…" : "Puede responder cuando recupere conexión"}</Text></View>
+            <Pressable accessibilityRole="button" accessibilityLabel="Ver historial de conversaciones" onPress={() => { void refreshConversations(user.id); setHistoryOpen(true); }} style={styles.headerAction}><Clock3 size={18} color={colors.blue} /></Pressable>
+            <Pressable accessibilityRole="button" accessibilityLabel="Nueva conversación" onPress={startNewConversation} style={styles.headerAction}><Plus size={19} color={colors.blue} /></Pressable>
           </View>
-
-          <View style={styles.warning}>
-            <Text style={styles.warningText}>
-              KIRAI no sustituye a un profesional veterinario. Ante dificultad
-              para respirar, convulsiones, sangrado abundante o posible
-              intoxicación, busca atención veterinaria urgente.
-            </Text>
+          <View style={styles.safetyNote}><Text style={styles.safetyText}>KIRAI usa tus registros de PetCare y los cambios guardados en este dispositivo. Sus recomendaciones no reemplazan la atención veterinaria.</Text></View>
+          {notice ? <Text accessibilityRole="alert" style={styles.notice}>{notice}</Text> : null}
+          <ScrollView
+            ref={scrollRef}
+            style={styles.messagesScroll}
+            contentContainerStyle={styles.messageList}
+            keyboardShouldPersistTaps="handled"
+            onContentSizeChange={() => { if (shouldScrollRef.current) scrollRef.current?.scrollToEnd({ animated: true }); }}
+          >
+            {hasOlderMessages ? <Pressable accessibilityRole="button" onPress={() => void loadOlder()} style={styles.olderButton}><Text style={styles.olderText}>{loadingHistory ? "Cargando…" : "Cargar mensajes anteriores"}</Text></Pressable> : null}
+            {messages.map((message) => (
+              <View key={message.id} style={[styles.messageRow, message.role === "user" ? styles.userRow : styles.agentRow]}>
+                <View style={[styles.bubble, message.role === "user" ? styles.userBubble : styles.agentBubble]}>
+                  <Text style={[styles.messageAuthor, message.role === "user" && styles.userAuthor]}>{message.role === "user" ? "Tú" : "KIRAI"}</Text>
+                  <Text selectable style={[styles.messageText, message.role === "user" && styles.userMessageText]}>{message.content}</Text>
+                  {kiraiDeliveryLabel(message, sendingRequestId) ? <Text style={[styles.deliveryStatus, message.requestStatus === "failed" && styles.failedStatus]}>{kiraiDeliveryLabel(message, sendingRequestId)}</Text> : null}
+                  {message.role === "user" && message.requestId && (message.requestStatus === "failed" || (message.requestStatus === "pending" && message.requestId !== sendingRequestId)) ? <Pressable accessibilityRole="button" disabled={busy} onPress={() => void sendQuestion(message.content, message.requestId ?? undefined)} style={styles.retryAction}><Text style={styles.retryText}>Reintentar envío</Text></Pressable> : null}
+                  {message.role === "assistant" && message.truncated ? <Text style={styles.messageMeta}>La respuesta puede estar incompleta.</Text> : null}
+                </View>
+              </View>
+            ))}
+            {busy ? <View style={[styles.messageRow, styles.agentRow]}><View style={[styles.bubble, styles.agentBubble, styles.typing]}><Text style={styles.messageAuthor}>KIRAI</Text><View style={styles.typingRow}><ActivityIndicator size="small" color={colors.blue} /><Text style={styles.messageMeta}>Está escribiendo…</Text></View></View></View> : null}
+            {messages.length === 0 && !busy ? <View style={styles.empty}><View style={styles.emptyIcon}><MessageCircle size={22} color={colors.blue} /></View><Text style={styles.emptyTitle}>¿En qué te puedo ayudar?</Text><Text style={styles.muted}>Pregunta por una mascota, su historial, sus cuidados o sus próximos eventos.</Text></View> : null}
+          </ScrollView>
+          <View style={styles.composer}>
+            <TextInput
+              accessibilityLabel="Mensaje para KIRAI"
+              value={question}
+              onChangeText={setQuestion}
+              placeholder="Escribe un mensaje…"
+              placeholderTextColor={colors.textMuted}
+              style={styles.input}
+              multiline
+              maxLength={2_000}
+              editable={!busy}
+              onSubmitEditing={() => { if (Platform.OS === "ios") void sendQuestion(question); }}
+            />
+            <Pressable accessibilityRole="button" accessibilityLabel="Enviar mensaje" disabled={busy || !question.trim()} onPress={() => void sendQuestion(question)} style={[styles.sendButton, (busy || !question.trim()) && styles.sendDisabled]}>
+              {busy ? <ActivityIndicator color={colors.surface} size="small" /> : <Send size={18} color={colors.surface} />}
+            </Pressable>
           </View>
-
-          {loading ? (
-            <SurfaceCard style={styles.loadingCard}>
-              <ActivityIndicator color={colors.blue} />
-              <Text style={styles.muted}>Comprobando tu sesión…</Text>
-            </SurfaceCard>
-          ) : !user ? (
-            <SurfaceCard style={styles.card}>
-              <Text style={styles.cardTitle}>
-                {authError
-                  ? "No se pudo validar la sesión"
-                  : "Inicia sesión para consultar"}
-              </Text>
-              <Text style={styles.muted}>
-                {authError ??
-                  "KIRAI requiere una cuenta PetCare. Iniciar sesión no sube ni vincula los datos locales de tus mascotas."}
-              </Text>
-              {authError ? (
-                <AppButton label="Reintentar sesión" onPress={() => void restore()} />
-              ) : null}
-              <AppButton
-                label="Iniciar sesión"
-                variant={authError ? "secondary" : "primary"}
-                onPress={() =>
-                  router.push({ pathname: "/auth", params: { mode: "login" } })
-                }
-              />
-            </SurfaceCard>
-          ) : (
-            <>
-              {availabilityState !== "available" ? (
-                <SurfaceCard style={styles.card}>
-                  <Text style={styles.cardTitle}>
-                    {availabilityState === "checking"
-                      ? "Comprobando disponibilidad de KIRAI"
-                      : "KIRAI no está disponible"}
-                  </Text>
-                  {availabilityState === "checking" ? (
-                    <ActivityIndicator color={colors.blue} />
-                  ) : (
-                    <>
-                      {availabilityError ? (
-                        <Text style={styles.error}>{availabilityError.message}</Text>
-                      ) : (
-                        <Text style={styles.muted}>No se pudo confirmar la disponibilidad.</Text>
-                      )}
-                      {availabilityError?.code === "SESSION_INVALID" ? (
-                        <AppButton
-                          label="Iniciar sesión nuevamente"
-                          onPress={() => router.push({ pathname: "/auth", params: { mode: "login" } })}
-                        />
-                      ) : (
-                        <AppButton
-                          label="Reintentar disponibilidad"
-                          onPress={() => void checkAvailability()}
-                        />
-                      )}
-                    </>
-                  )}
-                </SurfaceCard>
-              ) : (
-                <>
-                  <SurfaceCard style={styles.card}>
-                    <AppTextField
-                      label="¿Qué te gustaría saber?"
-                      value={question}
-                      onChangeText={setQuestion}
-                      placeholder="Escribe una pregunta general sobre bienestar animal"
-                      multiline
-                      maxLength={2_000}
-                      editable={!busy}
-                      style={styles.input}
-                      accessibilityLabel="Pregunta para KIRAI"
-                    />
-                    <Text style={styles.counter}>{question.length}/2000</Text>
-                    {error ? <Text style={styles.error}>{error.message}</Text> : null}
-                    <AppButton
-                      label="Consultar a KIRAI"
-                      loading={busy}
-                      disabled={busy || !question.trim()}
-                      onPress={() => void submit()}
-                    />
-                    {error &&
-                    [
-                      "API_CONNECTION_ERROR",
-                      "KIRAI_CONNECTION_ERROR",
-                      "KIRAI_UNAVAILABLE",
-                    ].includes(error.code) ? (
-                      <AppButton
-                        label="Reintentar consulta"
-                        variant="secondary"
-                        disabled={busy || !question.trim()}
-                        onPress={() => void submit()}
-                      />
-                    ) : null}
-                    {error?.code === "SESSION_INVALID" ? (
-                      <AppButton
-                        label="Iniciar sesión nuevamente"
-                        variant="secondary"
-                        onPress={() =>
-                          router.push({ pathname: "/auth", params: { mode: "login" } })
-                        }
-                      />
-                    ) : null}
-                  </SurfaceCard>
-
-                  {conversation.length > 0 || pendingQuestion ? (
-                    <SurfaceCard style={styles.answerCard}>
-                      <Text style={styles.answerEyebrow}>CONVERSACIÓN</Text>
-                      <View style={styles.messageList}>
-                        {conversation.map((message, index) => (
-                          <View
-                            key={`${index}-${message.role}`}
-                            style={styles.message}
-                          >
-                            <Text style={styles.messageRole}>
-                              {message.role === "user" ? "TÚ" : "KIRAI"}
-                            </Text>
-                            <Text selectable style={styles.answer}>
-                              {message.content}
-                            </Text>
-                            {message.truncated ? (
-                              <Text style={styles.muted}>
-                                La respuesta puede estar incompleta.
-                              </Text>
-                            ) : null}
-                          </View>
-                        ))}
-                        {pendingQuestion ? (
-                          <View style={styles.message}>
-                            <Text style={styles.messageRole}>TÚ</Text>
-                            <Text selectable style={styles.answer}>
-                              {pendingQuestion}
-                            </Text>
-                            <ActivityIndicator color={colors.blue} />
-                          </View>
-                        ) : null}
-                      </View>
-                      {conversation.length > 0 ? (
-                        <AppButton
-                          label="Nueva conversación"
-                          variant="secondary"
-                          disabled={busy}
-                          onPress={startNewConversation}
-                        />
-                      ) : null}
-                    </SurfaceCard>
-                  ) : null}
-                </>
-              )}
-            </>
-          )}
         </View>
-      </ScrollView>
+      </KeyboardAvoidingView>
+      <Modal visible={historyOpen} transparent animationType="slide" onRequestClose={() => setHistoryOpen(false)}>
+        <View style={styles.modalBackdrop}>
+          <Pressable style={StyleSheet.absoluteFill} onPress={() => setHistoryOpen(false)} accessibilityLabel="Cerrar historial" />
+          <View style={[styles.historySheet, wide && styles.historySheetWide]}>
+            <View style={styles.historyHeader}><Text style={styles.historyTitle}>Conversaciones</Text><Pressable accessibilityRole="button" onPress={() => setHistoryOpen(false)} style={styles.headerAction}><X size={20} color={colors.text} /></Pressable></View>
+            <ScrollView contentContainerStyle={styles.historyList}>
+              {conversations.map((item) => <Pressable key={item.id} accessibilityRole="button" onPress={() => void selectConversation(item)} style={styles.historyItem}><Text numberOfLines={1} style={styles.historyItemTitle}>{item.title}</Text><Text style={styles.historyItemDate}>{new Date(item.lastMessageAt).toLocaleDateString("es-CO", { day: "numeric", month: "short" })}</Text></Pressable>)}
+              {conversations.length === 0 ? <Text style={styles.muted}>Tus conversaciones aparecerán aquí.</Text> : null}
+            </ScrollView>
+            <AppButton label="Nueva conversación" icon={Plus} onPress={() => { setHistoryOpen(false); startNewConversation(); }} />
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: colors.background },
-  content: {
-    flexGrow: 1,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.md,
-    paddingBottom: 100,
-  },
-  inner: { width: "100%", maxWidth: 620, alignSelf: "center", gap: spacing.md },
-  innerWide: { maxWidth: 760 },
-  notice: {
-    padding: spacing.md,
-    gap: spacing.xs,
-    borderRadius: 14,
-    backgroundColor: colors.blueSoft,
-  },
-  noticeTitle: { color: colors.blueDark, fontSize: 14, fontWeight: "800" },
-  noticeText: { color: colors.blueDark, fontSize: 13, lineHeight: 19 },
-  warning: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderRadius: 12,
-    backgroundColor: colors.yellowSoft,
-  },
-  warningText: { color: "#78350F", fontSize: 12, lineHeight: 18 },
-  card: { gap: spacing.md },
-  loadingCard: {
-    minHeight: 120,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: spacing.sm,
-  },
-  cardTitle: { color: colors.blueDark, fontSize: 17, fontWeight: "800" },
-  muted: { color: colors.textMuted, fontSize: 13, lineHeight: 19 },
-  input: { minHeight: 120, textAlignVertical: "top", paddingTop: spacing.md },
-  counter: { alignSelf: "flex-end", color: colors.textMuted, fontSize: 11 },
-  error: { color: colors.orange, fontSize: 13, lineHeight: 19 },
-  answerCard: { gap: spacing.md },
-  messageList: { gap: spacing.md },
-  message: { gap: spacing.xs },
-  messageRole: {
-    color: colors.blue,
-    fontSize: 10,
-    fontWeight: "800",
-    letterSpacing: 1,
-  },
-  answerEyebrow: {
-    color: colors.blue,
-    fontSize: 10,
-    fontWeight: "800",
-    letterSpacing: 1,
-  },
-  answer: { color: colors.text, fontSize: 15, lineHeight: 23 },
+  flex: { flex: 1 },
+  chat: { flex: 1, width: "100%", alignSelf: "center", backgroundColor: colors.background },
+  chatWide: { maxWidth: 880 },
+  header: { minHeight: 66, flexDirection: "row", alignItems: "center", gap: spacing.xs, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, borderBottomWidth: 1, borderBottomColor: colors.border, backgroundColor: colors.surface },
+  agentAvatar: { width: 38, height: 38, borderRadius: 19, backgroundColor: colors.blue, alignItems: "center", justifyContent: "center", flexShrink: 0 },
+  headerCopy: { flex: 1, minWidth: 0, paddingVertical: 4 },
+  title: { color: colors.text, fontSize: 17, fontWeight: "800" },
+  status: { color: colors.textMuted, fontSize: 10, lineHeight: 14, marginTop: 2, flexShrink: 1 },
+  headerAction: { width: 36, height: 36, borderRadius: radius.pill, alignItems: "center", justifyContent: "center", backgroundColor: colors.blueSoft, flexShrink: 0 },
+  safetyNote: { marginHorizontal: spacing.xs, marginTop: spacing.xs, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, borderRadius: radius.sm, backgroundColor: colors.blueSoft },
+  safetyText: { color: colors.blueDark, fontSize: 10, lineHeight: 14, textAlign: "center" },
+  notice: { color: colors.orange, fontSize: 12, lineHeight: 18, paddingHorizontal: spacing.md, paddingVertical: spacing.xs },
+  messagesScroll: { flex: 1 },
+  messageList: { flexGrow: 1, gap: spacing.sm, padding: spacing.md, paddingBottom: spacing.lg },
+  messageRow: { width: "100%", flexDirection: "row" },
+  userRow: { justifyContent: "flex-end" },
+  agentRow: { justifyContent: "flex-start" },
+  bubble: { maxWidth: "86%", minWidth: 96, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, borderRadius: 18, gap: 4 },
+  userBubble: { backgroundColor: colors.blue, borderBottomRightRadius: 5 },
+  agentBubble: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderBottomLeftRadius: 5 },
+  messageAuthor: { color: colors.blue, fontSize: 10, fontWeight: "800", letterSpacing: 0.3 },
+  userAuthor: { color: "#DBEAFE", textAlign: "right" },
+  messageText: { color: colors.text, fontSize: 14, lineHeight: 21 },
+  userMessageText: { color: colors.surface },
+  messageMeta: { color: colors.textMuted, fontSize: 10, lineHeight: 15 },
+  deliveryStatus: { color: colors.blueDark, fontSize: 10, textAlign: "right", paddingTop: 2 },
+  failedStatus: { color: colors.orange, fontWeight: "700" },
+  retryAction: { minHeight: 32, justifyContent: "center", alignSelf: "flex-end", paddingLeft: spacing.sm, paddingTop: 2 },
+  retryText: { color: colors.blue, fontSize: 11, fontWeight: "800" },
+  typing: { minWidth: 160 },
+  typingRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: spacing.xs },
+  empty: { flex: 1, alignItems: "center", justifyContent: "center", gap: spacing.sm, padding: spacing.xl },
+  emptyIcon: { width: 48, height: 48, borderRadius: 16, backgroundColor: colors.blueSoft, alignItems: "center", justifyContent: "center" },
+  emptyTitle: { color: colors.text, fontSize: 16, fontWeight: "800" },
+  muted: { color: colors.textMuted, fontSize: 12, lineHeight: 18, textAlign: "center" },
+  olderButton: { alignSelf: "center", paddingVertical: spacing.sm, paddingHorizontal: spacing.md },
+  olderText: { color: colors.blue, fontSize: 12, fontWeight: "700" },
+  composer: { flexDirection: "row", alignItems: "flex-end", gap: spacing.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, borderTopWidth: 1, borderTopColor: colors.border, backgroundColor: colors.surface },
+  input: { flex: 1, maxHeight: 130, minHeight: 44, borderWidth: 1, borderColor: colors.border, borderRadius: 22, paddingHorizontal: spacing.md, paddingTop: 11, paddingBottom: 10, backgroundColor: colors.background, color: colors.text, fontSize: 14, lineHeight: 20 },
+  sendButton: { width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center", backgroundColor: colors.blue },
+  sendDisabled: { opacity: 0.5 },
+  center: { flex: 1, alignItems: "center", justifyContent: "center", gap: spacing.md },
+  authCard: { flex: 1, justifyContent: "center", gap: spacing.md, padding: spacing.lg },
+  modalBackdrop: { flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(15,23,42,0.48)" },
+  historySheet: { maxHeight: "82%", padding: spacing.lg, paddingBottom: spacing.xl, borderTopLeftRadius: 24, borderTopRightRadius: 24, backgroundColor: colors.surface, gap: spacing.md },
+  historySheetWide: { width: "100%", maxWidth: 560, alignSelf: "center", marginBottom: 20, borderRadius: 24 },
+  historyHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  historyTitle: { color: colors.text, fontSize: 18, fontWeight: "800" },
+  historyList: { gap: spacing.xs },
+  historyItem: { minHeight: 54, flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.md, borderRadius: radius.sm, backgroundColor: colors.background },
+  historyItemTitle: { flex: 1, color: colors.text, fontSize: 13, fontWeight: "700" },
+  historyItemDate: { color: colors.textMuted, fontSize: 11 },
 });

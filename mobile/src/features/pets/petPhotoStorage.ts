@@ -3,6 +3,8 @@ import { Platform } from "react-native";
 
 export type PetPhotoStorage = {
   savePickedPhoto(sourceUri: string, storageKey: string): Promise<void>;
+  readPhoto(storageKey: string): Promise<Blob>;
+  saveRemotePhoto(storageKey: string, blob: Blob): Promise<void>;
   getPhotoUri(storageKey: string): Promise<string | null>;
   deletePhoto(storageKey: string): Promise<void>;
 };
@@ -95,6 +97,24 @@ export const petPhotoStorage: PetPhotoStorage = {
     const uri = URL.createObjectURL(blob);
     objectUrls.set(storageKey, uri);
     return uri;
+  },
+
+  async readPhoto(storageKey) {
+    if (Platform.OS === "web") {
+      const blob = await loadBlob(storageKey);
+      if (!blob) throw new Error("La foto local ya no está disponible.");
+      return blob;
+    }
+    const file = getStoredFile(storageKey);
+    if (!file.exists) throw new Error("La foto local ya no está disponible.");
+    return new Blob([await file.arrayBuffer()]);
+  },
+
+  async saveRemotePhoto(storageKey, blob) {
+    if (Platform.OS === "web") { await storeBlob(storageKey, blob); return; }
+    const file = getStoredFile(storageKey);
+    file.parentDirectory.create({ idempotent: true, intermediates: true });
+    file.write(new Uint8Array(await blob.arrayBuffer()));
   },
 
   async deletePhoto(storageKey) {

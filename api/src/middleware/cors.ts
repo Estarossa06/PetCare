@@ -14,7 +14,8 @@ export function createCorsMiddleware(
     if (origin && allowedOrigins.has(origin)) {
       response.setHeader("Access-Control-Allow-Origin", origin);
       response.setHeader("Access-Control-Allow-Methods", "GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS");
-      response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+      response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Upload-Id, X-Checksum-Sha256, X-File-Name, X-Pet-Id");
+      response.setHeader("Access-Control-Expose-Headers", "X-Content-SHA256, Content-Disposition");
     }
 
     if (request.method === "OPTIONS") {

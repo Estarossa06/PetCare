@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppButton } from "../../../components/ui/AppButton";
+import { CalendarDateField } from "../../../components/ui/CalendarDateField";
 import { AppTextField } from "../../../components/ui/TextField";
 import { SurfaceCard } from "../../../components/ui/SurfaceCard";
 import { medicalCategoryLabels, medicalService } from "../medicalService";
@@ -109,17 +110,19 @@ export default function MedicalRecordFormScreen({ petId, recordId }: { petId: st
     setError(null);
     try {
       const result = await DocumentPicker.getDocumentAsync({
-        type: ["image/*", "application/pdf", "text/*", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"],
+        type: ["image/jpeg", "image/png", "image/webp", "application/pdf", "text/plain", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"],
         multiple: true,
         copyToCacheDirectory: true,
       });
       if (result.canceled) return;
-      const selected = result.assets.map((asset) => ({
-        uri: asset.uri,
-        name: asset.name,
-        mimeType: asset.mimeType ?? "application/octet-stream",
-        size: asset.size ?? 1,
-      }));
+      const selected = result.assets.map((asset) => {
+        const extension = asset.name.toLowerCase().slice(asset.name.lastIndexOf("."));
+        const inferred: Record<string, string> = { ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".webp": "image/webp", ".pdf": "application/pdf", ".txt": "text/plain", ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document" };
+        const mimeType = asset.mimeType ?? inferred[extension];
+        if (!mimeType || !Object.values(inferred).includes(mimeType) || inferred[extension] !== mimeType) throw new Error(`El formato de ${asset.name} no es compatible.`);
+        if ((asset.size ?? 0) < 1 || (asset.size ?? 0) > 15 * 1024 * 1024) throw new Error(`${asset.name} supera el límite de 15 MB.`);
+        return { uri: asset.uri, name: asset.name, mimeType, size: asset.size! };
+      });
       setFiles((current) => [...current, ...selected]);
     } catch (pickerError) {
       setError(pickerError instanceof Error ? pickerError.message : "No se pudieron seleccionar los archivos.");
@@ -196,21 +199,25 @@ export default function MedicalRecordFormScreen({ petId, recordId }: { petId: st
                 <Text style={styles.sectionTitle}>Información del registro</Text>
                 <AppTextField label="Título *" value={title} onChangeText={setTitle} placeholder="Ej. Control anual" />
                 <AppTextField label="Descripción" value={description} onChangeText={setDescription} placeholder="Resumen del acontecimiento" multiline />
-                <AppTextField label="Fecha del acontecimiento *" value={occurredAt} onChangeText={setOccurredAt} placeholder="AAAA-MM-DD" />
+                <CalendarDateField label="Fecha del acontecimiento *" value={occurredAt} onChange={setOccurredAt} mode="date" />
                 <AppTextField label="Profesional veterinario" value={professionalName} onChangeText={setProfessionalName} placeholder="Nombre del profesional (opcional)" />
                 <AppTextField label="Clínica veterinaria" value={clinicName} onChangeText={setClinicName} placeholder="Clínica (opcional)" />
                 {category === "diagnosis" ? (
                   <Text style={styles.helper}>Registra únicamente un diagnóstico comunicado por un profesional veterinario.</Text>
                 ) : null}
                 {(detailFields[category] ?? []).map((field) => (
-                  <AppTextField
-                    key={field.key}
-                    label={field.label}
-                    value={details[field.key] ?? ""}
-                    onChangeText={(value) => updateDetail(field.key, value)}
-                    placeholder={field.placeholder}
-                    multiline={field.key === "examResults" || field.key === "recommendations" || field.key === "postoperativeObservations"}
-                  />
+                  field.key === "applicationDate" || field.key === "nextDoseDate" || field.key === "nextApplicationDate" ? (
+                    <CalendarDateField key={field.key} label={field.label} value={details[field.key] ?? ""} onChange={(value) => updateDetail(field.key, value)} mode="date" allowClear />
+                  ) : (
+                    <AppTextField
+                      key={field.key}
+                      label={field.label}
+                      value={details[field.key] ?? ""}
+                      onChangeText={(value) => updateDetail(field.key, value)}
+                      placeholder={field.placeholder}
+                      multiline={field.key === "examResults" || field.key === "recommendations" || field.key === "postoperativeObservations"}
+                    />
+                  )
                 ))}
                 <AppTextField label="Observaciones" value={observations} onChangeText={setObservations} placeholder="Notas adicionales" multiline />
               </SurfaceCard>

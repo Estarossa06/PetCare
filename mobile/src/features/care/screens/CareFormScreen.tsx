@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react-native";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Switch, Text, View, useWindowDimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppButton } from "../../../components/ui/AppButton";
+import { CalendarDateField } from "../../../components/ui/CalendarDateField";
 import { AppTextField } from "../../../components/ui/TextField";
 import { SurfaceCard } from "../../../components/ui/SurfaceCard";
 import { careCategoryLabels, careService, frequencyLabels } from "../careService";
@@ -148,14 +149,8 @@ export default function CareFormScreen({ petId, taskId }: { petId: string; taskI
                     ))}
                   </View>
                 ) : null}
-                <AppTextField
-                  label="Inicio (fecha y hora local)"
-                  value={startsLocal}
-                  onChangeText={setStartsLocal}
-                  placeholder="AAAA-MM-DDTHH:mm"
-                  hint="Hora local de la zona seleccionada."
-                />
-                <AppTextField label="Finalizar después del día (opcional)" value={endsLocal} onChangeText={setEndsLocal} placeholder="AAAA-MM-DD" />
+                <CalendarDateField label="Inicio (fecha y hora local)" value={startsLocal} onChange={setStartsLocal} mode="datetime" hint="Hora local de la zona seleccionada." />
+                <CalendarDateField label="Finalizar después del día (opcional)" value={endsLocal} onChange={setEndsLocal} mode="date" allowClear />
                 <AppTextField label="Zona horaria IANA" value={timezone} onChangeText={setTimezone} placeholder="America/Bogota" />
                 <View style={styles.switchRow}>
                   <View style={styles.switchCopy}><Text style={styles.switchTitle}>Actividad habilitada</Text></View>
