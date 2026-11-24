@@ -8,7 +8,10 @@ import { requireJsonBody } from "./middleware/requireJsonBody.js";
 import type { Queryable } from "./db/queryable.js";
 import { createAuthRouter } from "./modules/auth/routes.js";
 import type { AuthStore } from "./modules/auth/types.js";
+<<<<<<< HEAD
 import { createTrackingRouter } from "./modules/pets/trackingRoutes.js";
+=======
+>>>>>>> 6d3f7afd017663331a047b8da45206044c26978f
 import { createPetsRouter } from "./modules/pets/routes.js";
 import { PostgresPetRepository } from "./modules/pets/repository.js";
 import { PetService } from "./modules/pets/service.js";
@@ -53,7 +56,10 @@ export function createApp({
       config.accessTokenSecret,
     ),
   );
+<<<<<<< HEAD
   app.use("/tracking", createTrackingRouter(database, new PetService(new PostgresPetRepository(database)), authStore, config.accessTokenSecret));
+=======
+>>>>>>> 6d3f7afd017663331a047b8da45206044c26978f
   app.use(
     "/kirai",
     createKiraiRouter(
