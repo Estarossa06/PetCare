@@ -10,7 +10,7 @@ import { PostgresAuthStore } from "./modules/auth/postgresAuthStore.js";
 import { logger } from "./observability/logger.js";
 import { R2ObjectStore } from "./modules/media/objectStore.js";
 import { runMediaMaintenance } from "./modules/media/maintenance.js";
-import { runAccountDeletionBatch } from "./modules/auth/accountDeletionWorker.js";
+import { runAccountDeletionBatch, safeFailureCode } from "./modules/auth/accountDeletionWorker.js";
 
 export interface RunningServer {
   server: Server;
@@ -60,7 +60,10 @@ export async function startServer(config: AppConfig = loadConfig()): Promise<Run
   const runDeletionMaintenance = () => {
     if (deletionRun) return;
     deletionRun = runAccountDeletionBatch(pool, mediaStore, logger)
-      .catch(() => logger.error({ event: "account_deletion_worker_failed" }))
+      .catch((error: unknown) => logger.error({
+        event: "account_deletion_worker_failed",
+        code: safeFailureCode(error),
+      }))
       .finally(() => { deletionRun = undefined; });
   };
   const accountDeletionTimer = setInterval(runDeletionMaintenance, 30_000);

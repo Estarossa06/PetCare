@@ -129,7 +129,7 @@ async function purgeOwnerRows(pool: Pool, requestId: string, userId: string): Pr
   });
 }
 
-function safeFailureCode(error: unknown): string {
+export function safeFailureCode(error: unknown): string {
   const code = error && typeof error === "object" && "code" in error && typeof error.code === "string"
     ? error.code : "ACCOUNT_DELETION_RETRY";
   return /^[A-Z0-9_]{1,64}$/.test(code) ? code : "ACCOUNT_DELETION_RETRY";
