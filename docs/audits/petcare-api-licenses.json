@@ -1,5 +1,149 @@
 [
   {
+    "name": "@aws-sdk/checksums",
+    "version": "3.1002.6",
+    "scope": "required",
+    "license": "Apache-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@aws-sdk/checksums"
+  },
+  {
+    "name": "@aws-sdk/client-s3",
+    "version": "3.1176.0",
+    "scope": "required",
+    "license": "Apache-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@aws-sdk/client-s3"
+  },
+  {
+    "name": "@aws-sdk/core",
+    "version": "3.981.1",
+    "scope": "required",
+    "license": "Apache-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@aws-sdk/core"
+  },
+  {
+    "name": "@aws-sdk/credential-provider-env",
+    "version": "3.972.85",
+    "scope": "required",
+    "license": "Apache-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@aws-sdk/credential-provider-env"
+  },
+  {
+    "name": "@aws-sdk/credential-provider-http",
+    "version": "3.972.87",
+    "scope": "required",
+    "license": "Apache-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@aws-sdk/credential-provider-http"
+  },
+  {
+    "name": "@aws-sdk/credential-provider-ini",
+    "version": "3.973.31",
+    "scope": "required",
+    "license": "Apache-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@aws-sdk/credential-provider-ini"
+  },
+  {
+    "name": "@aws-sdk/credential-provider-login",
+    "version": "3.972.93",
+    "scope": "required",
+    "license": "Apache-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@aws-sdk/credential-provider-login"
+  },
+  {
+    "name": "@aws-sdk/credential-provider-node",
+    "version": "3.972.98",
+    "scope": "required",
+    "license": "Apache-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@aws-sdk/credential-provider-node"
+  },
+  {
+    "name": "@aws-sdk/credential-provider-process",
+    "version": "3.972.85",
+    "scope": "required",
+    "license": "Apache-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@aws-sdk/credential-provider-process"
+  },
+  {
+    "name": "@aws-sdk/credential-provider-sso",
+    "version": "3.973.29",
+    "scope": "required",
+    "license": "Apache-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@aws-sdk/credential-provider-sso"
+  },
+  {
+    "name": "@aws-sdk/credential-provider-web-identity",
+    "version": "3.972.91",
+    "scope": "required",
+    "license": "Apache-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@aws-sdk/credential-provider-web-identity"
+  },
+  {
+    "name": "@aws-sdk/middleware-sdk-s3",
+    "version": "3.972.91",
+    "scope": "required",
+    "license": "Apache-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@aws-sdk/middleware-sdk-s3"
+  },
+  {
+    "name": "@aws-sdk/nested-clients",
+    "version": "3.998.4",
+    "scope": "required",
+    "license": "Apache-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@aws-sdk/nested-clients"
+  },
+  {
+    "name": "@aws-sdk/signature-v4-multi-region",
+    "version": "3.996.52",
+    "scope": "required",
+    "license": "Apache-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@aws-sdk/signature-v4-multi-region"
+  },
+  {
+    "name": "@aws-sdk/token-providers",
+    "version": "3.1175.0",
+    "scope": "required",
+    "license": "Apache-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@aws-sdk/token-providers"
+  },
+  {
+    "name": "@aws-sdk/types",
+    "version": "3.975.1",
+    "scope": "required",
+    "license": "Apache-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@aws-sdk/types"
+  },
+  {
+    "name": "@aws-sdk/xml-builder",
+    "version": "3.972.43",
+    "scope": "required",
+    "license": "Apache-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@aws-sdk/xml-builder"
+  },
+  {
+    "name": "@aws/lambda-invoke-store",
+    "version": "0.3.0",
+    "scope": "required",
+    "license": "Apache-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@aws/lambda-invoke-store"
+  },
+  {
     "name": "@emnapi/runtime",
     "version": "1.11.3",
     "scope": "required",
@@ -432,6 +576,54 @@
     "lockfilePath": "node_modules/@img/sharp-win32-x64"
   },
   {
+    "name": "@smithy/core",
+    "version": "3.41.1",
+    "scope": "required",
+    "license": "Apache-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@smithy/core"
+  },
+  {
+    "name": "@smithy/credential-provider-imds",
+    "version": "4.5.2",
+    "scope": "required",
+    "license": "Apache-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@smithy/credential-provider-imds"
+  },
+  {
+    "name": "@smithy/fetch-http-handler",
+    "version": "5.8.1",
+    "scope": "required",
+    "license": "Apache-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@smithy/fetch-http-handler"
+  },
+  {
+    "name": "@smithy/node-http-handler",
+    "version": "4.14.2",
+    "scope": "required",
+    "license": "Apache-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@smithy/node-http-handler"
+  },
+  {
+    "name": "@smithy/signature-v4",
+    "version": "5.7.5",
+    "scope": "required",
+    "license": "Apache-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@smithy/signature-v4"
+  },
+  {
+    "name": "@smithy/types",
+    "version": "4.20.0",
+    "scope": "required",
+    "license": "Apache-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@smithy/types"
+  },
+  {
     "name": "@types/body-parser",
     "version": "1.19.6",
     "scope": "required",
@@ -534,6 +726,14 @@
     "license": "MIT",
     "licenseEvidence": "installed package.json license field",
     "lockfilePath": "node_modules/body-parser"
+  },
+  {
+    "name": "bowser",
+    "version": "2.15.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/bowser"
   },
   {
     "name": "bytes",
@@ -1188,7 +1388,7 @@
     "version": "2.9.1",
     "scope": "required",
     "license": "0BSD",
-    "licenseEvidence": "https://github.com/microsoft/tslib/blob/main/LICENSE.txt",
+    "licenseEvidence": "installed package.json license field",
     "lockfilePath": "node_modules/tslib"
   },
   {

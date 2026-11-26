@@ -10,6 +10,7 @@ import { PostgresAuthStore } from "./modules/auth/postgresAuthStore.js";
 import { logger } from "./observability/logger.js";
 import { R2ObjectStore } from "./modules/media/objectStore.js";
 import { runMediaMaintenance } from "./modules/media/maintenance.js";
+import { runAccountDeletionBatch } from "./modules/auth/accountDeletionWorker.js";
 
 export interface RunningServer {
   server: Server;
@@ -55,6 +56,17 @@ export async function startServer(config: AppConfig = loadConfig()): Promise<Run
   }, 60 * 60_000) : undefined;
   mediaMaintenanceTimer?.unref();
 
+  let deletionRun: Promise<unknown> | undefined;
+  const runDeletionMaintenance = () => {
+    if (deletionRun) return;
+    deletionRun = runAccountDeletionBatch(pool, mediaStore, logger)
+      .catch(() => logger.error({ event: "account_deletion_worker_failed" }))
+      .finally(() => { deletionRun = undefined; });
+  };
+  const accountDeletionTimer = setInterval(runDeletionMaintenance, 30_000);
+  accountDeletionTimer.unref();
+  runDeletionMaintenance();
+
   let closing: Promise<void> | undefined;
   const close = (): Promise<void> => {
     if (!closing) {
@@ -66,8 +78,10 @@ export async function startServer(config: AppConfig = loadConfig()): Promise<Run
           }
           resolveClose();
         });
-      }).then(() => {
+      }).then(async () => {
         if (mediaMaintenanceTimer) clearInterval(mediaMaintenanceTimer);
+        clearInterval(accountDeletionTimer);
+        await deletionRun;
         return pool.end();
       });
     }

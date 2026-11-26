@@ -1,12 +1,12 @@
 import "dotenv/config";
 import assert from "node:assert/strict";
-import { createHash, randomUUID } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import { once } from "node:events";
 import { createServer, type Server } from "node:http";
 import test from "node:test";
 import { createApp } from "../src/app.js";
 import { createDatabasePool } from "../src/db/pool.js";
-import { migrations } from "../src/db/migrations/index.js";
+import { assertMigrationsApplied } from "./assertMigrations.js";
 import { PostgresAuthStore } from "../src/modules/auth/postgresAuthStore.js";
 import type { Logger } from "../src/observability/logger.js";
 
@@ -61,21 +61,7 @@ test(
         `Refusing to write auth fixtures outside petcare_test (run ${runId}).`,
       );
 
-      const appliedResult = await pool.query<{
-        version: number;
-        name: string;
-        checksum: string;
-      }>("SELECT version, name, checksum FROM schema_migrations ORDER BY version");
-      const applied = new Map(appliedResult.rows.map((row) => [row.version, row]));
-      for (const migration of migrations) {
-        const row = applied.get(migration.version);
-        assert.ok(row, `Migration ${migration.version} is required for auth tests.`);
-        assert.equal(row.name, migration.name);
-        assert.equal(
-          row.checksum,
-          createHash("sha256").update(migration.up.toString()).digest("hex"),
-        );
-      }
+      await assertMigrationsApplied(pool, ["auth_refresh_token_history"]);
 
       const app = createApp({
         config: { corsOrigins: [], accessTokenSecret },
@@ -193,7 +179,9 @@ test(
       currentPassword: testPassword,
     }, deletionTokens.accessToken);
     assert.equal(deletionRequest.status, 202);
-    assert.deepEqual(await deletionRequest.json(), { status: "pending_permanent_deletion" });
+    const deletionBody = await deletionRequest.json() as { status: string; requestId: string };
+    assert.equal(deletionBody.status, "pending_permanent_deletion");
+    assert.match(deletionBody.requestId, /^[0-9a-f-]{36}$/i);
     assert.equal((await fetch(`${baseUrl}/auth/me`, {
       headers: { Authorization: `Bearer ${deletionTokens.accessToken}` },
     })).status, 401);

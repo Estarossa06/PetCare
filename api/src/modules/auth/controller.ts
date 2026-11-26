@@ -129,8 +129,8 @@ export class AuthController {
 
   readonly requestPermanentDeletion: RequestHandler = async (request, response, next) => {
     try {
-      await this.service.requestPermanentDeletion(requirePrincipal(request), request.body);
-      response.status(202).json({ status: "pending_permanent_deletion" });
+      const deletion = await this.service.requestPermanentDeletion(requirePrincipal(request), request.body);
+      response.status(202).json({ status: "pending_permanent_deletion", requestId: deletion.requestId });
     } catch (error) {
       if (error instanceof InvalidCredentialsError) {
         sendError(response, 401, "INVALID_CREDENTIALS", "The current password is incorrect.");

@@ -7,6 +7,7 @@ import {
 } from "./migration-lineage.js";
 
 type MigrationClient = PoolClient;
+const MIGRATION_LOCK_KEY = [1346720843, 1297044558] as const;
 
 export interface MigrationLedgerSnapshot {
   exists: boolean;
@@ -61,40 +62,47 @@ export async function runMigrations(
   client: MigrationClient,
   log: (message: string) => void = console.log,
 ): Promise<{ lineage: "remote" | "legacy-local"; applied: number; pending: number }> {
-  const snapshot = await readLedger(client);
-  if (!snapshot.exists || snapshot.rows.length === 0) {
-    await assertNoUntrackedSchema(client);
-  }
-
-  // This validates every applied row before creating the ledger or running DDL.
-  const lineage = resolveMigrationLineage(snapshot.rows);
-  const appliedVersions = new Set(snapshot.rows.map((row) => row.version));
-  if (!snapshot.exists) await ensureMigrationTable(client);
-
-  let applied = 0;
-  let pending = 0;
-  for (const migration of lineage.migrations) {
-    if (appliedVersions.has(migration.version)) {
-      log(`Already applied: ${migration.version} ${migration.name}`);
-      continue;
+  // Serialize migration processes across API instances before reading the
+  // ledger. A second process must observe the first one's committed prefix.
+  await client.query("SELECT pg_advisory_lock($1, $2)", [...MIGRATION_LOCK_KEY]);
+  try {
+    const snapshot = await readLedger(client);
+    if (!snapshot.exists || snapshot.rows.length === 0) {
+      await assertNoUntrackedSchema(client);
     }
-    pending += 1;
-    await client.query("BEGIN");
-    try {
-      await migration.up(client);
-      await client.query(
-        "INSERT INTO public.schema_migrations (version, name, checksum) VALUES ($1, $2, $3)",
-        [migration.version, migration.name, migrationChecksum(migration)],
-      );
-      await client.query("COMMIT");
-      applied += 1;
-      log(`Applied: ${migration.version} ${migration.name}`);
-    } catch (error) {
-      await client.query("ROLLBACK");
-      throw error;
+
+    // This validates every applied row before creating the ledger or running DDL.
+    const lineage = resolveMigrationLineage(snapshot.rows);
+    const appliedVersions = new Set(snapshot.rows.map((row) => row.version));
+    if (!snapshot.exists) await ensureMigrationTable(client);
+
+    let applied = 0;
+    let pending = 0;
+    for (const migration of lineage.migrations) {
+      if (appliedVersions.has(migration.version)) {
+        log(`Already applied: ${migration.version} ${migration.name}`);
+        continue;
+      }
+      pending += 1;
+      await client.query("BEGIN");
+      try {
+        await migration.up(client);
+        await client.query(
+          "INSERT INTO public.schema_migrations (version, name, checksum) VALUES ($1, $2, $3)",
+          [migration.version, migration.name, migrationChecksum(migration)],
+        );
+        await client.query("COMMIT");
+        applied += 1;
+        log(`Applied: ${migration.version} ${migration.name}`);
+      } catch (error) {
+        await client.query("ROLLBACK");
+        throw error;
+      }
     }
+    return { lineage: lineage.id, applied, pending: 0 };
+  } finally {
+    await client.query("SELECT pg_advisory_unlock($1, $2)", [...MIGRATION_LOCK_KEY]);
   }
-  return { lineage: lineage.id, applied, pending: 0 };
 }
 
 export async function printMigrationStatus(

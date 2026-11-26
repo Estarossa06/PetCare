@@ -73,6 +73,14 @@ export async function getLocalAccountId(): Promise<string> {
 export async function withLocalWriteTransaction<T>(
   work: (tx: SQLiteDatabase, ownerId: string) => Promise<T>,
 ): Promise<T> {
+  const ownerId = await getLocalAccountId();
+  return withLocalWriteTransactionForAccount(ownerId, work);
+}
+
+export async function withLocalWriteTransactionForAccount<T>(
+  ownerId: string,
+  work: (tx: SQLiteDatabase, ownerId: string) => Promise<T>,
+): Promise<T> {
   const previous = writeQueue;
   let release = () => {};
   writeQueue = new Promise<void>((resolve) => {
@@ -81,7 +89,6 @@ export async function withLocalWriteTransaction<T>(
   await previous;
   try {
     const db = await getPetCareDatabase();
-    const ownerId = await getLocalAccountId();
     await db.execAsync("BEGIN IMMEDIATE");
     try {
       const result = await work(db, ownerId);

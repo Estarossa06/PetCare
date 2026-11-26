@@ -420,7 +420,9 @@ test("deactivation and permanent-deletion requests require proof and revoke acco
     const deletionTokens = await deletionAccount.json();
     const requested = await postJson(harness.baseUrl, "/auth/deletion-request", { currentPassword: PASSWORD }, deletionTokens.accessToken);
     assert.equal(requested.status, 202);
-    assert.deepEqual(await requested.json(), { status: "pending_permanent_deletion" });
+    const deletionBody = await requested.json() as { status: string; requestId: string };
+    assert.equal(deletionBody.status, "pending_permanent_deletion");
+    assert.ok(deletionBody.requestId.length > 0);
     assert.equal(harness.store.deletionRequests.has(deletionTokens.user.id), true);
     assert.equal(await harness.store.findUserById(deletionTokens.user.id), undefined);
     assert.equal((await postJson(harness.baseUrl, "/auth/refresh", { refreshToken: deletionTokens.refreshToken })).status, 401);

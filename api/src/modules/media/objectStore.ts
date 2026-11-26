@@ -11,13 +11,41 @@ export interface MediaObjectStore {
 
 export type R2Config = { accountId: string; bucket: string; accessKeyId: string; secretAccessKey: string };
 
+export function resolveR2Endpoint(accountIdOrEndpoint: string): string {
+  const value = accountIdOrEndpoint.trim();
+  if (/^[a-f0-9]{32}$/i.test(value)) {
+    return `https://${value}.r2.cloudflarestorage.com`;
+  }
+
+  let endpoint: URL;
+  try {
+    endpoint = new URL(value);
+  } catch {
+    throw new Error("R2_ACCOUNT_ID must be a Cloudflare account ID or its canonical S3 endpoint.");
+  }
+  const validHost = /^[a-f0-9]{32}\.r2\.cloudflarestorage\.com$/i.test(endpoint.hostname);
+  if (
+    endpoint.protocol !== "https:" ||
+    !validHost ||
+    endpoint.username ||
+    endpoint.password ||
+    (endpoint.pathname !== "" && endpoint.pathname !== "/") ||
+    endpoint.search ||
+    endpoint.hash ||
+    endpoint.port
+  ) {
+    throw new Error("R2_ACCOUNT_ID must be a Cloudflare account ID or its canonical S3 endpoint.");
+  }
+  return endpoint.origin;
+}
+
 export class R2ObjectStore implements MediaObjectStore {
   private readonly client: S3Client;
 
   constructor(private readonly config: R2Config) {
     this.client = new S3Client({
       region: "auto",
-      endpoint: `https://${config.accountId}.r2.cloudflarestorage.com`,
+      endpoint: resolveR2Endpoint(config.accountId),
       credentials: { accessKeyId: config.accessKeyId, secretAccessKey: config.secretAccessKey },
       requestChecksumCalculation: "WHEN_REQUIRED",
       responseChecksumValidation: "WHEN_REQUIRED",

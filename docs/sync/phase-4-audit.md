@@ -1,5 +1,7 @@
 # PetCare — Fase 4: auditoría de persistencia y sincronización
 
+> **Informe histórico (10 de noviembre de 2026; no describe el estado actual).** En ese momento push/pull, API de dominio, KIRAI conectado y almacenamiento remoto todavía estaban pendientes. Las secciones que los clasifican como inexistentes quedaron superadas por la implementación posterior. Para el estado de código y evidencia actual, consulta [mobile-operation-boundaries.md](../backend/mobile-operation-boundaries.md), [petcare-current-status.md](../audits/petcare-current-status.md) y la [auditoría de cierre](../audit/fifth-delivery-audit.md). Esta anotación no reescribe las conclusiones originales ni afirma validación física.
+
 **Fecha:** 10 de noviembre de 2026  
 **Alcance:** inspección estática de migraciones y código fuente local. No se
 consultó Neon ni se ejecutaron migraciones, cambios de datos, ni pruebas que

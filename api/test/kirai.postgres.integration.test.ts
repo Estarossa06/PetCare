@@ -1,9 +1,9 @@
 import "dotenv/config";
 import assert from "node:assert/strict";
-import { createHash, randomUUID } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import test from "node:test";
 import { createDatabasePool } from "../src/db/pool.js";
-import { migrations } from "../src/db/migrations/index.js";
+import { assertMigrationsApplied } from "./assertMigrations.js";
 import { loadRemotePetContext } from "../src/modules/kirai/petContext.js";
 import { KiraiNotFoundError, PostgresKiraiStore } from "../src/modules/kirai/repository.js";
 
@@ -30,16 +30,7 @@ test("KIRAI PostgreSQL context, persistence and owner isolation use petcare_test
   try {
     const database = await pool.query<{ name: string }>("SELECT current_database() AS name");
     assert.equal(database.rows[0].name, "petcare_test", `Refusing test fixtures outside petcare_test (${runId}).`);
-    const appliedResult = await pool.query<{ version: number; name: string; checksum: string }>(
-      "SELECT version,name,checksum FROM schema_migrations ORDER BY version",
-    );
-    const applied = new Map(appliedResult.rows.map((row) => [row.version, row]));
-    for (const migration of migrations) {
-      const row = applied.get(migration.version);
-      assert.ok(row, `Migration ${migration.version} is required.`);
-      assert.equal(row.name, migration.name);
-      assert.equal(row.checksum, createHash("sha256").update(migration.up.toString()).digest("hex"));
-    }
+    await assertMigrationsApplied(pool, ["kirai_conversations"]);
 
     await pool.query(
       "INSERT INTO users(id,email,password_hash,name) VALUES($1,$2,'integration-only-hash','KIRAI test A'),($3,$4,'integration-only-hash','KIRAI test B')",

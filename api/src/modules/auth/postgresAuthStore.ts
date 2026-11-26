@@ -184,16 +184,19 @@ export class PostgresAuthStore implements AuthStore {
     });
   }
 
-  async requestPermanentDeletion(userId: string): Promise<void> {
-    await transaction(this.pool, async (client) => {
-      await client.query(
+  async requestPermanentDeletion(userId: string): Promise<{ requestId: string }> {
+    return transaction(this.pool, async (client) => {
+      const request = await client.query<{ request_id: string } & QueryResultRow>(
         `INSERT INTO account_deletion_requests (user_id, status)
          VALUES ($1, 'pending')
-         ON CONFLICT (user_id) DO UPDATE SET requested_at = now(), status = 'pending', completed_at = NULL`,
-        [userId],
-      );
+         ON CONFLICT (user_id) WHERE user_id IS NOT NULL
+         DO UPDATE SET requested_at = now(), status = 'pending', completed_at = NULL,
+           attempt_count = 0, next_attempt_at = now(), processing_started_at = NULL,
+           last_error_code = NULL
+         RETURNING request_id`, [userId]);
       await client.query(`UPDATE users SET deleted_at = COALESCE(deleted_at, now()), updated_at = now() WHERE id = $1`, [userId]);
       await revokeAllUserSessions(client, userId);
+      return { requestId: request.rows[0].request_id };
     });
   }
 

@@ -22,6 +22,27 @@
   "components": [
     {
       "type": "machine-learning-model",
+      "name": "qwen3",
+      "version": "8b",
+      "description": "Qwen3 8B Ollama artifact used by the KIRAI conversational API; model weights execute on the backend host and are not included in the mobile bundle.",
+      "licenses": [{ "license": { "id": "Apache-2.0" } }],
+      "externalReferences": [
+        { "type": "distribution", "url": "https://ollama.com/library/qwen3" },
+        { "type": "website", "url": "https://huggingface.co/Qwen/Qwen3-8B" },
+        { "type": "vcs", "url": "https://github.com/QwenLM/Qwen3" }
+      ],
+      "properties": [
+        { "name": "petcare:ollama-model-tag", "value": "qwen3:8b" },
+        { "name": "petcare:ollama-model-id-prefix", "value": "500a1f067a9f" },
+        { "name": "petcare:quantization", "value": "Q4_K_M" },
+        { "name": "petcare:parameter-count", "value": "8.2B reported by local Ollama" },
+        { "name": "petcare:context-length", "value": "40960 tokens reported by local Ollama" },
+        { "name": "petcare:license-evidence", "value": "Apache-2.0 shown by local ollama show --verbose and LICENSE returned by ollama show --license; official Qwen3 repository states all open-weight models use Apache 2.0" },
+        { "name": "petcare:source", "value": "Ollama registry artifact; not bundled in repository or npm lockfiles" }
+      ]
+    },
+    {
+      "type": "machine-learning-model",
       "name": "qwen2.5vl",
       "version": "7b",
       "description": "Qwen2.5-VL 7B, Ollama Q4_K_M artifact used for local pet photo identification.",

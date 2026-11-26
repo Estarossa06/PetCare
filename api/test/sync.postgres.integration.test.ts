@@ -1,12 +1,12 @@
 import "dotenv/config";
 import assert from "node:assert/strict";
-import { createHash, randomUUID } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import { once } from "node:events";
 import { createServer, type Server } from "node:http";
 import test from "node:test";
 import { createApp } from "../src/app.js";
 import { createDatabasePool } from "../src/db/pool.js";
-import { migrations } from "../src/db/migrations/index.js";
+import { assertMigrationsApplied } from "./assertMigrations.js";
 import { PostgresAuthStore } from "../src/modules/auth/postgresAuthStore.js";
 import type { Logger } from "../src/observability/logger.js";
 
@@ -45,14 +45,7 @@ test("PostgreSQL pet sync authenticates, isolates owners, replays idempotently, 
   let fixturesStarted = false;
   try {
     assert.equal((await pool.query<{ database: string }>("SELECT current_database() AS database")).rows[0].database, "petcare_test");
-    const applied = await pool.query<{ version: number; name: string; checksum: string }>("SELECT version,name,checksum FROM schema_migrations ORDER BY version");
-    const byVersion = new Map(applied.rows.map((item) => [item.version, item]));
-    for (const migration of migrations) {
-      const row = byVersion.get(migration.version);
-      assert.ok(row, `Migration ${migration.version} is required.`);
-      assert.equal(row.name, migration.name);
-      assert.equal(row.checksum, createHash("sha256").update(migration.up.toString()).digest("hex"));
-    }
+    await assertMigrationsApplied(pool, ["sync_support", "pet_sync_protocol"]);
 
     const app = createApp({ config: { corsOrigins: [], accessTokenSecret: secret }, database: pool, authStore: new PostgresAuthStore(pool), logger });
     server = createServer(app);

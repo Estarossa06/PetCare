@@ -10,6 +10,7 @@ import preserveSyncEntityTypes from "./0008_preserve_sync_entity_types.js";
 import accountLifecycle from "./0009_account_lifecycle.js";
 import kiraiConversations from "./0010_kirai_conversations.js";
 import mediaStorage from "./0011_media_storage.js";
+import accountDeletionWorker from "./0013_account_deletion_worker.js";
 import type { Migration } from "./types.js";
 
 const commonMigrations = [
@@ -34,6 +35,7 @@ export const migrations: Migration[] = [
   atVersion(accountLifecycle, 10),
   atVersion(kiraiConversations, 11),
   atVersion(mediaStorage, 12),
+  atVersion(accountDeletionWorker, 13),
 ];
 
 /**
@@ -51,4 +53,5 @@ export const legacyLocalMigrations: Migration[] = [
   kiraiConversations,
   mediaStorage,
   atVersion(tracking, 12),
+  accountDeletionWorker,
 ];

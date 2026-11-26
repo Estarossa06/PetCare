@@ -1,4 +1,4 @@
-export type NodeEnvironment = "development" | "test" | "production";
+export type NodeEnvironment = "development" | "test" | "staging" | "production";
 
 export interface AppConfig {
   nodeEnv: NodeEnvironment;
@@ -88,9 +88,10 @@ export function loadConfig(
   if (
     nodeEnv !== "development" &&
     nodeEnv !== "test" &&
+    nodeEnv !== "staging" &&
     nodeEnv !== "production"
   ) {
-    throw new Error("NODE_ENV must be development, test, or production.");
+    throw new Error("NODE_ENV must be development, test, staging, or production.");
   }
 
   const host = env.HOST?.trim() || "127.0.0.1";

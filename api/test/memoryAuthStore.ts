@@ -109,9 +109,10 @@ export class MemoryAuthStore implements AuthStore {
     this.revokeEverySession(userId);
   }
 
-  async requestPermanentDeletion(userId: string): Promise<void> {
+  async requestPermanentDeletion(userId: string): Promise<{ requestId: string }> {
     this.deletionRequests.add(userId);
     await this.deactivateUser(userId);
+    return { requestId: `test-${userId}` };
   }
 
   async createSession(input: {

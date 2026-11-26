@@ -11,7 +11,10 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "com.petcare.mobile"
+      "package": "com.petcare.mobile",
+      "blockedPermissions": [
+        "android.permission.SYSTEM_ALERT_WINDOW"
+      ]
     },
     "plugins": [
       [

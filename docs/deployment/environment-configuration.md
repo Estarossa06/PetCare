@@ -36,23 +36,38 @@ fuera de ese parser.
 | `KIRAI_OLLAMA_BASE_URL` | Adaptador KIRAI Ollama; URL base local. Solo se acepta HTTP en `127.0.0.1`, `localhost` o `[::1]`, sin credenciales/ruta/query. | No; `http://127.0.0.1:11434`. | `KIRAI_OLLAMA_BASE_URL=http://127.0.0.1:11434` |
 | `KIRAI_OLLAMA_MODEL` | Adaptador KIRAI Ollama; nombre del modelo local. | No; `qwen3:8b`. | `KIRAI_OLLAMA_MODEL=qwen3:8b` |
 | `KIRAI_OLLAMA_TIMEOUT_MS` | Adaptador KIRAI Ollama; timeout HTTP en milisegundos. | No; `60000`; rango permitido 1–300000. | `KIRAI_OLLAMA_TIMEOUT_MS=60000` |
+| `PET_VISION_OLLAMA_BASE_URL` | Ollama para identificación visual. Solo admite loopback HTTP. | No; `http://127.0.0.1:11434`. | `PET_VISION_OLLAMA_BASE_URL=http://127.0.0.1:11434` |
+| `PET_VISION_OLLAMA_MODEL` | Modelo Ollama de visión. | No; `qwen2.5vl:7b`. | `PET_VISION_OLLAMA_MODEL=qwen2.5vl:7b` |
+| `PET_VISION_TIMEOUT_MS` | Timeout de inferencia visual. | No; `90000`; rango 1–300000. | `PET_VISION_TIMEOUT_MS=90000` |
+| `R2_ACCOUNT_ID` | Cuenta/endpoint S3 de Cloudflare R2, backend solamente. | Opcional; todas las variables R2 deben configurarse juntas. | Se deja vacío en ejemplos; usa bucket privado y token de mínimo privilegio. |
+| `R2_BUCKET` | Nombre del bucket R2, backend solamente. | Opcional junto al resto de R2. | En despliegue de prueba el bucket debe ser el asignado para pruebas; no incorporar credenciales al móvil. |
+| `R2_ACCESS_KEY_ID` | Clave de acceso R2 del backend. | Opcional junto al resto de R2. | Secreto; nunca usar en `EXPO_PUBLIC_*`. |
+| `R2_SECRET_ACCESS_KEY` | Secreto R2 del backend. | Opcional junto al resto de R2. | Secreto; nunca usar en `EXPO_PUBLIC_*`. |
+| `TRACCAR_URL` | Base HTTPS del servidor Traccar. HTTP solo se admite para loopback fuera de producción. | Opcional; se requiere junto a `TRACCAR_TOKEN`. | Debe apuntar al servidor administrado; el cliente móvil solo llama a PetCare API. |
+| `TRACCAR_TOKEN` | Token API Traccar mantenido en backend. | Opcional; se requiere junto a `TRACCAR_URL`. | Usa permisos mínimos y restringe el token a dispositivos autorizados. |
+| `PETCARE_TEST_DATABASE_URL` | Solo integración PostgreSQL; suites comprueban el nombre exacto `petcare_test`. | Opcional fuera de pruebas DB. | Nunca apunta a desarrollo compartido o producción. |
+| `PETCARE_RUN_AUTH_DB_TESTS` | Habilita integraciones PostgreSQL de auth/pets/sync/domain/KIRAI y ciclo de cuenta. | No; requiere valor `1` y URL de test. | Solo `petcare_test`. |
+| `PETCARE_RUN_KIRAI_DB_TESTS` | Habilita integración KIRAI/PostgreSQL simulada. | No; requiere valor `1` y URL de test. | Solo `petcare_test`. |
+| `PETCARE_RUN_MEDIA_DB_TESTS` | Habilita integración de metadata/API de archivos con store de test. | No; requiere valor `1` y URL de test. | Solo `petcare_test`; no significa que use R2 real. |
 | `PETCARE_RUN_DB_CHECKS` | Scripts `db:verify` y `db:verify:cursor`; guard para permitir ejecutar los verificadores de base. | No para runtime. Es necesaria con valor exacto `1` para esos verificadores. | `PETCARE_RUN_DB_CHECKS=1` — habilita verificadores que escriben fixtures y los limpian; usar solo con base desechable autorizada. |
 | `EXPO_PUBLIC_API_URL` | Cliente Expo; URL base HTTP(S) del API que se incorpora al bundle móvil/web. No es una credencial. | Sí al usar el cliente HTTP autenticado. | `EXPO_PUBLIC_API_URL=http://localhost:3000` para un navegador local; dispositivos físicos necesitan un host accesible desde ellos. |
 
 La tabla no implica que el cliente móvil pueda conectarse a PostgreSQL. La
 única variable de URL pública en el cliente es la dirección HTTP(S) del API.
 `EXPO_PUBLIC_API_URL` es pública por diseño de Expo y no debe contener
-contraseñas, tokens ni claves privadas. Las opciones `KIRAI_OLLAMA_*` se leen
-por el adaptador/CLI de Ollama; no forman parte del `AppConfig` general y no
-hacen que Express se conecte a Ollama en su arranque.
+contraseñas, tokens ni claves privadas. Ollama, R2 y Traccar solo se consumen
+desde procesos backend. Ollama availability se comprueba al usar KIRAI o
+identificación, no como prueba de distribución del modelo.
 
-### Variables futuras
+### KIRAI, visión y proveedores externos
 
-La integración de otros proveedores de IA no está implementada ni tiene
-variables configuradas en el código actual. Sus nombres y contratos deberán
-definirse en una decisión técnica separada. Sus claves serán variables
-secretas disponibles solo en el backend o en un secret manager, nunca
-variables `EXPO_PUBLIC_*`.
+KIRAI usa `KIRAI_OLLAMA_*`; visión usa `PET_VISION_OLLAMA_*`. Son
+configuraciones separadas, aunque pueden compartir un mismo daemon Ollama.
+Traccar debe estar configurado con `TRACCAR_URL` y `TRACCAR_TOKEN`; cada
+dispositivo Traccar debe tener el atributo `petcareOwnerId` igual al UUID de
+la cuenta PetCare autorizada. Si falta esa relación, la API rechaza la
+asociación/lectura de posiciones. R2 es opcional, pero se configura con las
+cuatro variables simultáneas y únicamente en API.
 
 ## 4. Ubicación y carga de archivos
 
@@ -141,7 +156,7 @@ Las clases de operación no son intercambiables:
 | Consulta de solo lectura | Lee catálogos, historial o datos; no debe contener DDL ni DML. | Confirmar base y permisos read-only. Una transacción marcada `READ ONLY` ayuda a impedir escrituras SQL, pero no sustituye la comprobación del destino. |
 | Consulta de escritura | Puede cambiar filas, secuencias u otro estado. | Solo sobre entorno autorizado; usar límites, transacción y revisión apropiados. |
 | Migración (`db:migrate`) | Ejecuta DDL de cada migración pendiente y registra checksum/historial. El runner usa advisory lock y transacciones por migración. | Operación de escritura. Confirmar destino y estado; nunca ejecutar casualmente contra producción. No editar una migración ya aplicada. |
-| Estado (`db:migrate:status`) | Lee historial y compara nombre/checksum, pero el runner también adquiere un advisory lock de PostgreSQL. | No es una consulta estrictamente de solo lectura sin efectos de sesión. Ejecutar solo con configuración/destino confirmados; una inspección SQL read-only autorizada es alternativa para una revisión sin lock del runner. |
+| Estado (`db:migrate:status`) | Lee historial y compara nombre/checksum, pero el runner también adquiere un advisory lock de PostgreSQL. | No ejecuta DDL/DML del proyecto, pero adquiere un lock de sesión. Ejecutar solo con configuración/destino confirmados; una inspección SQL read-only autorizada es alternativa si no se desea adquirirlo. |
 | Verificadores (`db:verify`, `db:verify:cursor`) | Insertan fixtures de usuarios/entidades, ejercitan restricciones/concurrencia y ejecutan limpieza o rollback; exigen `PETCARE_RUN_DB_CHECKS=1`. | Son pruebas con escritura, aunque intenten limpiar los fixtures. Solo en base desechable, nunca en producción ni en Neon compartido sin aprobación expresa. |
 
 El estado reportado en [verificación Neon Fase 4.3](../sync/phase-4-3-neon-verification.md)
@@ -158,24 +173,18 @@ versiones aplicadas con checksums coincidentes. Esta actualización no modifica
 el informe histórico de Fase 4.3. La prueba de autenticación PostgreSQL sigue
 pendiente de ejecutarse en una base desechable identificada como test.
 
-## 7. Preparación futura de KIRAI
+## 7. KIRAI y manejo de datos
 
-La integración de proveedores de IA aún no está configurada por variables en
-el código inspeccionado. Antes de implementarla:
+KIRAI funciona mediante Ollama detrás de la API. Las conversaciones y mensajes
+se persisten por propietario; los logs excluyen contenido, tokens y respuestas
+del modelo. Se envía al modelo contexto limitado de datos de la cuenta y del
+dispositivo autenticado. El proveedor debe permanecer en loopback del backend;
+no expongas el API Ollama a la red pública ni configures su URL en Expo.
 
-- Mantener todas las API keys exclusivamente en el backend.
-- No entregar claves al cliente Expo ni guardarlas en SQLite móvil.
-- Asignar credenciales distintas por desarrollo, pruebas, staging y
-  producción; proporcionar solo el mínimo permiso requerido.
-- Integrar proveedores detrás de una interfaz/adaptador del backend para que
-  cambiar de proveedor o configuración no requiera modificar el cliente móvil.
-- Definir nombres de variables, límites de uso, timeout, manejo de errores,
-  privacidad, retención y rotación en una decisión de implementación futura.
-- Mantener fuera del repositorio los valores de secretos y evitar incluirlos
-  en logs, respuestas de diagnóstico o reportes de error.
-
-Esta sección es preparación arquitectónica; no configura proveedores ni
-implementa KIRAI.
+Las respuestas pueden ser incorrectas y no constituyen diagnóstico ni
+prescripción veterinaria. Las funciones de salud urgente deben remitir a
+atención profesional. Para producción se requiere monitorizar disponibilidad,
+latencia/memoria del modelo, límites, privacidad y retención de conversaciones.
 
 ## Referencias del repositorio
 

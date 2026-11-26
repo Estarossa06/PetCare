@@ -10,6 +10,7 @@ import {
 import { apiClient, type AuthUser } from "./apiClient";
 import { authErrorMessage } from "./authErrorMessage";
 import { setActiveLocalAuthUserId } from "../../db/localAccount";
+import { deleteLocalAccountData } from "../../db/deleteLocalAccountData";
 import { subscribeToAppForegroundSync, synchronizePets, waitForPetSync } from "../sync/petSync";
 
 interface AuthContextValue {
@@ -21,6 +22,7 @@ interface AuthContextValue {
   register(email: string, password: string, name: string): Promise<void>;
   logout(): Promise<void>;
   finishDeactivatedAccount(): Promise<void>;
+  finishPermanentlyDeletedAccount(): Promise<boolean>;
   updateLocalUser(user: AuthUser): void;
   restore(): Promise<void>;
 }
@@ -105,6 +107,25 @@ export function AuthProvider({ children }: PropsWithChildren) {
     setUser(null);
   }, []);
 
+  const finishPermanentlyDeletedAccount = useCallback(async (): Promise<boolean> => {
+    await waitForPetSync();
+    let localDataRemoved = false;
+    try {
+      if (user?.id) {
+        await deleteLocalAccountData(user.id);
+        localDataRemoved = true;
+      }
+    } catch {
+      // The server request remains durable; report the local cleanup result to the caller.
+    } finally {
+      try { await apiClient.clearLocalSession(); } catch { /* Server sessions were already revoked. */ }
+      setActiveLocalAuthUserId(null);
+      setError(null);
+      setUser(null);
+    }
+    return localDataRemoved;
+  }, [user?.id]);
+
   const updateLocalUser = useCallback((updatedUser: AuthUser) => {
     setUser(updatedUser);
   }, []);
@@ -119,10 +140,11 @@ export function AuthProvider({ children }: PropsWithChildren) {
       register,
       logout,
       finishDeactivatedAccount,
+      finishPermanentlyDeletedAccount,
       updateLocalUser,
       restore,
     }),
-    [user, loading, error, login, register, logout, finishDeactivatedAccount, updateLocalUser, restore],
+    [user, loading, error, login, register, logout, finishDeactivatedAccount, finishPermanentlyDeletedAccount, updateLocalUser, restore],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

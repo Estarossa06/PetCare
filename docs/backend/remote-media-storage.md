@@ -6,14 +6,14 @@ La app móvil y Web se comunican exclusivamente con la API de PetCare. La API tr
 
 En el entorno privado de la API se deben configurar conjuntamente:
 
-- `R2_ACCOUNT_ID`
+- `R2_ACCOUNT_ID` (the 32-character Cloudflare account ID; the matching canonical HTTPS R2 S3 endpoint is also accepted)
 - `R2_BUCKET`
 - `R2_ACCESS_KEY_ID`
 - `R2_SECRET_ACCESS_KEY`
 
 Crear el bucket sin acceso público y emitir un token limitado a ese bucket con permisos de lectura, escritura y listado necesarios para subir, bajar, borrar y limpiar huérfanos. No definir estas variables en `mobile/.env`, Expo ni en el bundle. Sin ellas la API permanece disponible, pero los endpoints de archivos responden `503 MEDIA_STORAGE_UNAVAILABLE`; no se finge que una subida tuvo éxito.
 
-No se proporciona conexión R2 ni se han usado credenciales reales en desarrollo o pruebas.
+La validación real anterior se realizó con credenciales privadas y un prefijo temporal. Esta auditoría no vuelve a consultar ni revelar valores de configuración. La disponibilidad actual de credenciales debe comprobarse en el entorno backend; la privacidad efectiva del bucket debe confirmarse en el panel de Cloudflare.
 
 ## API y controles
 
@@ -28,6 +28,6 @@ No se proporciona conexión R2 ni se han usado credenciales reales en desarrollo
 
 ## Validación realizada
 
-Las pruebas automatizadas usan un almacén en memoria y PostgreSQL desechable `petcare_test`. No verifican conectividad real a R2 ni sus permisos, CORS ni configuración de bucket. Antes de habilitarlo en un despliegue hay que crear/configurar el bucket privado y probar las variables en un entorno no productivo.
+Las pruebas automatizadas incluyen almacén en memoria y PostgreSQL desechable `petcare_test`. La ejecución real separada reportó transferencias autenticadas de imagen y PDF con comparación SHA-256, aislamiento, límites, reintento tras interrupción y tombstones contra Cloudflare R2. Esa evidencia no confirma la política de acceso público del bucket, CORS del panel ni el comportamiento físico de dispositivos. Verificar el bucket privado en Cloudflare antes de habilitarlo en un despliegue.
 
 Las imágenes se validan realmente. PDF se valida por cabecera, marca EOF y ausencia de datos finales ajenos, no con un parser PDF completo; DOCX valida estructura ZIP y partes XML principales pero no ejecuta macros. Para procesamiento antivirus/Content Disarm & Reconstruction se requiere un servicio adicional todavía no integrado.

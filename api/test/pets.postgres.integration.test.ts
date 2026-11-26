@@ -1,12 +1,12 @@
 import "dotenv/config";
 import assert from "node:assert/strict";
-import { createHash, randomUUID } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import { once } from "node:events";
 import { createServer, type Server } from "node:http";
 import test from "node:test";
 import { createApp } from "../src/app.js";
 import { createDatabasePool } from "../src/db/pool.js";
-import { migrations } from "../src/db/migrations/index.js";
+import { assertMigrationsApplied } from "./assertMigrations.js";
 import { PostgresAuthStore } from "../src/modules/auth/postgresAuthStore.js";
 import type { Logger } from "../src/observability/logger.js";
 import type { Pet } from "../src/modules/pets/types.js";
@@ -67,21 +67,7 @@ test(
       );
       assert.equal(databaseInfo.rows[0].database, "petcare_test");
 
-      const appliedResult = await pool.query<{
-        version: number;
-        name: string;
-        checksum: string;
-      }>("SELECT version, name, checksum FROM schema_migrations ORDER BY version");
-      const applied = new Map(appliedResult.rows.map((row) => [row.version, row]));
-      for (const migration of migrations) {
-        const row = applied.get(migration.version);
-        assert.ok(row, `Migration ${migration.version} is required for pet tests.`);
-        assert.equal(row.name, migration.name);
-        assert.equal(
-          row.checksum,
-          createHash("sha256").update(migration.up.toString()).digest("hex"),
-        );
-      }
+      await assertMigrationsApplied(pool, ["core"]);
 
       const app = createApp({
         config: { corsOrigins: [], accessTokenSecret },

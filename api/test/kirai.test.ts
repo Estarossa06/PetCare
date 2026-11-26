@@ -4,6 +4,7 @@ import { createServer, type Server } from "node:http";
 import test from "node:test";
 import express from "express";
 import { createApp } from "../src/app.js";
+import type { Queryable } from "../src/db/queryable.js";
 import {
   DEFAULT_KIRAI_OLLAMA_BASE_URL,
   DEFAULT_KIRAI_OLLAMA_MODEL,
@@ -221,7 +222,7 @@ async function listen(app: express.Express): Promise<{
   return { server, baseUrl: `http://127.0.0.1:${address.port}` };
 }
 
-async function createKiraiHarness(provider: ModelProvider) {
+async function createKiraiHarness(provider: ModelProvider, database: Queryable = { async query() { return { rows: [] }; } }) {
   const entries: LogFields[] = [];
   const logger: Logger = {
     info: (fields) => entries.push(fields),
@@ -230,7 +231,7 @@ async function createKiraiHarness(provider: ModelProvider) {
   const kiraiStore = new MemoryKiraiStore();
   const app = createApp({
     config: { corsOrigins: [], accessTokenSecret: routeSecret },
-    database: { query: async () => ({ rows: [] }) },
+    database,
     authStore: new MemoryAuthStore(),
     logger,
     kiraiProvider: provider,
@@ -279,6 +280,34 @@ async function createKiraiHarness(provider: ModelProvider) {
     },
   };
 }
+
+test("KIRAI reports a safe failure stage when remote context loading fails", async () => {
+  let generated = 0;
+  const database: Queryable = {
+    async query() { throw new Error("sensitive database host and credentials"); },
+  };
+  const harness = await createKiraiHarness({
+    async checkAvailability() {},
+    async generate() {
+      generated += 1;
+      return { message: { role: "assistant", content: "respuesta" } };
+    },
+  }, database);
+  try {
+    const accessToken = await harness.register("kirai-context-error@example.test");
+    const response = await harness.chat({ message: "Pregunta segura" }, accessToken);
+    assert.equal(response.status, 503);
+    assert.equal((await response.text()).includes("sensitive database"), false);
+    assert.equal(generated, 0);
+    const failure = harness.entries.find((entry) => entry.event === "kirai_generation_failed");
+    assert.equal(failure?.stage, "load_context");
+    assert.equal(JSON.stringify(harness.entries).includes("credentials"), false);
+  } finally {
+    const closed = once(harness.server, "close");
+    harness.server.close();
+    await closed;
+  }
+});
 
 test("KIRAI availability requires authentication and confirms the provider", async () => {
   let checks = 0;

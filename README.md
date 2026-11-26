@@ -1,310 +1,97 @@
 # PetCare
 
-**Plataforma multiplataforma para la gestión integral del cuidado de animales domésticos.**
+Aplicación móvil Expo para gestionar mascotas, historial de salud, cuidados y calendario. El cliente conserva datos por cuenta en SQLite; cuando hay conexión, la API autenticada sincroniza entidades y archivos con PostgreSQL y almacenamiento privado R2.
 
-PetCare es un proyecto de ingeniería de software orientado a centralizar la información y el seguimiento del cuidado de animales domésticos. Permite gestionar mascotas, historiales médicos, rutinas de cuidado, citas y recordatorios desde una aplicación multiplataforma.
-
-El proyecto utiliza una arquitectura *offline-first*, que permite realizar operaciones sobre los datos localmente y contempla su posterior sincronización con un servidor central.
-
-Además, incorpora el desarrollo de **KIRAI**, un asistente de inteligencia artificial especializado en el cuidado de animales domésticos, diseñado para proporcionar orientación informativa y acompañamiento a los usuarios.
-
----
-
-## Características principales
-
-- **Gestión de mascotas:** registro, consulta, edición y eliminación de perfiles.
-- **Historial médico:** organización de consultas, vacunas, desparasitaciones, medicamentos, tratamientos, cirugías, alergias, diagnósticos y exámenes.
-- **Rutinas de cuidado:** administración de actividades recurrentes y seguimiento de su ejecución.
-- **Calendario:** visualización y organización de eventos, citas y actividades.
-- **Recordatorios:** programación de notificaciones para actividades importantes.
-- **Persistencia local:** almacenamiento mediante SQLite para permitir el funcionamiento sin conexión.
-- **Sincronización:** arquitectura diseñada para sincronizar los datos locales con el servidor.
-- **KIRAI:** asistente de inteligencia artificial especializado en animales domésticos.
-
-## Arquitectura del sistema
-
-PetCare utiliza una arquitectura cliente-servidor compuesta por un cliente multiplataforma y un servicio API independiente.
+## Arquitectura actual
 
 ```text
-                         PETCARE
-                            |
-             +--------------+--------------+
-             |                             |
-       Cliente Expo                     API REST
-             |                             |
-      +------+------+               +------+------+
-      |             |               |             |
-   Android / iOS   Web         Autenticación   Lógica de
-      |             |               |           negocio
-      +------+------+               |             |
-             |                      |           KIRAI
-          SQLite                    |             |
-             |                      +------+------+
-      Cola de sincronización                |
-             |                         PostgreSQL
-             +-----------------------------|
-                                          Neon
+Android / iOS / Web
+   ├─ SQLite por cuenta, archivos locales y outbox
+   └─ HTTPS → API PetCare → PostgreSQL
+                         ├─ Ollama local: KIRAI y sugerencias visuales
+                         ├─ Cloudflare R2 privado: medios
+                         └─ Traccar: ubicación GPS (configuración externa)
 ```
 
-### Cliente multiplataforma
+El móvil no recibe credenciales PostgreSQL, Ollama, Traccar ni R2. `EXPO_PUBLIC_API_URL` es pública y se incorpora al bundle. Las notificaciones de calendario se programan localmente en cada dispositivo.
 
-Una única aplicación desarrollada con React Native, Expo, Expo Router y TypeScript permite construir las versiones de Android, iOS y Web.
+## Estado por función
 
-Las pantallas, la navegación y la lógica de negocio se comparten entre plataformas. Las diferencias específicas de cada sistema se aíslan mediante adaptadores.
-
-### Backend
-
-El backend centraliza la autenticación, las operaciones remotas, las reglas de negocio y el acceso a la base de datos.
-
-El cliente móvil y web no se conecta directamente a PostgreSQL. Todas las operaciones remotas se realizan mediante la API.
-
-### Persistencia de datos
-
-PetCare utiliza dos niveles de persistencia:
-
-| Componente | Tecnología | Responsabilidad |
+| Función | Estado del código | Evidencia y límite |
 |---|---|---|
-| Base de datos local | SQLite | Persistencia y operaciones sin conexión. |
-| Base de datos central | PostgreSQL (Neon) | Almacenamiento remoto y centralizado. |
-| Servicio de acceso | Node.js + Express | Comunicación con la base de datos central. |
+| Autenticación, sesión y guards | Implementados | API y pruebas de rutas; restaurar sesión requiere acceso a la API para renovar tokens. |
+| Mascotas y entidades de dominio | SQLite offline-first y protocolo push/pull implementados | Pruebas API/PostgreSQL y SQLite; completar piloto en dos dispositivos físicos. |
+| Fotografías y adjuntos | Cola local y transferencias API→R2 implementadas | Hay evidencia de integración R2 real previa; bucket privado debe confirmarse en el panel de Cloudflare. |
+| KIRAI | Chat persistente, contexto owner-scoped, reintentos idempotentes y Ollama implementados | Smoke real de Ollama y E2E con `petcare_test` pasan en este entorno; respuestas no son diagnósticos veterinarios. |
+| Identificación visual | API usa Ollama y validación de imagen | `qwen2.5vl:7b` está instalado localmente; la precisión es orientativa, no diagnóstico. |
+| GPS/Traccar | API autenticada, vínculo mascota/dispositivo y consulta de posición | Cliente ahora exige el atributo de Traccar `petcareOwnerId` que coincida con el usuario autenticado. Sin instancia y dispositivo asignado no hay integración física validada. |
+| Notificaciones | Programación/reconciliación local | Lógica automatizada probada; falta verificar entrega del sistema operativo en Android/iOS físicos. |
+| Web | Exportación Expo disponible | No es una PWA: no hay manifest instalable ni service worker/offline shell. |
 
-La estrategia *offline-first* utiliza almacenamiento local y una cola de operaciones pendientes para preparar la sincronización posterior.
+Consulta [límites de operación móvil](docs/backend/mobile-operation-boundaries.md), [estado actual](docs/audits/petcare-current-status.md), [configuración de entornos](docs/deployment/environment-configuration.md), [integraciones externas](docs/deployment/external-integrations.md) y [checklists físicos](docs/testing/mobile-physical-validation.md).
 
-**Estado actual:** la arquitectura de sincronización está diseñada, pero su implementación integral todavía está pendiente. Los cambios locales no se sincronizan automáticamente con Neon en esta etapa.
+### Funciones del producto
 
-## Tecnologías utilizadas
+- Perfiles de mascotas con historial de salud: consultas, vacunas, desparasitación, medicamentos, tratamientos, cirugías, alergias y exámenes.
+- Rutinas recurrentes, calendario y recordatorios locales.
+- Persistencia offline por cuenta y sincronización de cambios cuando la API está disponible.
+- Conversaciones KIRAI persistidas y aisladas por propietario. Su contexto autorizado no convierte sus respuestas en diagnóstico ni reemplaza atención veterinaria profesional.
 
-### Aplicación cliente
+### Tecnologías y límites de confianza
 
-- React Native
-- Expo
-- Expo Router
-- TypeScript
-- SQLite
-- Expo Notifications
-- Expo SecureStore
+El cliente usa React Native, Expo, Expo Router, TypeScript, SQLite, SecureStore y notificaciones locales. La API usa Node.js, Express, TypeScript y PostgreSQL; las operaciones remotas y el acceso a integraciones pasan por ella. Ollama ejecuta los modelos configurados en el entorno del backend; R2 conserva medios privados y Traccar aporta ubicaciones solo cuando se configura una instancia y dispositivo reales.
 
-### Backend
+La API autentica y limita los datos al usuario propietario. Contraseñas y tokens se gestionan en el backend; credenciales de base de datos, Ollama, Traccar y R2 nunca pertenecen al bundle móvil/web. Solo las variables `EXPO_PUBLIC_*` son públicas y deben tratarse como código descargable.
 
-- Node.js
-- Express
-- TypeScript
-- PostgreSQL
-- Neon
-- JSON Web Tokens (JWT)
-- Scrypt para el almacenamiento seguro de contraseñas
+La estructura y responsabilidades de módulos están descritas en [project-structure.md](docs/architecture/project-structure.md); el modelo de entidades en [data-model.md](docs/data-model.md), y las decisiones multiplataforma en [multiplatform-architecture.md](docs/multiplatform-architecture.md).
 
-### Inteligencia artificial
+## Configuración local
 
-- Ollama
-- Qwen3 8B como modelo local de prueba
-- Arquitectura independiente del proveedor de modelos
-- Contrato común para la comunicación con modelos de lenguaje
-- Reglas de seguridad y comportamiento del asistente
+Requisitos: Node.js compatible con Expo/TypeScript del lockfile, npm, PostgreSQL de desarrollo/pruebas, y Ollama si se ejecutan funciones de IA localmente.
 
-### Herramientas de desarrollo
+1. Instala dependencias dentro de `api/` y `mobile/` con `npm ci`.
+2. Copia `api/.env.example` a `api/.env` y completa valores locales. Nunca copies secretos a `mobile/.env` ni los imprimas.
+3. Configura `EXPO_PUBLIC_API_URL` en el entorno del cliente. En un teléfono debe ser una URL del equipo alcanzable desde la red del dispositivo; usa HTTPS fuera de desarrollo local.
+4. Configura y verifica la base antes de cualquier migración. Las pruebas PostgreSQL destructivas se limitan a una base desechable cuyo nombre exacto sea `petcare_test`.
+5. Para KIRAI se requiere Ollama disponible en el backend y el modelo definido por `KIRAI_OLLAMA_MODEL` (por defecto `qwen3:8b`). La identificación visual usa `PET_VISION_OLLAMA_MODEL` (por defecto `qwen2.5vl:7b`).
 
-- Visual Studio Code
-- Git
-- GitHub
-- npm
-- Expo Go
+Variables, valores por defecto y límites están listados por nombre en [environment-configuration.md](docs/deployment/environment-configuration.md) y `api/.env.example`; allí no deben añadirse secretos reales.
 
-## KIRAI — Asistente de inteligencia artificial
+## Scripts
 
-KIRAI es el componente de inteligencia artificial de PetCare. Su propósito es proporcionar orientación informativa sobre el cuidado de animales domésticos mediante una interfaz conversacional.
+Desde `api/`:
 
-Su arquitectura contempla:
-
-- Identidad y personalidad propias.
-- Instrucciones de comportamiento centralizadas.
-- Reglas de seguridad para evitar diagnósticos definitivos y recomendaciones médicas irresponsables.
-- Integración mediante proveedores intercambiables de modelos de lenguaje.
-- Ejecución local mediante Ollama durante la etapa inicial.
-
-### Estado de desarrollo
-
-| Fase | Descripción | Estado |
-|---|---|---|
-| 1 | Fundamentos del agente, identidad, instrucciones y seguridad. | Completada |
-| 2 | Integración del proveedor Ollama y pruebas con Qwen3 8B. | Completada |
-| 3 | Orquestador conversacional y gestión de contexto. | Pendiente |
-| 4 | Memoria persistente y contexto del usuario. | Pendiente |
-| 5 | Recuperación de información y herramientas controladas. | Pendiente |
-| 6 | Integración progresiva con los datos de PetCare. | Pendiente |
-
-El desarrollo de KIRAI busca mantener separada la lógica del agente de la implementación específica del modelo utilizado.
-
-Documentación: `docs/kirai/`
-
-## Estructura del proyecto
-
-```text
-PetCare/
-├── api/
-│   ├── src/
-│   │   ├── config/          # Configuración global
-│   │   ├── db/              # PostgreSQL y migraciones
-│   │   ├── middleware/      # Middleware HTTP común
-│   │   └── modules/         # Auth, mascotas, KIRAI y system
-│   └── test/                # Pruebas API
-├── mobile/
-│   ├── app/                 # Rutas Expo Router
-│   └── src/
-│       ├── features/        # Auth, mascotas, médico, cuidado,
-│       │                    # calendario, dashboard, perfil y previews
-│       ├── components/ui/   # UI compartida
-│       ├── db/              # SQLite y migraciones locales
-│       ├── devtools/        # Verificaciones locales
-│       ├── navigation/
-│       └── theme/
-├── docs/
-│   ├── architecture/
-│   ├── backend/
-│   ├── audits/
-│   ├── kirai/
-│   └── sync/
-└── README.md
-```
-
-Expo Router conserva las rutas públicas bajo `mobile/app/`; las pantallas, servicios, repositorios y tipos de cada dominio móvil se agrupan en `mobile/src/features/`. El backend organiza autenticación y mascotas en módulos separados; las migraciones permanecen en `api/src/db/migrations/`. La sincronización del backend aún no está implementada. Consulta la [estructura arquitectónica](docs/architecture/project-structure.md) para más detalle.
-
-## Configuración del entorno
-
-### Requisitos previos
-
-- Node.js y npm.
-- Git.
-- Expo CLI mediante `npx`.
-- Una instancia PostgreSQL o una base de datos Neon para el backend.
-- Ollama, si se desea ejecutar KIRAI localmente.
-
-### 1. Clonar el repositorio
-
-```bash
-git clone https://github.com/Estarossa06/PetCare.git
-cd PetCare
-```
-
-### 2. Configurar el backend
-
-```bash
-cd api
-npm install
-```
-
-Crear el archivo `api/.env` con las variables necesarias:
-
-```env
-NODE_ENV=development
-PORT=3000
-HOST=127.0.0.1
-
-DATABASE_URL=tu_conexion_postgresql
-
-AUTH_ACCESS_TOKEN_SECRET=tu_secreto_seguro
-
-CORS_ORIGINS=http://localhost:8081
-```
-
-Los valores son ejemplos de configuración y deben ajustarse al entorno de ejecución.
-
-**Consideraciones de seguridad:**
-
-- No subir archivos `.env` al repositorio.
-- No incluir credenciales de Neon en la aplicación móvil.
-- Utilizar secretos diferentes para desarrollo y producción.
-- Mantener las claves de proveedores de inteligencia artificial exclusivamente en el backend.
-
-### 3. Ejecutar las migraciones
-
-Desde el directorio `api/`:
-
-```bash
+```sh
+npm run dev
+npm run typecheck
+npm run build
+npm test
+npm run test:migration-lineage
 npm run db:migrate:status
-npm run db:migrate
 ```
 
-La variable `DATABASE_URL` debe estar configurada antes de ejecutar estos comandos.
+`npm run db:migrate` es una operación de escritura: confirma base, historial y respaldo antes de usarlo. No existe un script raíz de monorepo.
 
-### 4. Configurar la aplicación móvil
+Desde `mobile/`:
 
-```bash
-cd mobile
-npm install
-npx expo start
+```sh
+npm run start
+npm run android
+npm run ios
+npm run web
+npm run typecheck
+npm test
 ```
 
-Desde Expo se puede iniciar el entorno de desarrollo y seleccionar la plataforma disponible.
+Exportación Web estática: `npx expo export --platform web`. El resultado solo es un bundle web; no aporta instalación PWA, service worker, hosting, monitorización ni validación física.
 
-La URL de la API debe configurarse mediante la variable correspondiente al entorno del cliente:
+## Preparación de distribución
 
-```env
-EXPO_PUBLIC_API_URL=http://localhost:3000
-```
+Los identificadores están definidos como `com.petcare.mobile`. No hay `eas.json`, perfiles de EAS ni artefactos firmados en el repositorio. La primera publicación contempla Android y Web; iOS queda fuera de este alcance. Aún se requieren firma y revisión de permisos Android, hosting HTTPS con headers COOP/COEP para Web, política de privacidad/retención, monitorización de API/DB/Ollama/R2/Traccar y smoke tests de cada artefacto. No se afirma preparación para producción hasta completar esos pasos.
 
-En dispositivos físicos, `localhost` debe sustituirse por la dirección IP local del equipo que ejecuta la API.
+## Documentación
 
-## Estado actual del desarrollo
-
-PetCare se desarrolla de manera incremental. Las funcionalidades se implementan y verifican por etapas.
-
-| Componente | Estado |
-|---|---|
-| Arquitectura general | Definida |
-| Interfaz y navegación multiplataforma | Implementadas inicialmente |
-| Gestión de mascotas | Implementada con persistencia local |
-| Historial médico | Implementado con persistencia local |
-| Rutinas de cuidado | Implementadas inicialmente |
-| Calendario y recordatorios | Implementados inicialmente |
-| Persistencia SQLite | Implementada y verificada en Web y Android |
-| Backend Express | API con autenticación PostgreSQL y endpoints de sistema |
-| Autenticación | Implementada y probada con PostgreSQL en base de pruebas |
-| Migraciones PostgreSQL | 0001–0004 aplicadas; checksums verificados |
-| Sincronización local-remota | Diseño aprobado; implementación pendiente |
-| KIRAI — fundamentos | Completados |
-| KIRAI — proveedor Ollama | Integrado y probado |
-| KIRAI — orquestador conversacional | Pendiente |
-
-### Validaciones pendientes
-
-- Validación nativa completa en iOS.
-- Verificación de notificaciones en dispositivos físicos.
-- Validación del alojamiento Web con las cabeceras de aislamiento requeridas.
-- Implementación y pruebas integrales del sistema de sincronización.
-- Integración progresiva de KIRAI con el contexto y los datos de PetCare.
-
-**Nota:** la ruta `app/database-verification.tsx` conserva temporalmente una pantalla de diagnóstico de SQLite. No es la pantalla de inicio del producto.
-
-## Documentación técnica
-
-La documentación se mantiene separada del código fuente para facilitar su consulta y evolución.
-
-| Documento | Descripción |
-|---|---|
-| `docs/database-setup.md` | Configuración de las bases de datos. |
-| `docs/backend/authentication.md` | Rutas y autenticación persistente del backend. |
-| `docs/data-model.md` | Modelo de datos. |
-| `docs/multiplatform-architecture.md` | Arquitectura multiplataforma. |
-| `docs/architecture/project-structure.md` | Organización modular del repositorio. |
-| `docs/persistence-phase-2.md` | Alcance de la segunda fase de persistencia. |
-| `docs/persistence-verification.md` | Informe de verificación de persistencia. |
-| `docs/architecture/database-decision.md` | Decisiones sobre la arquitectura de bases de datos. |
-| `docs/deployment/environment-configuration.md` | Configuración de entornos. |
-| `docs/kirai/` | Documentación del desarrollo de KIRAI. |
-| `docs/sync/` | Diseño y planificación de sincronización. |
-
-## Seguridad
-
-- La API es el único componente autorizado para acceder a Neon.
-- Las operaciones remotas deben estar autenticadas y restringidas al propietario de los datos.
-- Las contraseñas se almacenan mediante funciones de derivación seguras.
-- Los tokens de actualización se gestionan mediante rotación.
-- Las credenciales y secretos no deben almacenarse en el cliente ni publicarse en Git.
-- KIRAI debe respetar sus límites de seguridad y no sustituir la valoración de un profesional veterinario.
-
-## Objetivo del proyecto
-
-Construir una plataforma escalable y multiplataforma que facilite la administración del cuidado de animales domésticos, integrando persistencia *offline-first*, sincronización de información y asistencia mediante inteligencia artificial.
-
-PetCare se desarrolla de forma incremental, priorizando la comprensión de cada componente, la validación técnica y la documentación de las decisiones de arquitectura.
+- `docs/sync/phase-4-audit.md` es un diagnóstico histórico y fue superado por la implementación de sync descrita en `docs/backend/mobile-operation-boundaries.md`.
+- Arquitectura, migraciones, medios, cuenta y KIRAI están documentados en `docs/`.
+- SBOM npm y auditorías de vulnerabilidades están en `docs/audits/`; el BOM separado de modelos lista artifacts externos a npm.
+- El estado de la candidata y el manifiesto de release están en [`docs/deployment/release-manifest.md`](docs/deployment/release-manifest.md).

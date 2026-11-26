@@ -6,7 +6,7 @@ import { createServer, type Server } from "node:http";
 import test from "node:test";
 import { createApp } from "../src/app.js";
 import { createDatabasePool } from "../src/db/pool.js";
-import { migrations } from "../src/db/migrations/index.js";
+import { assertMigrationsApplied } from "./assertMigrations.js";
 import { PostgresAuthStore } from "../src/modules/auth/postgresAuthStore.js";
 import type { Logger } from "../src/observability/logger.js";
 
@@ -23,8 +23,7 @@ test("PostgreSQL domain sync persists all requested entities with owner isolatio
   const pool=createDatabasePool(url!), run=randomUUID(), emails=[`domain-${run}-a@test.invalid`,`domain-${run}-b@test.invalid`];let server:Server|undefined,started=false;
   try{
     assert.equal((await pool.query<{name:string}>("SELECT current_database() AS name")).rows[0].name,"petcare_test");
-    const applied=await pool.query<{version:number;name:string}>("SELECT version,name FROM schema_migrations");
-    for(const m of migrations)assert.ok(applied.rows.some(x=>x.version===m.version&&x.name===m.name),`Migration ${m.version} is not applied.`);
+    await assertMigrationsApplied(pool,["domain_sync_entities"]);
     server=createServer(createApp({config:{corsOrigins:[],accessTokenSecret:secret},database:pool,authStore:new PostgresAuthStore(pool),logger}));server.listen(0,"127.0.0.1");await once(server,"listening");
     const address=server.address();assert.ok(address&&typeof address!=="string");const base=`http://127.0.0.1:${address.port}`;started=true;
     const a=await register(base,emails[0]),b=await register(base,emails[1]),deviceA=randomUUID(),deviceB=randomUUID();

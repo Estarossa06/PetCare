@@ -105,6 +105,7 @@ export function createKiraiRouter(
       const principal = requirePrincipal(request);
       const conversationId = chatRequest.conversationId ?? randomUUID();
       const requestId = chatRequest.requestId ?? randomUUID();
+      let generationStage: "load_context" | "generate_answer" | "persist_answer" = "load_context";
       let prepared: Awaited<ReturnType<KiraiStore["prepareRequest"]>>;
       try {
         prepared = await store.prepareRequest({
@@ -137,7 +138,9 @@ export function createKiraiRouter(
           store.conversationHistory(principal.userId, prepared.conversationId, prepared.message),
         ]);
         const contextText = buildPetContextText(remoteContext, chatRequest.localContext);
+        generationStage = "generate_answer";
         const result = await service.answer(prepared.message.content, history, contextText);
+        generationStage = "persist_answer";
         const answer = await store.saveAnswer(principal.userId, prepared.message, result.answer, result.truncated);
         response.status(200).json(chatResult(prepared.conversationId, prepared.message, answer));
       } catch (error) {
@@ -148,6 +151,7 @@ export function createKiraiRouter(
           requestId: String(response.getHeader("X-Request-Id") ?? ""),
           code:
             error instanceof OllamaProviderError ? error.code : "unexpected",
+          stage: generationStage,
         });
         response.status(503).json({
           error: {

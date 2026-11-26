@@ -139,10 +139,10 @@ export class AuthService {
     await this.store.deactivateUser(principal.userId);
   }
 
-  async requestPermanentDeletion(principal: Principal, input: unknown): Promise<void> {
+  async requestPermanentDeletion(principal: Principal, input: unknown): Promise<{ requestId: string }> {
     const currentPassword = validateCurrentPassword(input);
     await this.verifyCurrentPassword(principal.userId, currentPassword);
-    await this.store.requestPermanentDeletion(principal.userId);
+    return this.store.requestPermanentDeletion(principal.userId);
   }
 
   private async verifyCurrentPassword(userId: string, password: string): Promise<void> {

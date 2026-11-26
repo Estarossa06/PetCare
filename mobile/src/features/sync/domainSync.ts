@@ -2,7 +2,7 @@ import * as Crypto from "expo-crypto";
 import { getPetCareDatabase } from "../../db/database";
 import { getActiveLocalAuthUserId, getLocalAccountId, withLocalWriteTransaction } from "../../db/localAccount";
 import { apiClient } from "../auth/apiClient";
-import { retryDelayMilliseconds } from "./petSyncPolicy";
+import { scheduleDomainRetry, selectReadyQueueOperations } from "./domainQueueState";
 import { calendarRepository } from "../calendar/calendarRepository";
 import { refreshTarget } from "../calendar/calendarService";
 import { syncCalendarNotification } from "../calendar/calendarNotifications";
@@ -43,12 +43,10 @@ async function pending(localId:string):Promise<Array<Queue & {depends_on:string[
   const db=await getPetCareDatabase(), now=new Date().toISOString();
   const rows=await db.getAllAsync<Queue>(`SELECT operation_id,entity_type,entity_id,action,payload,base_version,local_revision,changed_fields,attempt_count FROM sync_queue WHERE account_id=? AND entity_type IN ('health_record','care_task','care_execution','appointment','calendar_event','calendar_reminder') AND status='pending' AND (next_retry_at IS NULL OR next_retry_at<=?) ORDER BY created_at,rowid LIMIT 500`,localId,now);
   const edges=await db.getAllAsync<{operation_id:string;depends_on_operation_id:string}>("SELECT operation_id,depends_on_operation_id FROM sync_queue_dependencies WHERE account_id=?",localId);
-  const candidates=new Map(rows.map(r=>[r.operation_id,r])), by=new Map<string,string[]>();
-  for(const e of edges)by.set(e.operation_id,[...(by.get(e.operation_id)??[]),e.depends_on_operation_id]);
-  const selected=new Set<string>(), out:Array<Queue&{depends_on:string[]}>=[];
-  let progress=true;
-  while(progress&&out.length<50){progress=false;for(const row of rows){if(selected.has(row.operation_id))continue;const deps=by.get(row.operation_id)??[];if(deps.some(d=>candidates.has(d)&&!selected.has(d)))continue;selected.add(row.operation_id);out.push({...row,depends_on:deps});progress=true;if(out.length===50)break;}}
-  return out;
+  const ready=selectReadyQueueOperations(rows,edges,50);
+  const by=new Map<string,string[]>();
+  for(const edge of edges)by.set(edge.operation_id,[...(by.get(edge.operation_id)??[]),edge.depends_on_operation_id]);
+  return ready.map(row=>({...row,depends_on:by.get(row.operation_id)??[]}));
 }
 
 async function applyResults(authId:string,localId:string,results:Result[]):Promise<void>{
@@ -116,8 +114,8 @@ export async function synchronizeDomainEntities(deviceId:string,authId:string,lo
   if(ops.length){await db.execAsync("BEGIN IMMEDIATE");try{for(const op of ops)await db.runAsync("UPDATE sync_queue SET status='in_flight',updated_at=? WHERE account_id=? AND operation_id=? AND status='pending'",new Date().toISOString(),localId,op.operation_id);await db.execAsync("COMMIT");}catch(e){await db.execAsync("ROLLBACK");throw e;}
     try{
       const response=await apiClient.request<{results:Result[]}>('/sync/v1/domain/push',{method:'POST',authenticated:true,body:{protocol_version:1,device_id:deviceId,batch_id:Crypto.randomUUID().toLowerCase(),operations:ops.map(o=>({operation_id:o.operation_id,entity_type:o.entity_type,entity_id:o.entity_id,action:o.action,base_version:o.base_version,local_revision:o.local_revision,depends_on:o.depends_on,changed_fields:JSON.parse(o.changed_fields),payload:syncPayload(o.entity_type,o.payload)}))}});
-      await applyResults(authId,localId,response.results);const seen=new Set(response.results.map(r=>r.operation_id));for(const o of ops)if(!seen.has(o.operation_id))await retry(o);
-    }catch(e){for(const o of ops)await retry(o);throw e;}
+      await applyResults(authId,localId,response.results);const seen=new Set(response.results.map(r=>r.operation_id));for(const o of ops)if(!seen.has(o.operation_id))await retry(o,localId);
+    }catch(e){for(const o of ops)await retry(o,localId);throw e;}
   }
   const cursorRow=await db.getFirstAsync<{domain_download_cursor:number}>('SELECT domain_download_cursor FROM sync_metadata WHERE account_id=?',localId);let cursor=cursorRow?.domain_download_cursor??0;
   for(let i=0;i<100;i++){
@@ -129,4 +127,4 @@ export async function synchronizeDomainEntities(deviceId:string,authId:string,lo
   await apiClient.request('/sync/v1/ack',{method:'POST',authenticated:true,body:{device_id:deviceId,cursor:String(saved?.domain_download_cursor??0)}});
 }
 
-async function retry(op:Queue):Promise<void>{const db=await getPetCareDatabase(),attempt=op.attempt_count+1;await db.runAsync("UPDATE sync_queue SET status='pending',attempt_count=?,next_retry_at=?,last_error='NETWORK_OR_SERVER_UNAVAILABLE',updated_at=? WHERE operation_id=? AND status='in_flight'",attempt,new Date(Date.now()+retryDelayMilliseconds(attempt)).toISOString(),new Date().toISOString(),op.operation_id);}
+async function retry(op:Queue,accountId:string):Promise<void>{const db=await getPetCareDatabase();await scheduleDomainRetry(db,accountId,op.operation_id,op.attempt_count);}

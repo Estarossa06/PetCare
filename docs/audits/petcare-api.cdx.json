@@ -1,20 +1,654 @@
 {
-  "$schema": "http://cyclonedx.org/schema/bom-1.5.schema.json",
+  "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
   "bomFormat": "CycloneDX",
-  "specVersion": "1.5",
+  "specVersion": "1.6",
   "version": 1,
+  "serialNumber": "urn:uuid:58c04009-9eba-4e48-86e8-0759c05fbd14",
   "metadata": {
+    "timestamp": "2026-11-25T22:25:42.727Z",
     "component": {
       "type": "application",
       "name": "petcare-api",
-      "version": "unversioned"
+      "version": "unversioned",
+      "bom-ref": "pkg:npm/petcare-api@unversioned"
     }
   },
   "components": [
     {
       "type": "library",
+      "name": "@aws-sdk/checksums",
+      "version": "3.1002.6",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fchecksums@3.1002.6",
+      "purl": "pkg:npm/@aws-sdk/checksums@3.1002.6",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "3a0c6013ae0c907346b6ded825cd90f9dd666869d8704902c39afe50eedc33bf22573c8c8571553209b9ba7d456739385c1f25bf8dfacd876e2162c7f626dd06"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@aws-sdk/checksums"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@aws-sdk/client-s3",
+      "version": "3.1176.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fclient-s3@3.1176.0",
+      "purl": "pkg:npm/@aws-sdk/client-s3@3.1176.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "643d13ff7e11c7c732085eca8d3f43a4a6de7948cfbdd0d381c3b3767fcd38740843719d31cecd21d7de6b7194048fab15ac6f94bb10e1ab95d5e351f29be401"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@aws-sdk/client-s3"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@aws-sdk/core",
+      "version": "3.981.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcore@3.981.1",
+      "purl": "pkg:npm/@aws-sdk/core@3.981.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "b0446d25a663cef05d14c9b6b9e8b89345b03cd509b48acc047f61d00130ec6d0a92121b9cdddee597301a36d5282951fabac90a6c8bd6386d5e4b1e13b0d4e0"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@aws-sdk/core"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@aws-sdk/credential-provider-env",
+      "version": "3.972.85",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcredential-provider-env@3.972.85",
+      "purl": "pkg:npm/@aws-sdk/credential-provider-env@3.972.85",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "22421f1569836d4c8311d359a7200c983dc68afae6d7523d52ba9b8262eed6450bfe887de9032a6dfb8771b1f4f04ae78193c3090dbeedf5b7538aff5b69365e"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@aws-sdk/credential-provider-env"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@aws-sdk/credential-provider-http",
+      "version": "3.972.87",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcredential-provider-http@3.972.87",
+      "purl": "pkg:npm/@aws-sdk/credential-provider-http@3.972.87",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "35640d99f9a5944356d533a931f84465e47312f6d2685b12e72adbd93649d30bbe7d52f98725527c654b77c1d359bd941020f66c2c3f9035da03a751d5525fde"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@aws-sdk/credential-provider-http"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@aws-sdk/credential-provider-ini",
+      "version": "3.973.31",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcredential-provider-ini@3.973.31",
+      "purl": "pkg:npm/@aws-sdk/credential-provider-ini@3.973.31",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "2ba8e468a6806959fda8097f235e25cc31e76161e211293160b9e63d89c983739f4d1b56cf7f4d7aba62750233a9b329a04fe9985aa181227e4b1fe3d7efbcb0"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@aws-sdk/credential-provider-ini"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@aws-sdk/credential-provider-login",
+      "version": "3.972.93",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcredential-provider-login@3.972.93",
+      "purl": "pkg:npm/@aws-sdk/credential-provider-login@3.972.93",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "2687f114a2723462dcf4c98530acbfbe68d5c2f34858a36f1ce7fcae45e1787f71e3e589a487b1864d5ca9b9b15a4a1d0d802876a19388211d04056e8b21f488"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@aws-sdk/credential-provider-login"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@aws-sdk/credential-provider-node",
+      "version": "3.972.98",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcredential-provider-node@3.972.98",
+      "purl": "pkg:npm/@aws-sdk/credential-provider-node@3.972.98",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "12944be98c12aaf365323bd19b0476a377b157a0da1134dd696af553b7d9e39e8b41e2ba12b39296e73a996318f8e8e4ac15452b83e0ad4e0d9444574dc8332a"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@aws-sdk/credential-provider-node"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@aws-sdk/credential-provider-process",
+      "version": "3.972.85",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcredential-provider-process@3.972.85",
+      "purl": "pkg:npm/@aws-sdk/credential-provider-process@3.972.85",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "d7d91cdf18fac2847735bd8d585c68c119029ee478de33057132cb2c2aa4cc1feb3f1c44d7e35f1e700fe5fa5782b238c514600f3bd67834448e11ab271a9fc4"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@aws-sdk/credential-provider-process"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@aws-sdk/credential-provider-sso",
+      "version": "3.973.29",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcredential-provider-sso@3.973.29",
+      "purl": "pkg:npm/@aws-sdk/credential-provider-sso@3.973.29",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "0c9b8a22cd1b9f93195dce6e135b1ffd1ebb6150b88af1672ff75b287ba485d6f907a172f3493cfc1aa24329335c4aa84ffaa54906aa617536f61a950188dcb2"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@aws-sdk/credential-provider-sso"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@aws-sdk/credential-provider-web-identity",
+      "version": "3.972.91",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcredential-provider-web-identity@3.972.91",
+      "purl": "pkg:npm/@aws-sdk/credential-provider-web-identity@3.972.91",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "e24e1b7964a4c61c0a7863157e0a69bff2f009f09dd7303271682aa29ec61e476f74d2bd4d39169f6f7d2e35103a00cc7c15f64afd3cb7e27598058a1dab6db7"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@aws-sdk/credential-provider-web-identity"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@aws-sdk/middleware-sdk-s3",
+      "version": "3.972.91",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fmiddleware-sdk-s3@3.972.91",
+      "purl": "pkg:npm/@aws-sdk/middleware-sdk-s3@3.972.91",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "2f8ad8f68e22f393ff509f2b1a21c7e09602fcf9c5c1d01b0ab5c0b37835502c67cab9ca6e8626e9b960c77f316cecd5699d6876992b05194c34c588f9a4df82"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@aws-sdk/middleware-sdk-s3"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@aws-sdk/nested-clients",
+      "version": "3.998.4",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fnested-clients@3.998.4",
+      "purl": "pkg:npm/@aws-sdk/nested-clients@3.998.4",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "f15ce0ddef626ba787412b67a129f5edab113561eb7ffa33810b252cc18e74ce4989fc95f80024d7e960557710326af3811851f6985150417100e83f70187b31"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@aws-sdk/nested-clients"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@aws-sdk/signature-v4-multi-region",
+      "version": "3.996.52",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fsignature-v4-multi-region@3.996.52",
+      "purl": "pkg:npm/@aws-sdk/signature-v4-multi-region@3.996.52",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "e96e928c673c3975213333715355fddb68210fe3cfd57bf398293949cba2d23698b0b7b3c9c31847545a2e9e714c8394ae14d7c9be039c06cfaf77c1826767ce"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@aws-sdk/signature-v4-multi-region"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@aws-sdk/token-providers",
+      "version": "3.1175.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Ftoken-providers@3.1175.0",
+      "purl": "pkg:npm/@aws-sdk/token-providers@3.1175.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "8ab760f7098a8d30ee996a1979720cdde7207eb8871049b4434e5b8e21f018d4425d77b1cfee6ba0c4b6f08cca5842c8e505ff5d98cbd6fbef688ca9b6509f01"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@aws-sdk/token-providers"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@aws-sdk/types",
+      "version": "3.975.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Ftypes@3.975.1",
+      "purl": "pkg:npm/@aws-sdk/types@3.975.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "eeb1b1524081d903e840e7899a89e6008093376ceb1fe7e99a2d69e08c2eef6967c4d68c84e82a71ba7275d89f9ccd4305bd7d4d6435bbacff5e391a14d1035b"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@aws-sdk/types"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@aws-sdk/xml-builder",
+      "version": "3.972.43",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fxml-builder@3.972.43",
+      "purl": "pkg:npm/@aws-sdk/xml-builder@3.972.43",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "ac6f10571e033ab256a6db2882ed40abe083b273ca681ac0949a4a2f1ac9ac80d702ad449675b4c908e3067956497965d1c0da9021ba503bdaab0cf403d77d3a"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@aws-sdk/xml-builder"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@aws/lambda-invoke-store",
+      "version": "0.3.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40aws%2Flambda-invoke-store@0.3.0",
+      "purl": "pkg:npm/@aws/lambda-invoke-store@0.3.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "b25e019baca230d62b64a92aa8315637451f9d68654bc8af2b1ad897eeadd2008baeaafccb707622a6596c54647da555a7b0bf6da029ca1ef53fe2de135036b1"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@aws/lambda-invoke-store"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "@emnapi/runtime",
       "version": "1.11.3",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40emnapi%2Fruntime@1.11.3",
       "purl": "pkg:npm/@emnapi/runtime@1.11.3",
       "licenses": [
         {
@@ -55,6 +689,7 @@
       "type": "library",
       "name": "@esbuild/aix-ppc64",
       "version": "0.28.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Faix-ppc64@0.28.2",
       "purl": "pkg:npm/@esbuild/aix-ppc64@0.28.2",
       "licenses": [
         {
@@ -95,6 +730,7 @@
       "type": "library",
       "name": "@esbuild/android-arm",
       "version": "0.28.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Fandroid-arm@0.28.2",
       "purl": "pkg:npm/@esbuild/android-arm@0.28.2",
       "licenses": [
         {
@@ -135,6 +771,7 @@
       "type": "library",
       "name": "@esbuild/android-arm64",
       "version": "0.28.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Fandroid-arm64@0.28.2",
       "purl": "pkg:npm/@esbuild/android-arm64@0.28.2",
       "licenses": [
         {
@@ -175,6 +812,7 @@
       "type": "library",
       "name": "@esbuild/android-x64",
       "version": "0.28.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Fandroid-x64@0.28.2",
       "purl": "pkg:npm/@esbuild/android-x64@0.28.2",
       "licenses": [
         {
@@ -215,6 +853,7 @@
       "type": "library",
       "name": "@esbuild/darwin-arm64",
       "version": "0.28.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Fdarwin-arm64@0.28.2",
       "purl": "pkg:npm/@esbuild/darwin-arm64@0.28.2",
       "licenses": [
         {
@@ -255,6 +894,7 @@
       "type": "library",
       "name": "@esbuild/darwin-x64",
       "version": "0.28.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Fdarwin-x64@0.28.2",
       "purl": "pkg:npm/@esbuild/darwin-x64@0.28.2",
       "licenses": [
         {
@@ -295,6 +935,7 @@
       "type": "library",
       "name": "@esbuild/freebsd-arm64",
       "version": "0.28.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Ffreebsd-arm64@0.28.2",
       "purl": "pkg:npm/@esbuild/freebsd-arm64@0.28.2",
       "licenses": [
         {
@@ -335,6 +976,7 @@
       "type": "library",
       "name": "@esbuild/freebsd-x64",
       "version": "0.28.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Ffreebsd-x64@0.28.2",
       "purl": "pkg:npm/@esbuild/freebsd-x64@0.28.2",
       "licenses": [
         {
@@ -375,6 +1017,7 @@
       "type": "library",
       "name": "@esbuild/linux-arm",
       "version": "0.28.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Flinux-arm@0.28.2",
       "purl": "pkg:npm/@esbuild/linux-arm@0.28.2",
       "licenses": [
         {
@@ -415,6 +1058,7 @@
       "type": "library",
       "name": "@esbuild/linux-arm64",
       "version": "0.28.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Flinux-arm64@0.28.2",
       "purl": "pkg:npm/@esbuild/linux-arm64@0.28.2",
       "licenses": [
         {
@@ -455,6 +1099,7 @@
       "type": "library",
       "name": "@esbuild/linux-ia32",
       "version": "0.28.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Flinux-ia32@0.28.2",
       "purl": "pkg:npm/@esbuild/linux-ia32@0.28.2",
       "licenses": [
         {
@@ -495,6 +1140,7 @@
       "type": "library",
       "name": "@esbuild/linux-loong64",
       "version": "0.28.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Flinux-loong64@0.28.2",
       "purl": "pkg:npm/@esbuild/linux-loong64@0.28.2",
       "licenses": [
         {
@@ -535,6 +1181,7 @@
       "type": "library",
       "name": "@esbuild/linux-mips64el",
       "version": "0.28.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Flinux-mips64el@0.28.2",
       "purl": "pkg:npm/@esbuild/linux-mips64el@0.28.2",
       "licenses": [
         {
@@ -575,6 +1222,7 @@
       "type": "library",
       "name": "@esbuild/linux-ppc64",
       "version": "0.28.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Flinux-ppc64@0.28.2",
       "purl": "pkg:npm/@esbuild/linux-ppc64@0.28.2",
       "licenses": [
         {
@@ -615,6 +1263,7 @@
       "type": "library",
       "name": "@esbuild/linux-riscv64",
       "version": "0.28.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Flinux-riscv64@0.28.2",
       "purl": "pkg:npm/@esbuild/linux-riscv64@0.28.2",
       "licenses": [
         {
@@ -655,6 +1304,7 @@
       "type": "library",
       "name": "@esbuild/linux-s390x",
       "version": "0.28.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Flinux-s390x@0.28.2",
       "purl": "pkg:npm/@esbuild/linux-s390x@0.28.2",
       "licenses": [
         {
@@ -695,6 +1345,7 @@
       "type": "library",
       "name": "@esbuild/linux-x64",
       "version": "0.28.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Flinux-x64@0.28.2",
       "purl": "pkg:npm/@esbuild/linux-x64@0.28.2",
       "licenses": [
         {
@@ -735,6 +1386,7 @@
       "type": "library",
       "name": "@esbuild/netbsd-arm64",
       "version": "0.28.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Fnetbsd-arm64@0.28.2",
       "purl": "pkg:npm/@esbuild/netbsd-arm64@0.28.2",
       "licenses": [
         {
@@ -775,6 +1427,7 @@
       "type": "library",
       "name": "@esbuild/netbsd-x64",
       "version": "0.28.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Fnetbsd-x64@0.28.2",
       "purl": "pkg:npm/@esbuild/netbsd-x64@0.28.2",
       "licenses": [
         {
@@ -815,6 +1468,7 @@
       "type": "library",
       "name": "@esbuild/openbsd-arm64",
       "version": "0.28.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Fopenbsd-arm64@0.28.2",
       "purl": "pkg:npm/@esbuild/openbsd-arm64@0.28.2",
       "licenses": [
         {
@@ -855,6 +1509,7 @@
       "type": "library",
       "name": "@esbuild/openbsd-x64",
       "version": "0.28.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Fopenbsd-x64@0.28.2",
       "purl": "pkg:npm/@esbuild/openbsd-x64@0.28.2",
       "licenses": [
         {
@@ -895,6 +1550,7 @@
       "type": "library",
       "name": "@esbuild/openharmony-arm64",
       "version": "0.28.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Fopenharmony-arm64@0.28.2",
       "purl": "pkg:npm/@esbuild/openharmony-arm64@0.28.2",
       "licenses": [
         {
@@ -935,6 +1591,7 @@
       "type": "library",
       "name": "@esbuild/sunos-x64",
       "version": "0.28.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Fsunos-x64@0.28.2",
       "purl": "pkg:npm/@esbuild/sunos-x64@0.28.2",
       "licenses": [
         {
@@ -975,6 +1632,7 @@
       "type": "library",
       "name": "@esbuild/win32-arm64",
       "version": "0.28.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Fwin32-arm64@0.28.2",
       "purl": "pkg:npm/@esbuild/win32-arm64@0.28.2",
       "licenses": [
         {
@@ -1015,6 +1673,7 @@
       "type": "library",
       "name": "@esbuild/win32-ia32",
       "version": "0.28.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Fwin32-ia32@0.28.2",
       "purl": "pkg:npm/@esbuild/win32-ia32@0.28.2",
       "licenses": [
         {
@@ -1055,6 +1714,7 @@
       "type": "library",
       "name": "@esbuild/win32-x64",
       "version": "0.28.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Fwin32-x64@0.28.2",
       "purl": "pkg:npm/@esbuild/win32-x64@0.28.2",
       "licenses": [
         {
@@ -1089,6 +1749,7 @@
       "type": "library",
       "name": "@img/colour",
       "version": "1.1.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fcolour@1.1.0",
       "purl": "pkg:npm/@img/colour@1.1.0",
       "licenses": [
         {
@@ -1123,6 +1784,7 @@
       "type": "library",
       "name": "@img/sharp-darwin-arm64",
       "version": "0.35.5",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-darwin-arm64@0.35.5",
       "purl": "pkg:npm/@img/sharp-darwin-arm64@0.35.5",
       "licenses": [
         {
@@ -1163,6 +1825,7 @@
       "type": "library",
       "name": "@img/sharp-darwin-x64",
       "version": "0.35.5",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-darwin-x64@0.35.5",
       "purl": "pkg:npm/@img/sharp-darwin-x64@0.35.5",
       "licenses": [
         {
@@ -1203,6 +1866,7 @@
       "type": "library",
       "name": "@img/sharp-freebsd-wasm32",
       "version": "0.35.5",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-freebsd-wasm32@0.35.5",
       "purl": "pkg:npm/@img/sharp-freebsd-wasm32@0.35.5",
       "licenses": [
         {
@@ -1243,6 +1907,7 @@
       "type": "library",
       "name": "@img/sharp-libvips-darwin-arm64",
       "version": "1.3.4",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-libvips-darwin-arm64@1.3.4",
       "purl": "pkg:npm/@img/sharp-libvips-darwin-arm64@1.3.4",
       "licenses": [
         {
@@ -1283,6 +1948,7 @@
       "type": "library",
       "name": "@img/sharp-libvips-darwin-x64",
       "version": "1.3.4",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-libvips-darwin-x64@1.3.4",
       "purl": "pkg:npm/@img/sharp-libvips-darwin-x64@1.3.4",
       "licenses": [
         {
@@ -1323,6 +1989,7 @@
       "type": "library",
       "name": "@img/sharp-libvips-linux-arm",
       "version": "1.3.4",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-libvips-linux-arm@1.3.4",
       "purl": "pkg:npm/@img/sharp-libvips-linux-arm@1.3.4",
       "licenses": [
         {
@@ -1363,6 +2030,7 @@
       "type": "library",
       "name": "@img/sharp-libvips-linux-arm64",
       "version": "1.3.4",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-libvips-linux-arm64@1.3.4",
       "purl": "pkg:npm/@img/sharp-libvips-linux-arm64@1.3.4",
       "licenses": [
         {
@@ -1403,6 +2071,7 @@
       "type": "library",
       "name": "@img/sharp-libvips-linux-ppc64",
       "version": "1.3.4",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-libvips-linux-ppc64@1.3.4",
       "purl": "pkg:npm/@img/sharp-libvips-linux-ppc64@1.3.4",
       "licenses": [
         {
@@ -1443,6 +2112,7 @@
       "type": "library",
       "name": "@img/sharp-libvips-linux-riscv64",
       "version": "1.3.4",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-libvips-linux-riscv64@1.3.4",
       "purl": "pkg:npm/@img/sharp-libvips-linux-riscv64@1.3.4",
       "licenses": [
         {
@@ -1483,6 +2153,7 @@
       "type": "library",
       "name": "@img/sharp-libvips-linux-s390x",
       "version": "1.3.4",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-libvips-linux-s390x@1.3.4",
       "purl": "pkg:npm/@img/sharp-libvips-linux-s390x@1.3.4",
       "licenses": [
         {
@@ -1523,6 +2194,7 @@
       "type": "library",
       "name": "@img/sharp-libvips-linux-x64",
       "version": "1.3.4",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-libvips-linux-x64@1.3.4",
       "purl": "pkg:npm/@img/sharp-libvips-linux-x64@1.3.4",
       "licenses": [
         {
@@ -1563,6 +2235,7 @@
       "type": "library",
       "name": "@img/sharp-libvips-linuxmusl-arm64",
       "version": "1.3.4",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-libvips-linuxmusl-arm64@1.3.4",
       "purl": "pkg:npm/@img/sharp-libvips-linuxmusl-arm64@1.3.4",
       "licenses": [
         {
@@ -1603,6 +2276,7 @@
       "type": "library",
       "name": "@img/sharp-libvips-linuxmusl-x64",
       "version": "1.3.4",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-libvips-linuxmusl-x64@1.3.4",
       "purl": "pkg:npm/@img/sharp-libvips-linuxmusl-x64@1.3.4",
       "licenses": [
         {
@@ -1643,6 +2317,7 @@
       "type": "library",
       "name": "@img/sharp-linux-arm",
       "version": "0.35.5",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-linux-arm@0.35.5",
       "purl": "pkg:npm/@img/sharp-linux-arm@0.35.5",
       "licenses": [
         {
@@ -1683,6 +2358,7 @@
       "type": "library",
       "name": "@img/sharp-linux-arm64",
       "version": "0.35.5",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-linux-arm64@0.35.5",
       "purl": "pkg:npm/@img/sharp-linux-arm64@0.35.5",
       "licenses": [
         {
@@ -1723,6 +2399,7 @@
       "type": "library",
       "name": "@img/sharp-linux-ppc64",
       "version": "0.35.5",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-linux-ppc64@0.35.5",
       "purl": "pkg:npm/@img/sharp-linux-ppc64@0.35.5",
       "licenses": [
         {
@@ -1763,6 +2440,7 @@
       "type": "library",
       "name": "@img/sharp-linux-riscv64",
       "version": "0.35.5",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-linux-riscv64@0.35.5",
       "purl": "pkg:npm/@img/sharp-linux-riscv64@0.35.5",
       "licenses": [
         {
@@ -1803,6 +2481,7 @@
       "type": "library",
       "name": "@img/sharp-linux-s390x",
       "version": "0.35.5",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-linux-s390x@0.35.5",
       "purl": "pkg:npm/@img/sharp-linux-s390x@0.35.5",
       "licenses": [
         {
@@ -1843,6 +2522,7 @@
       "type": "library",
       "name": "@img/sharp-linux-x64",
       "version": "0.35.5",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-linux-x64@0.35.5",
       "purl": "pkg:npm/@img/sharp-linux-x64@0.35.5",
       "licenses": [
         {
@@ -1883,6 +2563,7 @@
       "type": "library",
       "name": "@img/sharp-linuxmusl-arm64",
       "version": "0.35.5",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-linuxmusl-arm64@0.35.5",
       "purl": "pkg:npm/@img/sharp-linuxmusl-arm64@0.35.5",
       "licenses": [
         {
@@ -1923,6 +2604,7 @@
       "type": "library",
       "name": "@img/sharp-linuxmusl-x64",
       "version": "0.35.5",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-linuxmusl-x64@0.35.5",
       "purl": "pkg:npm/@img/sharp-linuxmusl-x64@0.35.5",
       "licenses": [
         {
@@ -1963,6 +2645,7 @@
       "type": "library",
       "name": "@img/sharp-wasm32",
       "version": "0.35.5",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-wasm32@0.35.5",
       "purl": "pkg:npm/@img/sharp-wasm32@0.35.5",
       "licenses": [
         {
@@ -2003,6 +2686,7 @@
       "type": "library",
       "name": "@img/sharp-webcontainers-wasm32",
       "version": "0.35.5",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-webcontainers-wasm32@0.35.5",
       "purl": "pkg:npm/@img/sharp-webcontainers-wasm32@0.35.5",
       "licenses": [
         {
@@ -2043,6 +2727,7 @@
       "type": "library",
       "name": "@img/sharp-win32-arm64",
       "version": "0.35.5",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-win32-arm64@0.35.5",
       "purl": "pkg:npm/@img/sharp-win32-arm64@0.35.5",
       "licenses": [
         {
@@ -2083,6 +2768,7 @@
       "type": "library",
       "name": "@img/sharp-win32-ia32",
       "version": "0.35.5",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-win32-ia32@0.35.5",
       "purl": "pkg:npm/@img/sharp-win32-ia32@0.35.5",
       "licenses": [
         {
@@ -2123,6 +2809,7 @@
       "type": "library",
       "name": "@img/sharp-win32-x64",
       "version": "0.35.5",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-win32-x64@0.35.5",
       "purl": "pkg:npm/@img/sharp-win32-x64@0.35.5",
       "licenses": [
         {
@@ -2155,8 +2842,219 @@
     },
     {
       "type": "library",
+      "name": "@smithy/core",
+      "version": "3.41.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40smithy%2Fcore@3.41.1",
+      "purl": "pkg:npm/@smithy/core@3.41.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "db82f2887498d11fcc2dc6d3ca5bab59753a532e25cc8e8a260b1dcf190d9e34fdfce2d6736cc63dbff793900cd5fd2f720086ac4c5a9d41b7dfdb7e4c1888ac"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@smithy/core"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@smithy/credential-provider-imds",
+      "version": "4.5.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40smithy%2Fcredential-provider-imds@4.5.2",
+      "purl": "pkg:npm/@smithy/credential-provider-imds@4.5.2",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "03db92767ef6a336d15128add1e89bd135bb9d7b8d3e569e334cdc1a427e9c4ead15c4836e79adc28c5b4c2141ba455072ccc3032bec77bfab4ddb8f4d7a7282"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@smithy/credential-provider-imds"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@smithy/fetch-http-handler",
+      "version": "5.8.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40smithy%2Ffetch-http-handler@5.8.1",
+      "purl": "pkg:npm/@smithy/fetch-http-handler@5.8.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "87c05d314ad406132131a78aed0a8074835165ecc21ae60e0a970e659d5ec316c7493f6b753774f71c0da6f2d361fcc345e87142245e2b848a6dd619c4103e7b"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@smithy/fetch-http-handler"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@smithy/node-http-handler",
+      "version": "4.14.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40smithy%2Fnode-http-handler@4.14.2",
+      "purl": "pkg:npm/@smithy/node-http-handler@4.14.2",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "8b5b8e455d6fdea06a3f8ddac912b321d9b5ab9c75e2d7fc3780ddd3afd0517d52ce6e95c4732b4ecbb6d17e44eb7505b1a3590918c8e125c6d230e6a986bedf"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@smithy/node-http-handler"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@smithy/signature-v4",
+      "version": "5.7.5",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40smithy%2Fsignature-v4@5.7.5",
+      "purl": "pkg:npm/@smithy/signature-v4@5.7.5",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "58f8ddaf9a163a4d4b02ba48e296afbbe7d2a3efdebe2d117b5a25c46beac2e668a5de20611d541828be4a8ca7fc88e669fa9b5acf990bedc02b1252dd9a7052"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@smithy/signature-v4"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@smithy/types",
+      "version": "4.20.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40smithy%2Ftypes@4.20.0",
+      "purl": "pkg:npm/@smithy/types@4.20.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "94203a406db674f93d79c1dbbfdd630d066c9ad3d48dd4b5684d8897a34d3ea7bb0eb61cd1d6508ba0e17044a4d8a6171f6b29e716c07067583190c59eecc0d8"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@smithy/types"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "@types/body-parser",
       "version": "1.19.6",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40types%2Fbody-parser@1.19.6",
       "purl": "pkg:npm/@types/body-parser@1.19.6",
       "licenses": [
         {
@@ -2191,6 +3089,7 @@
       "type": "library",
       "name": "@types/connect",
       "version": "3.4.38",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40types%2Fconnect@3.4.38",
       "purl": "pkg:npm/@types/connect@3.4.38",
       "licenses": [
         {
@@ -2225,6 +3124,7 @@
       "type": "library",
       "name": "@types/express",
       "version": "5.0.6",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40types%2Fexpress@5.0.6",
       "purl": "pkg:npm/@types/express@5.0.6",
       "licenses": [
         {
@@ -2259,6 +3159,7 @@
       "type": "library",
       "name": "@types/express-serve-static-core",
       "version": "5.1.3",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40types%2Fexpress-serve-static-core@5.1.3",
       "purl": "pkg:npm/@types/express-serve-static-core@5.1.3",
       "licenses": [
         {
@@ -2293,6 +3194,7 @@
       "type": "library",
       "name": "@types/http-errors",
       "version": "2.0.5",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40types%2Fhttp-errors@2.0.5",
       "purl": "pkg:npm/@types/http-errors@2.0.5",
       "licenses": [
         {
@@ -2327,6 +3229,7 @@
       "type": "library",
       "name": "@types/node",
       "version": "22.20.5",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40types%2Fnode@22.20.5",
       "purl": "pkg:npm/@types/node@22.20.5",
       "licenses": [
         {
@@ -2361,6 +3264,7 @@
       "type": "library",
       "name": "@types/pg",
       "version": "8.23.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40types%2Fpg@8.23.1",
       "purl": "pkg:npm/@types/pg@8.23.1",
       "licenses": [
         {
@@ -2395,6 +3299,7 @@
       "type": "library",
       "name": "@types/qs",
       "version": "6.15.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40types%2Fqs@6.15.1",
       "purl": "pkg:npm/@types/qs@6.15.1",
       "licenses": [
         {
@@ -2429,6 +3334,7 @@
       "type": "library",
       "name": "@types/range-parser",
       "version": "1.2.7",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40types%2Frange-parser@1.2.7",
       "purl": "pkg:npm/@types/range-parser@1.2.7",
       "licenses": [
         {
@@ -2463,6 +3369,7 @@
       "type": "library",
       "name": "@types/send",
       "version": "1.2.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40types%2Fsend@1.2.1",
       "purl": "pkg:npm/@types/send@1.2.1",
       "licenses": [
         {
@@ -2497,6 +3404,7 @@
       "type": "library",
       "name": "@types/serve-static",
       "version": "2.2.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2F%40types%2Fserve-static@2.2.0",
       "purl": "pkg:npm/@types/serve-static@2.2.0",
       "licenses": [
         {
@@ -2531,6 +3439,7 @@
       "type": "library",
       "name": "accepts",
       "version": "2.0.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Faccepts@2.0.0",
       "purl": "pkg:npm/accepts@2.0.0",
       "licenses": [
         {
@@ -2565,6 +3474,7 @@
       "type": "library",
       "name": "body-parser",
       "version": "2.4.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fbody-parser@2.4.0",
       "purl": "pkg:npm/body-parser@2.4.0",
       "licenses": [
         {
@@ -2597,8 +3507,44 @@
     },
     {
       "type": "library",
+      "name": "bowser",
+      "version": "2.15.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fbowser@2.15.1",
+      "purl": "pkg:npm/bowser@2.15.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "99ae3b001794893b261b831c283b460a041289309ab4cf7b3256e7d772b8d8dd643d2144d78a0ddd614c8edc8be0ab9b846bd04ea62178a978431d9b26d3172d"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/bowser"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "bytes",
       "version": "3.1.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fbytes@3.1.2",
       "purl": "pkg:npm/bytes@3.1.2",
       "licenses": [
         {
@@ -2633,6 +3579,7 @@
       "type": "library",
       "name": "call-bind-apply-helpers",
       "version": "1.0.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fcall-bind-apply-helpers@1.0.2",
       "purl": "pkg:npm/call-bind-apply-helpers@1.0.2",
       "licenses": [
         {
@@ -2667,6 +3614,7 @@
       "type": "library",
       "name": "call-bound",
       "version": "1.0.4",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fcall-bound@1.0.4",
       "purl": "pkg:npm/call-bound@1.0.4",
       "licenses": [
         {
@@ -2701,6 +3649,7 @@
       "type": "library",
       "name": "content-disposition",
       "version": "2.0.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fcontent-disposition@2.0.1",
       "purl": "pkg:npm/content-disposition@2.0.1",
       "licenses": [
         {
@@ -2735,6 +3684,7 @@
       "type": "library",
       "name": "content-type",
       "version": "2.1.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fcontent-type@2.1.0",
       "purl": "pkg:npm/content-type@2.1.0",
       "licenses": [
         {
@@ -2769,6 +3719,7 @@
       "type": "library",
       "name": "cookie",
       "version": "0.7.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fcookie@0.7.2",
       "purl": "pkg:npm/cookie@0.7.2",
       "licenses": [
         {
@@ -2803,6 +3754,7 @@
       "type": "library",
       "name": "cookie-signature",
       "version": "1.2.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fcookie-signature@1.2.2",
       "purl": "pkg:npm/cookie-signature@1.2.2",
       "licenses": [
         {
@@ -2837,6 +3789,7 @@
       "type": "library",
       "name": "debug",
       "version": "4.4.3",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fdebug@4.4.3",
       "purl": "pkg:npm/debug@4.4.3",
       "licenses": [
         {
@@ -2871,6 +3824,7 @@
       "type": "library",
       "name": "depd",
       "version": "2.0.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fdepd@2.0.0",
       "purl": "pkg:npm/depd@2.0.0",
       "licenses": [
         {
@@ -2905,6 +3859,7 @@
       "type": "library",
       "name": "detect-libc",
       "version": "2.1.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fdetect-libc@2.1.2",
       "purl": "pkg:npm/detect-libc@2.1.2",
       "licenses": [
         {
@@ -2939,6 +3894,7 @@
       "type": "library",
       "name": "dotenv",
       "version": "16.6.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fdotenv@16.6.1",
       "purl": "pkg:npm/dotenv@16.6.1",
       "licenses": [
         {
@@ -2973,6 +3929,7 @@
       "type": "library",
       "name": "dunder-proto",
       "version": "1.0.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fdunder-proto@1.0.1",
       "purl": "pkg:npm/dunder-proto@1.0.1",
       "licenses": [
         {
@@ -3007,6 +3964,7 @@
       "type": "library",
       "name": "ee-first",
       "version": "1.1.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fee-first@1.1.1",
       "purl": "pkg:npm/ee-first@1.1.1",
       "licenses": [
         {
@@ -3041,6 +3999,7 @@
       "type": "library",
       "name": "encodeurl",
       "version": "2.0.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fencodeurl@2.0.1",
       "purl": "pkg:npm/encodeurl@2.0.1",
       "licenses": [
         {
@@ -3075,6 +4034,7 @@
       "type": "library",
       "name": "es-define-property",
       "version": "1.0.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fes-define-property@1.0.1",
       "purl": "pkg:npm/es-define-property@1.0.1",
       "licenses": [
         {
@@ -3109,6 +4069,7 @@
       "type": "library",
       "name": "es-errors",
       "version": "1.3.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fes-errors@1.3.0",
       "purl": "pkg:npm/es-errors@1.3.0",
       "licenses": [
         {
@@ -3143,6 +4104,7 @@
       "type": "library",
       "name": "es-object-atoms",
       "version": "1.1.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fes-object-atoms@1.1.2",
       "purl": "pkg:npm/es-object-atoms@1.1.2",
       "licenses": [
         {
@@ -3177,6 +4139,7 @@
       "type": "library",
       "name": "esbuild",
       "version": "0.28.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fesbuild@0.28.2",
       "purl": "pkg:npm/esbuild@0.28.2",
       "licenses": [
         {
@@ -3211,6 +4174,7 @@
       "type": "library",
       "name": "escape-html",
       "version": "1.0.3",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fescape-html@1.0.3",
       "purl": "pkg:npm/escape-html@1.0.3",
       "licenses": [
         {
@@ -3245,6 +4209,7 @@
       "type": "library",
       "name": "etag",
       "version": "1.8.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fetag@1.8.1",
       "purl": "pkg:npm/etag@1.8.1",
       "licenses": [
         {
@@ -3279,6 +4244,7 @@
       "type": "library",
       "name": "express",
       "version": "5.3.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fexpress@5.3.0",
       "purl": "pkg:npm/express@5.3.0",
       "licenses": [
         {
@@ -3313,6 +4279,7 @@
       "type": "library",
       "name": "express-rate-limit",
       "version": "8.7.3",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fexpress-rate-limit@8.7.3",
       "purl": "pkg:npm/express-rate-limit@8.7.3",
       "licenses": [
         {
@@ -3347,6 +4314,7 @@
       "type": "library",
       "name": "finalhandler",
       "version": "2.1.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Ffinalhandler@2.1.1",
       "purl": "pkg:npm/finalhandler@2.1.1",
       "licenses": [
         {
@@ -3381,6 +4349,7 @@
       "type": "library",
       "name": "forwarded",
       "version": "0.2.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fforwarded@0.2.0",
       "purl": "pkg:npm/forwarded@0.2.0",
       "licenses": [
         {
@@ -3415,6 +4384,7 @@
       "type": "library",
       "name": "fresh",
       "version": "2.0.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Ffresh@2.0.0",
       "purl": "pkg:npm/fresh@2.0.0",
       "licenses": [
         {
@@ -3449,6 +4419,7 @@
       "type": "library",
       "name": "fsevents",
       "version": "2.3.3",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Ffsevents@2.3.3",
       "purl": "pkg:npm/fsevents@2.3.3",
       "licenses": [
         {
@@ -3489,6 +4460,7 @@
       "type": "library",
       "name": "function-bind",
       "version": "1.1.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Ffunction-bind@1.1.2",
       "purl": "pkg:npm/function-bind@1.1.2",
       "licenses": [
         {
@@ -3523,6 +4495,7 @@
       "type": "library",
       "name": "get-intrinsic",
       "version": "1.3.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fget-intrinsic@1.3.0",
       "purl": "pkg:npm/get-intrinsic@1.3.0",
       "licenses": [
         {
@@ -3557,6 +4530,7 @@
       "type": "library",
       "name": "get-proto",
       "version": "1.0.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fget-proto@1.0.1",
       "purl": "pkg:npm/get-proto@1.0.1",
       "licenses": [
         {
@@ -3591,6 +4565,7 @@
       "type": "library",
       "name": "gopd",
       "version": "1.2.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fgopd@1.2.0",
       "purl": "pkg:npm/gopd@1.2.0",
       "licenses": [
         {
@@ -3625,6 +4600,7 @@
       "type": "library",
       "name": "has-symbols",
       "version": "1.1.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fhas-symbols@1.1.0",
       "purl": "pkg:npm/has-symbols@1.1.0",
       "licenses": [
         {
@@ -3659,6 +4635,7 @@
       "type": "library",
       "name": "hasown",
       "version": "2.0.4",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fhasown@2.0.4",
       "purl": "pkg:npm/hasown@2.0.4",
       "licenses": [
         {
@@ -3693,6 +4670,7 @@
       "type": "library",
       "name": "http-errors",
       "version": "2.0.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fhttp-errors@2.0.1",
       "purl": "pkg:npm/http-errors@2.0.1",
       "licenses": [
         {
@@ -3727,6 +4705,7 @@
       "type": "library",
       "name": "iconv-lite",
       "version": "0.7.3",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Ficonv-lite@0.7.3",
       "purl": "pkg:npm/iconv-lite@0.7.3",
       "licenses": [
         {
@@ -3761,6 +4740,7 @@
       "type": "library",
       "name": "inherits",
       "version": "2.0.4",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Finherits@2.0.4",
       "purl": "pkg:npm/inherits@2.0.4",
       "licenses": [
         {
@@ -3795,6 +4775,7 @@
       "type": "library",
       "name": "ip-address",
       "version": "10.7.6",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fip-address@10.7.6",
       "purl": "pkg:npm/ip-address@10.7.6",
       "licenses": [
         {
@@ -3829,6 +4810,7 @@
       "type": "library",
       "name": "ipaddr.js",
       "version": "1.9.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fipaddr.js@1.9.1",
       "purl": "pkg:npm/ipaddr.js@1.9.1",
       "licenses": [
         {
@@ -3863,6 +4845,7 @@
       "type": "library",
       "name": "is-promise",
       "version": "4.0.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fis-promise@4.0.0",
       "purl": "pkg:npm/is-promise@4.0.0",
       "licenses": [
         {
@@ -3897,6 +4880,7 @@
       "type": "library",
       "name": "jose",
       "version": "6.2.16",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fjose@6.2.16",
       "purl": "pkg:npm/jose@6.2.16",
       "licenses": [
         {
@@ -3931,6 +4915,7 @@
       "type": "library",
       "name": "math-intrinsics",
       "version": "1.1.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fmath-intrinsics@1.1.0",
       "purl": "pkg:npm/math-intrinsics@1.1.0",
       "licenses": [
         {
@@ -3965,6 +4950,7 @@
       "type": "library",
       "name": "media-typer",
       "version": "1.1.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fmedia-typer@1.1.1",
       "purl": "pkg:npm/media-typer@1.1.1",
       "licenses": [
         {
@@ -3999,6 +4985,7 @@
       "type": "library",
       "name": "merge-descriptors",
       "version": "2.0.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fmerge-descriptors@2.0.0",
       "purl": "pkg:npm/merge-descriptors@2.0.0",
       "licenses": [
         {
@@ -4033,6 +5020,7 @@
       "type": "library",
       "name": "mime-db",
       "version": "1.54.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fmime-db@1.54.0",
       "purl": "pkg:npm/mime-db@1.54.0",
       "licenses": [
         {
@@ -4067,6 +5055,7 @@
       "type": "library",
       "name": "mime-types",
       "version": "3.0.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fmime-types@3.0.2",
       "purl": "pkg:npm/mime-types@3.0.2",
       "licenses": [
         {
@@ -4101,6 +5090,7 @@
       "type": "library",
       "name": "ms",
       "version": "2.1.3",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fms@2.1.3",
       "purl": "pkg:npm/ms@2.1.3",
       "licenses": [
         {
@@ -4135,6 +5125,7 @@
       "type": "library",
       "name": "negotiator",
       "version": "1.1.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fnegotiator@1.1.0",
       "purl": "pkg:npm/negotiator@1.1.0",
       "licenses": [
         {
@@ -4169,6 +5160,7 @@
       "type": "library",
       "name": "object-inspect",
       "version": "1.13.4",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fobject-inspect@1.13.4",
       "purl": "pkg:npm/object-inspect@1.13.4",
       "licenses": [
         {
@@ -4203,6 +5195,7 @@
       "type": "library",
       "name": "on-finished",
       "version": "2.4.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fon-finished@2.4.2",
       "purl": "pkg:npm/on-finished@2.4.2",
       "licenses": [
         {
@@ -4237,6 +5230,7 @@
       "type": "library",
       "name": "once",
       "version": "1.4.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fonce@1.4.0",
       "purl": "pkg:npm/once@1.4.0",
       "licenses": [
         {
@@ -4271,6 +5265,7 @@
       "type": "library",
       "name": "parseurl",
       "version": "1.3.3",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fparseurl@1.3.3",
       "purl": "pkg:npm/parseurl@1.3.3",
       "licenses": [
         {
@@ -4305,6 +5300,7 @@
       "type": "library",
       "name": "path-to-regexp",
       "version": "8.4.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fpath-to-regexp@8.4.2",
       "purl": "pkg:npm/path-to-regexp@8.4.2",
       "licenses": [
         {
@@ -4339,6 +5335,7 @@
       "type": "library",
       "name": "pg",
       "version": "8.23.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fpg@8.23.1",
       "purl": "pkg:npm/pg@8.23.1",
       "licenses": [
         {
@@ -4373,6 +5370,7 @@
       "type": "library",
       "name": "pg-cloudflare",
       "version": "1.4.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fpg-cloudflare@1.4.1",
       "purl": "pkg:npm/pg-cloudflare@1.4.1",
       "licenses": [
         {
@@ -4407,6 +5405,7 @@
       "type": "library",
       "name": "pg-connection-string",
       "version": "2.14.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fpg-connection-string@2.14.1",
       "purl": "pkg:npm/pg-connection-string@2.14.1",
       "licenses": [
         {
@@ -4441,6 +5440,7 @@
       "type": "library",
       "name": "pg-int8",
       "version": "1.0.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fpg-int8@1.0.1",
       "purl": "pkg:npm/pg-int8@1.0.1",
       "licenses": [
         {
@@ -4475,6 +5475,7 @@
       "type": "library",
       "name": "pg-pool",
       "version": "3.14.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fpg-pool@3.14.0",
       "purl": "pkg:npm/pg-pool@3.14.0",
       "licenses": [
         {
@@ -4509,6 +5510,7 @@
       "type": "library",
       "name": "pg-protocol",
       "version": "1.16.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fpg-protocol@1.16.1",
       "purl": "pkg:npm/pg-protocol@1.16.1",
       "licenses": [
         {
@@ -4543,6 +5545,7 @@
       "type": "library",
       "name": "pg-types",
       "version": "2.2.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fpg-types@2.2.0",
       "purl": "pkg:npm/pg-types@2.2.0",
       "licenses": [
         {
@@ -4577,6 +5580,7 @@
       "type": "library",
       "name": "pgpass",
       "version": "1.0.5",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fpgpass@1.0.5",
       "purl": "pkg:npm/pgpass@1.0.5",
       "licenses": [
         {
@@ -4611,6 +5615,7 @@
       "type": "library",
       "name": "postgres-array",
       "version": "2.0.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fpostgres-array@2.0.0",
       "purl": "pkg:npm/postgres-array@2.0.0",
       "licenses": [
         {
@@ -4645,6 +5650,7 @@
       "type": "library",
       "name": "postgres-bytea",
       "version": "1.0.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fpostgres-bytea@1.0.1",
       "purl": "pkg:npm/postgres-bytea@1.0.1",
       "licenses": [
         {
@@ -4679,6 +5685,7 @@
       "type": "library",
       "name": "postgres-date",
       "version": "1.0.7",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fpostgres-date@1.0.7",
       "purl": "pkg:npm/postgres-date@1.0.7",
       "licenses": [
         {
@@ -4713,6 +5720,7 @@
       "type": "library",
       "name": "postgres-interval",
       "version": "1.2.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fpostgres-interval@1.2.0",
       "purl": "pkg:npm/postgres-interval@1.2.0",
       "licenses": [
         {
@@ -4747,6 +5755,7 @@
       "type": "library",
       "name": "proxy-addr",
       "version": "2.0.8",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fproxy-addr@2.0.8",
       "purl": "pkg:npm/proxy-addr@2.0.8",
       "licenses": [
         {
@@ -4781,6 +5790,7 @@
       "type": "library",
       "name": "qs",
       "version": "6.17.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fqs@6.17.1",
       "purl": "pkg:npm/qs@6.17.1",
       "licenses": [
         {
@@ -4815,6 +5825,7 @@
       "type": "library",
       "name": "range-parser",
       "version": "1.3.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Frange-parser@1.3.0",
       "purl": "pkg:npm/range-parser@1.3.0",
       "licenses": [
         {
@@ -4849,6 +5860,7 @@
       "type": "library",
       "name": "raw-body",
       "version": "3.0.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fraw-body@3.0.2",
       "purl": "pkg:npm/raw-body@3.0.2",
       "licenses": [
         {
@@ -4883,6 +5895,7 @@
       "type": "library",
       "name": "router",
       "version": "2.2.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Frouter@2.2.0",
       "purl": "pkg:npm/router@2.2.0",
       "licenses": [
         {
@@ -4917,6 +5930,7 @@
       "type": "library",
       "name": "safer-buffer",
       "version": "2.1.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fsafer-buffer@2.1.2",
       "purl": "pkg:npm/safer-buffer@2.1.2",
       "licenses": [
         {
@@ -4951,6 +5965,7 @@
       "type": "library",
       "name": "semver",
       "version": "7.8.6",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fsemver@7.8.6",
       "purl": "pkg:npm/semver@7.8.6",
       "licenses": [
         {
@@ -4985,6 +6000,7 @@
       "type": "library",
       "name": "send",
       "version": "1.2.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fsend@1.2.1",
       "purl": "pkg:npm/send@1.2.1",
       "licenses": [
         {
@@ -5019,6 +6035,7 @@
       "type": "library",
       "name": "serve-static",
       "version": "2.2.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fserve-static@2.2.1",
       "purl": "pkg:npm/serve-static@2.2.1",
       "licenses": [
         {
@@ -5053,6 +6070,7 @@
       "type": "library",
       "name": "setprototypeof",
       "version": "1.2.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fsetprototypeof@1.2.0",
       "purl": "pkg:npm/setprototypeof@1.2.0",
       "licenses": [
         {
@@ -5087,6 +6105,7 @@
       "type": "library",
       "name": "sharp",
       "version": "0.35.5",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fsharp@0.35.5",
       "purl": "pkg:npm/sharp@0.35.5",
       "licenses": [
         {
@@ -5121,6 +6140,7 @@
       "type": "library",
       "name": "side-channel",
       "version": "1.1.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fside-channel@1.1.1",
       "purl": "pkg:npm/side-channel@1.1.1",
       "licenses": [
         {
@@ -5155,6 +6175,7 @@
       "type": "library",
       "name": "side-channel-list",
       "version": "1.0.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fside-channel-list@1.0.1",
       "purl": "pkg:npm/side-channel-list@1.0.1",
       "licenses": [
         {
@@ -5189,6 +6210,7 @@
       "type": "library",
       "name": "side-channel-map",
       "version": "1.0.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fside-channel-map@1.0.1",
       "purl": "pkg:npm/side-channel-map@1.0.1",
       "licenses": [
         {
@@ -5223,6 +6245,7 @@
       "type": "library",
       "name": "side-channel-weakmap",
       "version": "1.0.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fside-channel-weakmap@1.0.2",
       "purl": "pkg:npm/side-channel-weakmap@1.0.2",
       "licenses": [
         {
@@ -5257,6 +6280,7 @@
       "type": "library",
       "name": "split2",
       "version": "4.2.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fsplit2@4.2.0",
       "purl": "pkg:npm/split2@4.2.0",
       "licenses": [
         {
@@ -5291,6 +6315,7 @@
       "type": "library",
       "name": "statuses",
       "version": "2.0.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fstatuses@2.0.2",
       "purl": "pkg:npm/statuses@2.0.2",
       "licenses": [
         {
@@ -5325,6 +6350,7 @@
       "type": "library",
       "name": "toidentifier",
       "version": "1.0.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Ftoidentifier@1.0.1",
       "purl": "pkg:npm/toidentifier@1.0.1",
       "licenses": [
         {
@@ -5359,11 +6385,12 @@
       "type": "library",
       "name": "tslib",
       "version": "2.9.1",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Ftslib@2.9.1",
       "purl": "pkg:npm/tslib@2.9.1",
       "licenses": [
         {
           "license": {
-            "id": "0BSD"
+            "name": "0BSD"
           }
         }
       ],
@@ -5374,12 +6401,6 @@
         }
       ],
       "scope": "required",
-      "externalReferences": [
-        {
-          "type": "vcs",
-          "url": "https://github.com/microsoft/tslib"
-        }
-      ],
       "properties": [
         {
           "name": "petcare:lockfile-path",
@@ -5391,7 +6412,7 @@
         },
         {
           "name": "petcare:license-evidence",
-          "value": "https://github.com/microsoft/tslib/blob/main/LICENSE.txt"
+          "value": "installed package.json license field"
         }
       ]
     },
@@ -5399,6 +6420,7 @@
       "type": "library",
       "name": "tsx",
       "version": "4.23.15",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Ftsx@4.23.15",
       "purl": "pkg:npm/tsx@4.23.15",
       "licenses": [
         {
@@ -5433,6 +6455,7 @@
       "type": "library",
       "name": "type-is",
       "version": "2.1.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Ftype-is@2.1.0",
       "purl": "pkg:npm/type-is@2.1.0",
       "licenses": [
         {
@@ -5467,6 +6490,7 @@
       "type": "library",
       "name": "typescript",
       "version": "5.9.3",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Ftypescript@5.9.3",
       "purl": "pkg:npm/typescript@5.9.3",
       "licenses": [
         {
@@ -5501,6 +6525,7 @@
       "type": "library",
       "name": "undici-types",
       "version": "6.21.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fundici-types@6.21.0",
       "purl": "pkg:npm/undici-types@6.21.0",
       "licenses": [
         {
@@ -5535,6 +6560,7 @@
       "type": "library",
       "name": "unpipe",
       "version": "1.0.0",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Funpipe@1.0.0",
       "purl": "pkg:npm/unpipe@1.0.0",
       "licenses": [
         {
@@ -5569,6 +6595,7 @@
       "type": "library",
       "name": "vary",
       "version": "1.1.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fvary@1.1.2",
       "purl": "pkg:npm/vary@1.1.2",
       "licenses": [
         {
@@ -5603,6 +6630,7 @@
       "type": "library",
       "name": "wrappy",
       "version": "1.0.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fwrappy@1.0.2",
       "purl": "pkg:npm/wrappy@1.0.2",
       "licenses": [
         {
@@ -5637,6 +6665,7 @@
       "type": "library",
       "name": "xtend",
       "version": "4.0.2",
+      "bom-ref": "urn:petcare:lockfile:node_modules%2Fxtend@4.0.2",
       "purl": "pkg:npm/xtend@4.0.2",
       "licenses": [
         {
@@ -5666,6 +6695,1114 @@
           "value": "installed package.json license field"
         }
       ]
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "pkg:npm/petcare-api@unversioned",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fclient-s3@3.1176.0",
+        "urn:petcare:lockfile:node_modules%2F%40types%2Fexpress@5.0.6",
+        "urn:petcare:lockfile:node_modules%2F%40types%2Fnode@22.20.5",
+        "urn:petcare:lockfile:node_modules%2F%40types%2Fpg@8.23.1",
+        "urn:petcare:lockfile:node_modules%2Fdotenv@16.6.1",
+        "urn:petcare:lockfile:node_modules%2Fexpress-rate-limit@8.7.3",
+        "urn:petcare:lockfile:node_modules%2Fexpress@5.3.0",
+        "urn:petcare:lockfile:node_modules%2Fjose@6.2.16",
+        "urn:petcare:lockfile:node_modules%2Fpg@8.23.1",
+        "urn:petcare:lockfile:node_modules%2Fsharp@0.35.5",
+        "urn:petcare:lockfile:node_modules%2Ftsx@4.23.15",
+        "urn:petcare:lockfile:node_modules%2Ftypescript@5.9.3"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fchecksums@3.1002.6",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcore@3.981.1",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Ftypes@3.975.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Fcore@3.41.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Ftypes@4.20.0",
+        "urn:petcare:lockfile:node_modules%2Ftslib@2.9.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fclient-s3@3.1176.0",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fchecksums@3.1002.6",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcore@3.981.1",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcredential-provider-node@3.972.98",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fmiddleware-sdk-s3@3.972.91",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fsignature-v4-multi-region@3.996.52",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Ftypes@3.975.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Fcore@3.41.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Ffetch-http-handler@5.8.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Fnode-http-handler@4.14.2",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Ftypes@4.20.0",
+        "urn:petcare:lockfile:node_modules%2Ftslib@2.9.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcore@3.981.1",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40aws%2Flambda-invoke-store@0.3.0",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Ftypes@3.975.1",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fxml-builder@3.972.43",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Fcore@3.41.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Fsignature-v4@5.7.5",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Ftypes@4.20.0",
+        "urn:petcare:lockfile:node_modules%2Fbowser@2.15.1",
+        "urn:petcare:lockfile:node_modules%2Ftslib@2.9.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcredential-provider-env@3.972.85",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcore@3.981.1",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Ftypes@3.975.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Fcore@3.41.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Ftypes@4.20.0",
+        "urn:petcare:lockfile:node_modules%2Ftslib@2.9.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcredential-provider-http@3.972.87",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcore@3.981.1",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Ftypes@3.975.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Fcore@3.41.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Ffetch-http-handler@5.8.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Fnode-http-handler@4.14.2",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Ftypes@4.20.0",
+        "urn:petcare:lockfile:node_modules%2Ftslib@2.9.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcredential-provider-ini@3.973.31",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcore@3.981.1",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcredential-provider-env@3.972.85",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcredential-provider-http@3.972.87",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcredential-provider-login@3.972.93",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcredential-provider-process@3.972.85",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcredential-provider-sso@3.973.29",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcredential-provider-web-identity@3.972.91",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fnested-clients@3.998.4",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Ftypes@3.975.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Fcore@3.41.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Fcredential-provider-imds@4.5.2",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Ftypes@4.20.0",
+        "urn:petcare:lockfile:node_modules%2Ftslib@2.9.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcredential-provider-login@3.972.93",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcore@3.981.1",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fnested-clients@3.998.4",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Ftypes@3.975.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Fcore@3.41.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Ftypes@4.20.0",
+        "urn:petcare:lockfile:node_modules%2Ftslib@2.9.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcredential-provider-node@3.972.98",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcredential-provider-env@3.972.85",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcredential-provider-http@3.972.87",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcredential-provider-ini@3.973.31",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcredential-provider-process@3.972.85",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcredential-provider-sso@3.973.29",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcredential-provider-web-identity@3.972.91",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Ftypes@3.975.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Fcore@3.41.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Fcredential-provider-imds@4.5.2",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Ftypes@4.20.0",
+        "urn:petcare:lockfile:node_modules%2Ftslib@2.9.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcredential-provider-process@3.972.85",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcore@3.981.1",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Ftypes@3.975.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Fcore@3.41.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Ftypes@4.20.0",
+        "urn:petcare:lockfile:node_modules%2Ftslib@2.9.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcredential-provider-sso@3.973.29",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcore@3.981.1",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fnested-clients@3.998.4",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Ftoken-providers@3.1175.0",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Ftypes@3.975.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Fcore@3.41.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Ftypes@4.20.0",
+        "urn:petcare:lockfile:node_modules%2Ftslib@2.9.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcredential-provider-web-identity@3.972.91",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcore@3.981.1",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fnested-clients@3.998.4",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Ftypes@3.975.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Fcore@3.41.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Ftypes@4.20.0",
+        "urn:petcare:lockfile:node_modules%2Ftslib@2.9.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fmiddleware-sdk-s3@3.972.91",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcore@3.981.1",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fsignature-v4-multi-region@3.996.52",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Ftypes@3.975.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Fcore@3.41.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Ftypes@4.20.0",
+        "urn:petcare:lockfile:node_modules%2Ftslib@2.9.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fnested-clients@3.998.4",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcore@3.981.1",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fsignature-v4-multi-region@3.996.52",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Ftypes@3.975.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Fcore@3.41.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Ffetch-http-handler@5.8.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Fnode-http-handler@4.14.2",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Ftypes@4.20.0",
+        "urn:petcare:lockfile:node_modules%2Ftslib@2.9.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fsignature-v4-multi-region@3.996.52",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Ftypes@3.975.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Fsignature-v4@5.7.5",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Ftypes@4.20.0",
+        "urn:petcare:lockfile:node_modules%2Ftslib@2.9.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Ftoken-providers@3.1175.0",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fcore@3.981.1",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fnested-clients@3.998.4",
+        "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Ftypes@3.975.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Fcore@3.41.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Ftypes@4.20.0",
+        "urn:petcare:lockfile:node_modules%2Ftslib@2.9.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Ftypes@3.975.1",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Ftypes@4.20.0",
+        "urn:petcare:lockfile:node_modules%2Ftslib@2.9.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40aws-sdk%2Fxml-builder@3.972.43",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Ftypes@4.20.0",
+        "urn:petcare:lockfile:node_modules%2Ftslib@2.9.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40aws%2Flambda-invoke-store@0.3.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40emnapi%2Fruntime@1.11.3",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Ftslib@2.9.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Faix-ppc64@0.28.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Fandroid-arm@0.28.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Fandroid-arm64@0.28.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Fandroid-x64@0.28.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Fdarwin-arm64@0.28.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Fdarwin-x64@0.28.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Ffreebsd-arm64@0.28.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Ffreebsd-x64@0.28.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Flinux-arm@0.28.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Flinux-arm64@0.28.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Flinux-ia32@0.28.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Flinux-loong64@0.28.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Flinux-mips64el@0.28.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Flinux-ppc64@0.28.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Flinux-riscv64@0.28.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Flinux-s390x@0.28.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Flinux-x64@0.28.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Fnetbsd-arm64@0.28.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Fnetbsd-x64@0.28.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Fopenbsd-arm64@0.28.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Fopenbsd-x64@0.28.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Fopenharmony-arm64@0.28.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Fsunos-x64@0.28.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Fwin32-arm64@0.28.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Fwin32-ia32@0.28.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40esbuild%2Fwin32-x64@0.28.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fcolour@1.1.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-darwin-arm64@0.35.5",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-darwin-x64@0.35.5",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-freebsd-wasm32@0.35.5",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-wasm32@0.35.5"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-libvips-darwin-arm64@1.3.4",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-libvips-darwin-x64@1.3.4",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-libvips-linux-arm@1.3.4",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-libvips-linux-arm64@1.3.4",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-libvips-linux-ppc64@1.3.4",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-libvips-linux-riscv64@1.3.4",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-libvips-linux-s390x@1.3.4",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-libvips-linux-x64@1.3.4",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-libvips-linuxmusl-arm64@1.3.4",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-libvips-linuxmusl-x64@1.3.4",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-linux-arm@0.35.5",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-linux-arm64@0.35.5",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-linux-ppc64@0.35.5",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-linux-riscv64@0.35.5",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-linux-s390x@0.35.5",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-linux-x64@0.35.5",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-linuxmusl-arm64@0.35.5",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-linuxmusl-x64@0.35.5",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-wasm32@0.35.5",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40emnapi%2Fruntime@1.11.3"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-webcontainers-wasm32@0.35.5",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-wasm32@0.35.5"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-win32-arm64@0.35.5",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-win32-ia32@0.35.5",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40img%2Fsharp-win32-x64@0.35.5",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40smithy%2Fcore@3.41.1",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Ftypes@4.20.0",
+        "urn:petcare:lockfile:node_modules%2Ftslib@2.9.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40smithy%2Fcredential-provider-imds@4.5.2",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Fcore@3.41.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Ftypes@4.20.0",
+        "urn:petcare:lockfile:node_modules%2Ftslib@2.9.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40smithy%2Ffetch-http-handler@5.8.1",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Fcore@3.41.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Ftypes@4.20.0",
+        "urn:petcare:lockfile:node_modules%2Ftslib@2.9.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40smithy%2Fnode-http-handler@4.14.2",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Fcore@3.41.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Ftypes@4.20.0",
+        "urn:petcare:lockfile:node_modules%2Ftslib@2.9.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40smithy%2Fsignature-v4@5.7.5",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Fcore@3.41.1",
+        "urn:petcare:lockfile:node_modules%2F%40smithy%2Ftypes@4.20.0",
+        "urn:petcare:lockfile:node_modules%2Ftslib@2.9.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40smithy%2Ftypes@4.20.0",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Ftslib@2.9.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40types%2Fbody-parser@1.19.6",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40types%2Fconnect@3.4.38",
+        "urn:petcare:lockfile:node_modules%2F%40types%2Fnode@22.20.5"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40types%2Fconnect@3.4.38",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40types%2Fnode@22.20.5"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40types%2Fexpress@5.0.6",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40types%2Fbody-parser@1.19.6",
+        "urn:petcare:lockfile:node_modules%2F%40types%2Fexpress-serve-static-core@5.1.3",
+        "urn:petcare:lockfile:node_modules%2F%40types%2Fserve-static@2.2.0"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40types%2Fexpress-serve-static-core@5.1.3",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40types%2Fnode@22.20.5",
+        "urn:petcare:lockfile:node_modules%2F%40types%2Fqs@6.15.1",
+        "urn:petcare:lockfile:node_modules%2F%40types%2Frange-parser@1.2.7",
+        "urn:petcare:lockfile:node_modules%2F%40types%2Fsend@1.2.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40types%2Fhttp-errors@2.0.5",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40types%2Fnode@22.20.5",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fundici-types@6.21.0"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40types%2Fpg@8.23.1",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40types%2Fnode@22.20.5",
+        "urn:petcare:lockfile:node_modules%2Fpg-protocol@1.16.1",
+        "urn:petcare:lockfile:node_modules%2Fpg-types@2.2.0"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40types%2Fqs@6.15.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40types%2Frange-parser@1.2.7",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40types%2Fsend@1.2.1",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40types%2Fnode@22.20.5"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2F%40types%2Fserve-static@2.2.0",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40types%2Fhttp-errors@2.0.5",
+        "urn:petcare:lockfile:node_modules%2F%40types%2Fnode@22.20.5"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Faccepts@2.0.0",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fmime-types@3.0.2",
+        "urn:petcare:lockfile:node_modules%2Fnegotiator@1.1.0"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fbody-parser@2.4.0",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fbytes@3.1.2",
+        "urn:petcare:lockfile:node_modules%2Fcontent-type@2.1.0",
+        "urn:petcare:lockfile:node_modules%2Fdebug@4.4.3",
+        "urn:petcare:lockfile:node_modules%2Fhttp-errors@2.0.1",
+        "urn:petcare:lockfile:node_modules%2Ficonv-lite@0.7.3",
+        "urn:petcare:lockfile:node_modules%2Fon-finished@2.4.2",
+        "urn:petcare:lockfile:node_modules%2Fqs@6.17.1",
+        "urn:petcare:lockfile:node_modules%2Fraw-body@3.0.2",
+        "urn:petcare:lockfile:node_modules%2Ftype-is@2.1.0"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fbowser@2.15.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fbytes@3.1.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fcall-bind-apply-helpers@1.0.2",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fes-errors@1.3.0",
+        "urn:petcare:lockfile:node_modules%2Ffunction-bind@1.1.2"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fcall-bound@1.0.4",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fcall-bind-apply-helpers@1.0.2",
+        "urn:petcare:lockfile:node_modules%2Fget-intrinsic@1.3.0"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fcontent-disposition@2.0.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fcontent-type@2.1.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fcookie@0.7.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fcookie-signature@1.2.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fdebug@4.4.3",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fms@2.1.3"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fdepd@2.0.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fdetect-libc@2.1.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fdotenv@16.6.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fdunder-proto@1.0.1",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fcall-bind-apply-helpers@1.0.2",
+        "urn:petcare:lockfile:node_modules%2Fes-errors@1.3.0",
+        "urn:petcare:lockfile:node_modules%2Fgopd@1.2.0"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fee-first@1.1.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fencodeurl@2.0.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fes-define-property@1.0.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fes-errors@1.3.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fes-object-atoms@1.1.2",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fes-errors@1.3.0"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fesbuild@0.28.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fescape-html@1.0.3",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fetag@1.8.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fexpress@5.3.0",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Faccepts@2.0.0",
+        "urn:petcare:lockfile:node_modules%2Fbody-parser@2.4.0",
+        "urn:petcare:lockfile:node_modules%2Fcontent-disposition@2.0.1",
+        "urn:petcare:lockfile:node_modules%2Fcontent-type@2.1.0",
+        "urn:petcare:lockfile:node_modules%2Fcookie-signature@1.2.2",
+        "urn:petcare:lockfile:node_modules%2Fcookie@0.7.2",
+        "urn:petcare:lockfile:node_modules%2Fdebug@4.4.3",
+        "urn:petcare:lockfile:node_modules%2Fdepd@2.0.0",
+        "urn:petcare:lockfile:node_modules%2Fencodeurl@2.0.1",
+        "urn:petcare:lockfile:node_modules%2Fescape-html@1.0.3",
+        "urn:petcare:lockfile:node_modules%2Fetag@1.8.1",
+        "urn:petcare:lockfile:node_modules%2Ffinalhandler@2.1.1",
+        "urn:petcare:lockfile:node_modules%2Ffresh@2.0.0",
+        "urn:petcare:lockfile:node_modules%2Fhttp-errors@2.0.1",
+        "urn:petcare:lockfile:node_modules%2Fmerge-descriptors@2.0.0",
+        "urn:petcare:lockfile:node_modules%2Fmime-types@3.0.2",
+        "urn:petcare:lockfile:node_modules%2Fon-finished@2.4.2",
+        "urn:petcare:lockfile:node_modules%2Fonce@1.4.0",
+        "urn:petcare:lockfile:node_modules%2Fparseurl@1.3.3",
+        "urn:petcare:lockfile:node_modules%2Fproxy-addr@2.0.8",
+        "urn:petcare:lockfile:node_modules%2Fqs@6.17.1",
+        "urn:petcare:lockfile:node_modules%2Frange-parser@1.3.0",
+        "urn:petcare:lockfile:node_modules%2Frouter@2.2.0",
+        "urn:petcare:lockfile:node_modules%2Fsend@1.2.1",
+        "urn:petcare:lockfile:node_modules%2Fserve-static@2.2.1",
+        "urn:petcare:lockfile:node_modules%2Fstatuses@2.0.2",
+        "urn:petcare:lockfile:node_modules%2Ftype-is@2.1.0",
+        "urn:petcare:lockfile:node_modules%2Fvary@1.1.2"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fexpress-rate-limit@8.7.3",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fdebug@4.4.3",
+        "urn:petcare:lockfile:node_modules%2Fip-address@10.7.6"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Ffinalhandler@2.1.1",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fdebug@4.4.3",
+        "urn:petcare:lockfile:node_modules%2Fencodeurl@2.0.1",
+        "urn:petcare:lockfile:node_modules%2Fescape-html@1.0.3",
+        "urn:petcare:lockfile:node_modules%2Fon-finished@2.4.2",
+        "urn:petcare:lockfile:node_modules%2Fparseurl@1.3.3",
+        "urn:petcare:lockfile:node_modules%2Fstatuses@2.0.2"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fforwarded@0.2.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Ffresh@2.0.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Ffsevents@2.3.3",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Ffunction-bind@1.1.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fget-intrinsic@1.3.0",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fcall-bind-apply-helpers@1.0.2",
+        "urn:petcare:lockfile:node_modules%2Fes-define-property@1.0.1",
+        "urn:petcare:lockfile:node_modules%2Fes-errors@1.3.0",
+        "urn:petcare:lockfile:node_modules%2Fes-object-atoms@1.1.2",
+        "urn:petcare:lockfile:node_modules%2Ffunction-bind@1.1.2",
+        "urn:petcare:lockfile:node_modules%2Fget-proto@1.0.1",
+        "urn:petcare:lockfile:node_modules%2Fgopd@1.2.0",
+        "urn:petcare:lockfile:node_modules%2Fhas-symbols@1.1.0",
+        "urn:petcare:lockfile:node_modules%2Fhasown@2.0.4",
+        "urn:petcare:lockfile:node_modules%2Fmath-intrinsics@1.1.0"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fget-proto@1.0.1",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fdunder-proto@1.0.1",
+        "urn:petcare:lockfile:node_modules%2Fes-object-atoms@1.1.2"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fgopd@1.2.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fhas-symbols@1.1.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fhasown@2.0.4",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Ffunction-bind@1.1.2"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fhttp-errors@2.0.1",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fdepd@2.0.0",
+        "urn:petcare:lockfile:node_modules%2Finherits@2.0.4",
+        "urn:petcare:lockfile:node_modules%2Fsetprototypeof@1.2.0",
+        "urn:petcare:lockfile:node_modules%2Fstatuses@2.0.2",
+        "urn:petcare:lockfile:node_modules%2Ftoidentifier@1.0.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Ficonv-lite@0.7.3",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fsafer-buffer@2.1.2"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Finherits@2.0.4",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fip-address@10.7.6",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fipaddr.js@1.9.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fis-promise@4.0.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fjose@6.2.16",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fmath-intrinsics@1.1.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fmedia-typer@1.1.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fmerge-descriptors@2.0.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fmime-db@1.54.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fmime-types@3.0.2",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fmime-db@1.54.0"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fms@2.1.3",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fnegotiator@1.1.0",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fcontent-type@2.1.0"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fobject-inspect@1.13.4",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fon-finished@2.4.2",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fee-first@1.1.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fonce@1.4.0",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fwrappy@1.0.2"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fparseurl@1.3.3",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fpath-to-regexp@8.4.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fpg@8.23.1",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fpg-connection-string@2.14.1",
+        "urn:petcare:lockfile:node_modules%2Fpg-pool@3.14.0",
+        "urn:petcare:lockfile:node_modules%2Fpg-protocol@1.16.1",
+        "urn:petcare:lockfile:node_modules%2Fpg-types@2.2.0",
+        "urn:petcare:lockfile:node_modules%2Fpgpass@1.0.5"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fpg-cloudflare@1.4.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fpg-connection-string@2.14.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fpg-int8@1.0.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fpg-pool@3.14.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fpg-protocol@1.16.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fpg-types@2.2.0",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fpg-int8@1.0.1",
+        "urn:petcare:lockfile:node_modules%2Fpostgres-array@2.0.0",
+        "urn:petcare:lockfile:node_modules%2Fpostgres-bytea@1.0.1",
+        "urn:petcare:lockfile:node_modules%2Fpostgres-date@1.0.7",
+        "urn:petcare:lockfile:node_modules%2Fpostgres-interval@1.2.0"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fpgpass@1.0.5",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fsplit2@4.2.0"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fpostgres-array@2.0.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fpostgres-bytea@1.0.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fpostgres-date@1.0.7",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fpostgres-interval@1.2.0",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fxtend@4.0.2"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fproxy-addr@2.0.8",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fforwarded@0.2.0",
+        "urn:petcare:lockfile:node_modules%2Fipaddr.js@1.9.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fqs@6.17.1",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fes-define-property@1.0.1",
+        "urn:petcare:lockfile:node_modules%2Fside-channel@1.1.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Frange-parser@1.3.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fraw-body@3.0.2",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fbytes@3.1.2",
+        "urn:petcare:lockfile:node_modules%2Fhttp-errors@2.0.1",
+        "urn:petcare:lockfile:node_modules%2Ficonv-lite@0.7.3",
+        "urn:petcare:lockfile:node_modules%2Funpipe@1.0.0"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Frouter@2.2.0",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fdebug@4.4.3",
+        "urn:petcare:lockfile:node_modules%2Fdepd@2.0.0",
+        "urn:petcare:lockfile:node_modules%2Fis-promise@4.0.0",
+        "urn:petcare:lockfile:node_modules%2Fparseurl@1.3.3",
+        "urn:petcare:lockfile:node_modules%2Fpath-to-regexp@8.4.2"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fsafer-buffer@2.1.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fsemver@7.8.6",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fsend@1.2.1",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fdebug@4.4.3",
+        "urn:petcare:lockfile:node_modules%2Fencodeurl@2.0.1",
+        "urn:petcare:lockfile:node_modules%2Fescape-html@1.0.3",
+        "urn:petcare:lockfile:node_modules%2Fetag@1.8.1",
+        "urn:petcare:lockfile:node_modules%2Ffresh@2.0.0",
+        "urn:petcare:lockfile:node_modules%2Fhttp-errors@2.0.1",
+        "urn:petcare:lockfile:node_modules%2Fmime-types@3.0.2",
+        "urn:petcare:lockfile:node_modules%2Fms@2.1.3",
+        "urn:petcare:lockfile:node_modules%2Fon-finished@2.4.2",
+        "urn:petcare:lockfile:node_modules%2Frange-parser@1.3.0",
+        "urn:petcare:lockfile:node_modules%2Fstatuses@2.0.2"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fserve-static@2.2.1",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fencodeurl@2.0.1",
+        "urn:petcare:lockfile:node_modules%2Fescape-html@1.0.3",
+        "urn:petcare:lockfile:node_modules%2Fparseurl@1.3.3",
+        "urn:petcare:lockfile:node_modules%2Fsend@1.2.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fsetprototypeof@1.2.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fsharp@0.35.5",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2F%40img%2Fcolour@1.1.0",
+        "urn:petcare:lockfile:node_modules%2Fdetect-libc@2.1.2",
+        "urn:petcare:lockfile:node_modules%2Fsemver@7.8.6"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fside-channel@1.1.1",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fes-errors@1.3.0",
+        "urn:petcare:lockfile:node_modules%2Fobject-inspect@1.13.4",
+        "urn:petcare:lockfile:node_modules%2Fside-channel-list@1.0.1",
+        "urn:petcare:lockfile:node_modules%2Fside-channel-map@1.0.1",
+        "urn:petcare:lockfile:node_modules%2Fside-channel-weakmap@1.0.2"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fside-channel-list@1.0.1",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fes-errors@1.3.0",
+        "urn:petcare:lockfile:node_modules%2Fobject-inspect@1.13.4"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fside-channel-map@1.0.1",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fcall-bound@1.0.4",
+        "urn:petcare:lockfile:node_modules%2Fes-errors@1.3.0",
+        "urn:petcare:lockfile:node_modules%2Fget-intrinsic@1.3.0",
+        "urn:petcare:lockfile:node_modules%2Fobject-inspect@1.13.4"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fside-channel-weakmap@1.0.2",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fcall-bound@1.0.4",
+        "urn:petcare:lockfile:node_modules%2Fes-errors@1.3.0",
+        "urn:petcare:lockfile:node_modules%2Fget-intrinsic@1.3.0",
+        "urn:petcare:lockfile:node_modules%2Fobject-inspect@1.13.4",
+        "urn:petcare:lockfile:node_modules%2Fside-channel-map@1.0.1"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fsplit2@4.2.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fstatuses@2.0.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Ftoidentifier@1.0.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Ftslib@2.9.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Ftsx@4.23.15",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fesbuild@0.28.2"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Ftype-is@2.1.0",
+      "dependsOn": [
+        "urn:petcare:lockfile:node_modules%2Fcontent-type@2.1.0",
+        "urn:petcare:lockfile:node_modules%2Fmedia-typer@1.1.1",
+        "urn:petcare:lockfile:node_modules%2Fmime-types@3.0.2"
+      ]
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Ftypescript@5.9.3",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fundici-types@6.21.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Funpipe@1.0.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fvary@1.1.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fwrappy@1.0.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "urn:petcare:lockfile:node_modules%2Fxtend@4.0.2",
+      "dependsOn": []
     }
   ]
 }

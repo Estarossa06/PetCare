@@ -2,6 +2,7 @@ import "dotenv/config";
 import { randomUUID } from "node:crypto";
 import { Pool, type PoolClient } from "pg";
 import { loadDatabaseUrl } from "../config/env.js";
+import { getMigrationStatus } from "./migration-runner.js";
 
 type Test = {
   name: string;
@@ -9,21 +10,37 @@ type Test = {
 };
 
 async function verifySchema(client: PoolClient): Promise<void> {
+  const migrationStatus = await getMigrationStatus(client);
+  const pendingMigrations = migrationStatus.migrations.filter((migration) => migration.status === "Pending");
+  if (pendingMigrations.length > 0) {
+    throw new Error(`PostgreSQL migration history ${migrationStatus.lineage} is incomplete: ${pendingMigrations.map((migration) => migration.version).join(", ")}.`);
+  }
+
   const expectedTables = [
     "users",
     "auth_sessions",
+    "auth_refresh_tokens",
     "pets",
     "health_records",
     "health_attachments",
     "care_tasks",
+    "care_task_executions",
     "appointments",
     "reminders",
+    "calendar_events",
+    "calendar_reminders",
     "ai_conversations",
     "ai_messages",
     "sync_devices",
     "sync_operations",
     "sync_changes",
     "sync_cursors",
+    "pet_trackers",
+    "account_deletion_requests",
+    "kirai_conversations",
+    "kirai_messages",
+    "media_objects",
+    "media_cleanup_queue",
     "schema_migrations",
   ];
   const tables = await client.query<{ table_name: string }>(
@@ -40,8 +57,27 @@ async function verifySchema(client: PoolClient): Promise<void> {
     "users_email_unique_idx",
     "pets_owner_updated_idx",
     "health_records_pet_date_idx",
+    "health_attachments_record_idx",
+    "care_tasks_pet_enabled_idx",
+    "care_task_executions_pet_time_idx",
+    "appointments_pet_start_idx",
+    "reminders_pet_due_idx",
+    "calendar_events_owner_start_idx",
+    "calendar_reminders_due_idx",
+    "auth_sessions_user_active_idx",
+    "auth_refresh_tokens_hash_unique_idx",
+    "auth_refresh_tokens_session_idx",
     "sync_devices_user_active_idx",
+    "sync_operations_processed_idx",
     "sync_changes_entity_idx",
+    "ai_conversations_pet_updated_idx",
+    "ai_messages_conversation_created_idx",
+    "kirai_conversations_owner_updated_idx",
+    "kirai_messages_conversation_created_idx",
+    "media_objects_owner_cursor_idx",
+    "media_objects_active_pet_photo_idx",
+    "account_deletion_requests_due_idx",
+    "account_deletion_requests_active_user_idx",
   ];
   const indexes = await client.query<{ indexname: string }>(
     "SELECT indexname FROM pg_indexes WHERE schemaname = 'public'",
@@ -62,6 +98,15 @@ async function verifySchema(client: PoolClient): Promise<void> {
     "sync_operations_pkey",
     "sync_changes_pkey",
     "sync_cursors_last_cursor_nonnegative",
+    "care_task_executions_owner_id_task_id_pet_id_fkey",
+    "calendar_events_pkey",
+    "calendar_reminders_pkey",
+    "media_objects_owner_id_id_unique",
+    "media_objects_pet_owner_fk",
+    "media_objects_record_owner_fk",
+    "media_objects_parent_matches_purpose",
+    "account_deletion_requests_attempt_count_nonnegative",
+    "account_deletion_requests_status_valid",
   ];
   const missingConstraints = expectedConstraints.filter(
     (constraint) => !actualConstraints.has(constraint),

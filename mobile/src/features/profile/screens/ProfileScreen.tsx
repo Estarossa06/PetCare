@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "expo-router";
 import Constants from "expo-constants";
 import {
-  ActivityIndicator, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView,
+  ActivityIndicator, Alert, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView,
   StyleSheet, Switch, Text, TextInput, View, useWindowDimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -54,7 +54,7 @@ function SettingRow({ icon: Icon, title, subtitle, onPress, danger = false, trai
 export default function ProfileScreen() {
   const router = useRouter();
   const { width } = useWindowDimensions();
-  const { user, loading, error, logout, restore, finishDeactivatedAccount, updateLocalUser } = useAuth();
+  const { user, loading, error, logout, restore, finishDeactivatedAccount, finishPermanentlyDeletedAccount, updateLocalUser } = useAuth();
   const { mode, setMode } = useTheme();
   const [page, setPage] = useState<Page>(null);
   const [profile, setProfile] = useState<AuthUser | null>(user);
@@ -158,7 +158,17 @@ export default function ProfileScreen() {
       }
       setConfirmAccountAction(false);
       setAccountAction(null);
-      await finishDeactivatedAccount();
+      if (accountAction === "delete") {
+        const localDataRemoved = await finishPermanentlyDeletedAccount();
+        Alert.alert(
+          "Solicitud registrada",
+          localDataRemoved
+            ? "La solicitud de eliminación quedó pendiente de procesamiento en el servidor. Los datos de esta instalación se eliminaron. Otros dispositivos sin conexión deberán conectarse y borrar sus datos locales por separado."
+            : "La solicitud de eliminación quedó pendiente de procesamiento en el servidor, pero no se pudieron borrar todos los datos locales de esta instalación. No reinstales ni compartas este dispositivo hasta completar esa limpieza.",
+        );
+      } else {
+        await finishDeactivatedAccount();
+      }
       router.replace("/auth");
     } catch (accountError) {
       setConfirmAccountAction(false);

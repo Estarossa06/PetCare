@@ -76,14 +76,29 @@ async function upload(request: Request, response: Response, database: MediaDb, s
   const tempFile = join(directory, randomUUID());
   let objectKey = "";
   let stored = false;
+  let committedTransaction = false;
+  let pg: Awaited<ReturnType<NonNullable<MediaDb["connect"]>>> | undefined;
+  let transactionOpen = false;
   try {
     const received = await writeIncoming(request, contentLength, maxBytes, tempFile);
     if (received.sha256 !== suppliedHash) throw new MediaValidationError("CHECKSUM_MISMATCH", "La integridad del archivo no coincide.", 422);
     const validated = await validateMediaFile(tempFile, purpose, mimeType, filename, received.size);
-    const existing = await database.query<MediaRow & QueryResultRow>("SELECT * FROM media_objects WHERE owner_id=$1 AND id=$2", [ownerId, assetId]);
+    pg = await database.connect?.();
+    if (!pg) throw new Error("Media persistence requires a transactional PostgreSQL pool.");
+    await pg.query("BEGIN");
+    transactionOpen = true;
+    const activeOwner = await pg.query("SELECT id FROM users WHERE id=$1 AND deleted_at IS NULL FOR SHARE", [ownerId]);
+    if (!activeOwner.rows.length) throw invalid(404, "MEDIA_PARENT_NOT_FOUND");
+    await verifyParent(pg, ownerId, purpose, petId, recordId);
+
+    // Keep the owner row locked until metadata commits. Account deletion takes
+    // an incompatible lock, so its R2 sweep cannot race an in-flight upload.
+    const existing = await pg.query<MediaRow & QueryResultRow>("SELECT * FROM media_objects WHERE owner_id=$1 AND id=$2", [ownerId, assetId]);
     if (existing.rows[0]) {
       const old = existing.rows[0];
       if (old.deleted_at || old.sha256.trim() !== received.sha256 || old.purpose !== purpose || old.pet_id !== petId || old.health_record_id !== (recordId ?? null)) throw invalid(409, "MEDIA_IDEMPOTENCY_CONFLICT");
+      await pg.query("COMMIT");
+      transactionOpen = false;
       response.status(200).json({ asset: mapAsset(old), idempotent: true });
       return;
     }
@@ -91,49 +106,52 @@ async function upload(request: Request, response: Response, database: MediaDb, s
     objectKey = `media/${ownerId}/${assetId}/${received.sha256}`;
     await store.put(objectKey, tempFile, received.size, validated.mimeType, received.contentMd5);
     stored = true;
-    const pg = await database.connect?.();
-    if (!pg) throw new Error("Media persistence requires a transactional PostgreSQL pool.");
-    try {
-      await pg.query("BEGIN");
-      await verifyParent(pg, ownerId, purpose, petId, recordId);
-      if (purpose === "pet_photo") {
-        const previous = await pg.query<MediaRow & QueryResultRow>("SELECT * FROM media_objects WHERE owner_id=$1 AND pet_id=$2 AND purpose='pet_photo' AND deleted_at IS NULL FOR UPDATE", [ownerId, petId]);
-        for (const row of previous.rows) {
-          await pg.query("UPDATE media_objects SET deleted_at=now(),updated_at=now(),version=version+1,cursor=nextval('media_change_cursor_seq') WHERE owner_id=$1 AND id=$2", [ownerId, row.id]);
-          await pg.query("INSERT INTO media_cleanup_queue(object_key) VALUES($1) ON CONFLICT DO NOTHING", [row.object_key]);
-        }
+    if (purpose === "pet_photo") {
+      const previous = await pg.query<MediaRow & QueryResultRow>("SELECT * FROM media_objects WHERE owner_id=$1 AND pet_id=$2 AND purpose='pet_photo' AND deleted_at IS NULL FOR UPDATE", [ownerId, petId]);
+      for (const row of previous.rows) {
+        await pg.query("UPDATE media_objects SET deleted_at=now(),updated_at=now(),version=version+1,cursor=nextval('media_change_cursor_seq') WHERE owner_id=$1 AND id=$2", [ownerId, row.id]);
+        await pg.query("INSERT INTO media_cleanup_queue(object_key) VALUES($1) ON CONFLICT DO NOTHING", [row.object_key]);
       }
-      const inserted = await pg.query<MediaRow & QueryResultRow>(
-        `INSERT INTO media_objects(id,owner_id,purpose,pet_id,health_record_id,object_key,original_filename,mime_type,size_bytes,sha256)
-         VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *`,
-        [assetId, ownerId, purpose, petId, recordId ?? null, objectKey, validated.filename, validated.mimeType, received.size, received.sha256]);
-      if (purpose === "health_attachment") {
-        await pg.query(
-          `INSERT INTO health_attachments(id,owner_id,pet_id,health_record_id,storage_key,remote_storage_key,original_filename,mime_type,size_bytes,sha256,version,created_at,updated_at)
+    }
+    const inserted = await pg.query<MediaRow & QueryResultRow>(
+      `INSERT INTO media_objects(id,owner_id,purpose,pet_id,health_record_id,object_key,original_filename,mime_type,size_bytes,sha256)
+       VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *`,
+      [assetId, ownerId, purpose, petId, recordId ?? null, objectKey, validated.filename, validated.mimeType, received.size, received.sha256]);
+    if (purpose === "health_attachment") {
+      await pg.query(
+        `INSERT INTO health_attachments(id,owner_id,pet_id,health_record_id,storage_key,remote_storage_key,original_filename,mime_type,size_bytes,sha256,version,created_at,updated_at)
            VALUES($1,$2,$3,$4,$5,$5,$6,$7,$8,$9,1,now(),now())
            ON CONFLICT(owner_id,id) DO UPDATE SET storage_key=EXCLUDED.storage_key,remote_storage_key=EXCLUDED.remote_storage_key,
              original_filename=EXCLUDED.original_filename,mime_type=EXCLUDED.mime_type,size_bytes=EXCLUDED.size_bytes,
              sha256=EXCLUDED.sha256,version=health_attachments.version+1,updated_at=now(),deleted_at=NULL`,
-          [assetId, ownerId, petId, recordId, objectKey, validated.filename, validated.mimeType, received.size, received.sha256]);
-      }
-      await pg.query("COMMIT");
-      response.status(201).json({ asset: mapAsset(inserted.rows[0]), idempotent: false });
-    } catch (error) {
-      await pg.query("ROLLBACK").catch(() => undefined);
-      throw error;
-    } finally { pg.release(); }
+        [assetId, ownerId, petId, recordId, objectKey, validated.filename, validated.mimeType, received.size, received.sha256]);
+    }
+    await pg.query("COMMIT");
+    transactionOpen = false;
+    committedTransaction = true;
+    response.status(201).json({ asset: mapAsset(inserted.rows[0]), idempotent: false });
   } catch (error) {
+    if (transactionOpen) await pg?.query("ROLLBACK").catch(() => undefined);
     if (stored && objectKey) {
       try {
-        const committed = await database.query("SELECT 1 FROM media_objects WHERE object_key=$1 LIMIT 1", [objectKey]);
-        if (!committed.rows.length) await store.delete(objectKey);
+        const committed = committedTransaction ? { rows: [{ exists: true }] } : await database.query("SELECT 1 FROM media_objects WHERE object_key=$1 LIMIT 1", [objectKey]);
+        if (!committed.rows.length) {
+          try { await store.delete(objectKey); }
+          catch {
+            await database.query("INSERT INTO media_cleanup_queue(object_key) VALUES($1) ON CONFLICT DO NOTHING", [objectKey]);
+            logger.error({ event: "media_orphan_cleanup_deferred", requestId: requestId(response), assetId });
+          }
+        }
       }
       catch { logger.error({ event: "media_orphan_cleanup_failed", requestId: requestId(response), assetId }); }
     }
     if (error instanceof MediaValidationError) throw error;
     logger.error({ event: "media_upload_failed", requestId: requestId(response), purpose });
     throw new MediaValidationError("MEDIA_UNAVAILABLE", "No se pudo guardar el archivo. Conservamos la copia local para reintentar.", 503);
-  } finally { await rm(directory, { recursive: true, force: true }); }
+  } finally {
+    pg?.release();
+    await rm(directory, { recursive: true, force: true });
+  }
 }
 
 async function download(request: Request, response: Response, database: Queryable, store: MediaObjectStore) {

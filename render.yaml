@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: petcare-api-staging
+    runtime: node
+    rootDir: api
+    autoDeployTrigger: "off"
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: 22.22.0
+      - key: NODE_ENV
+        value: staging
+      - key: HOST
+        value: 0.0.0.0
+      - key: DATABASE_URL
+        sync: false
+      - key: AUTH_ACCESS_TOKEN_SECRET
+        sync: false

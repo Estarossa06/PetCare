@@ -33,7 +33,7 @@ export interface AuthStore {
   updateUserProfile(input: { userId: string; email: string; name: string }): Promise<AuthUser>;
   updatePassword(input: { userId: string; currentSessionId: string; passwordHash: string }): Promise<void>;
   deactivateUser(userId: string): Promise<void>;
-  requestPermanentDeletion(userId: string): Promise<void>;
+  requestPermanentDeletion(userId: string): Promise<{ requestId: string }>;
   findUserByEmail(email: string): Promise<
     | (AuthUser & { passwordHash: string })
     | undefined

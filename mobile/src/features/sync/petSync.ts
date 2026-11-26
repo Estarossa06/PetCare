@@ -6,6 +6,7 @@ import { apiClient } from "../auth/apiClient";
 import { retryDelayMilliseconds } from "./petSyncPolicy";
 import { synchronizeDomainEntities } from "./domainSync";
 import { synchronizeMedia } from "./mediaSync";
+import { selectReadyQueueOperations } from "./domainQueueState";
 
 const PROTOCOL_VERSION = 1;
 const SQLITE_SCHEMA_VERSION = 10;
@@ -107,29 +108,10 @@ async function selectReadyOperations(localAccountId: string): Promise<Array<Queu
     `SELECT operation_id, depends_on_operation_id FROM sync_queue_dependencies WHERE account_id = ?`,
     localAccountId,
   );
-  const byOperation = new Map(candidates.map((operation) => [operation.operation_id, operation]));
+  const ready = selectReadyQueueOperations(candidates, dependencies, PUSH_BATCH_SIZE);
   const depsByOperation = new Map<string, string[]>();
   for (const edge of dependencies) depsByOperation.set(edge.operation_id, [...(depsByOperation.get(edge.operation_id) ?? []), edge.depends_on_operation_id]);
-  const selected = new Set<string>();
-  const output: Array<QueueRow & { depends_on: string[] }> = [];
-  let progressed = true;
-  while (progressed && output.length < PUSH_BATCH_SIZE) {
-    progressed = false;
-    for (const operation of candidates) {
-      if (selected.has(operation.operation_id)) continue;
-      const deps = depsByOperation.get(operation.operation_id) ?? [];
-      const ready = deps.every((dependencyId) => {
-        if (selected.has(dependencyId)) return true;
-        return !byOperation.has(dependencyId);
-      });
-      if (!ready) continue;
-      selected.add(operation.operation_id);
-      output.push({ ...operation, depends_on: deps });
-      progressed = true;
-      if (output.length >= PUSH_BATCH_SIZE) break;
-    }
-  }
-  return output;
+  return ready.map((operation) => ({ ...operation, depends_on: depsByOperation.get(operation.operation_id) ?? [] }));
 }
 
 async function markInFlight(localAccountId: string, operations: QueueRow[]): Promise<void> {

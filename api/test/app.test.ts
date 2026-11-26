@@ -87,6 +87,18 @@ test("configuration requires a PostgreSQL URL and validates port and CORS origin
   ]);
 });
 
+test("configuration accepts staging as a deployment environment", () => {
+  const config = loadConfig({
+    ...defaultEnvironment,
+    NODE_ENV: "staging",
+    HOST: "0.0.0.0",
+    PORT: "10000",
+  });
+  assert.equal(config.nodeEnv, "staging");
+  assert.equal(config.host, "0.0.0.0");
+  assert.equal(config.port, 10000);
+});
+
 test("application starts and returns health with a generated request ID", async () => {
   const { logger, entries } = createTestLogger();
   const app = createApp({
