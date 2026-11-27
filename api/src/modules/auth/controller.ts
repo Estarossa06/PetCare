@@ -92,7 +92,7 @@ export class AuthController {
 
   readonly updateProfile: RequestHandler = async (request, response, next) => {
     try {
-      const user = await this.service.updateProfile(requirePrincipal(request).userId, request.body);
+      const user = await this.service.updateProfile(requirePrincipal(request), request.body);
       response.status(200).json({ user });
     } catch (error) {
       if (error instanceof InvalidCredentialsError) {

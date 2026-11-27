@@ -12,22 +12,26 @@ for (let index = 0; index < sourceMigrations.length; index += 1) {
     assert.fail(`Migration ${index + 1} differs at ${offset} (lengths ${source.length}/${compiled.length}): ${JSON.stringify(source.slice(offset - 20, offset + 30))} vs ${JSON.stringify(compiled.slice(offset - 20, offset + 30))}`);
   }
   assert.equal(migrationChecksum(sourceMigrations[index]), migrationChecksum(compiledMigrations[index]));
-  assert.deepEqual(
-    new Set(migrationChecksumCandidates(sourceMigrations[index])),
-    new Set(migrationChecksumCandidates(compiledMigrations[index])),
-  );
+  const sourceCandidates = migrationChecksumCandidates(sourceMigrations[index]);
+  const compiledCandidates = migrationChecksumCandidates(compiledMigrations[index]);
+  assert.equal(sourceCandidates[0], compiledCandidates[0]);
+  // Historical migrations retain their known runtime digests; a newly added
+  // migration has no legacy raw digest and only its canonical checksum must
+  // be stable across tsx and compiled execution.
+  if (index < 13) assert.deepEqual(new Set(sourceCandidates), new Set(compiledCandidates));
 }
-const sourceRemoteLedger = sourceMigrations.map((migration) => ({
-  version: migration.version, name: migration.name, checksum: migrationChecksumCandidates(migration)[1],
+const persistedChecksum = (migration, index) => migrationChecksumCandidates(migration)[index < 13 ? 1 : 0];
+const sourceRemoteLedger = sourceMigrations.map((migration, index) => ({
+  version: migration.version, name: migration.name, checksum: persistedChecksum(migration, index),
 }));
-const compiledRemoteLedger = compiledMigrations.map((migration) => ({
-  version: migration.version, name: migration.name, checksum: migrationChecksumCandidates(migration)[1],
+const compiledRemoteLedger = compiledMigrations.map((migration, index) => ({
+  version: migration.version, name: migration.name, checksum: persistedChecksum(migration, index),
 }));
-const sourceLocalLedger = sourceLegacy.map((migration) => ({
-  version: migration.version, name: migration.name, checksum: migrationChecksumCandidates(migration)[1],
+const sourceLocalLedger = sourceLegacy.map((migration, index) => ({
+  version: migration.version, name: migration.name, checksum: persistedChecksum(migration, index),
 }));
-const compiledLocalLedger = compiledLegacy.map((migration) => ({
-  version: migration.version, name: migration.name, checksum: migrationChecksumCandidates(migration)[1],
+const compiledLocalLedger = compiledLegacy.map((migration, index) => ({
+  version: migration.version, name: migration.name, checksum: persistedChecksum(migration, index),
 }));
 assert.equal(resolveMigrationLineage(sourceRemoteLedger).id, "remote");
 assert.equal(resolveMigrationLineage(compiledRemoteLedger).id, "remote");

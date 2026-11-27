@@ -8,6 +8,7 @@ export interface AppConfig {
   corsOrigins: readonly string[];
   accessTokenSecret: Uint8Array;
   r2?: { accountId: string; bucket: string; accessKeyId: string; secretAccessKey: string };
+  googleOAuth?: { clientId: string; clientSecret: string; redirectUri: string; webReturnUrl: string };
 }
 
 function requiredValue(value: string | undefined, name: string): string {
@@ -81,6 +82,27 @@ function parseAccessTokenSecret(value: string | undefined): Uint8Array {
   return bytes;
 }
 
+function parseGoogleOAuth(env: NodeJS.ProcessEnv, nodeEnv: NodeEnvironment): AppConfig["googleOAuth"] {
+  const names = ["GOOGLE_OAUTH_CLIENT_ID", "GOOGLE_OAUTH_CLIENT_SECRET", "GOOGLE_OAUTH_REDIRECT_URI", "GOOGLE_OAUTH_WEB_RETURN_URL"] as const;
+  const values = names.map((name) => env[name]?.trim() ?? "");
+  if (values.every((value) => !value)) return undefined;
+  if (values.some((value) => !value)) {
+    throw new Error("GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, GOOGLE_OAUTH_REDIRECT_URI and GOOGLE_OAUTH_WEB_RETURN_URL must be configured together.");
+  }
+  const [clientId, clientSecret, redirectUri, webReturnUrl] = values as [string, string, string, string];
+  const allowLocalHttp = nodeEnv === "development" || nodeEnv === "test";
+  for (const [name, value] of [["GOOGLE_OAUTH_REDIRECT_URI", redirectUri], ["GOOGLE_OAUTH_WEB_RETURN_URL", webReturnUrl]] as const) {
+    let url: URL;
+    try { url = new URL(value); } catch { throw new Error(`${name} must be a valid absolute URL.`); }
+    const localHttp = allowLocalHttp && url.protocol === "http:" && ["localhost", "127.0.0.1"].includes(url.hostname);
+    if ((url.protocol !== "https:" && !localHttp) || url.username || url.password || url.search || url.hash) {
+      throw new Error(`${name} must be an HTTPS URL without credentials, query, or fragment.`);
+    }
+  }
+  if (clientId.length > 512 || clientSecret.length > 512) throw new Error("Google OAuth credentials have invalid lengths.");
+  return { clientId, clientSecret, redirectUri, webReturnUrl };
+}
+
 export function loadConfig(
   env: NodeJS.ProcessEnv = process.env,
 ): AppConfig {
@@ -104,6 +126,7 @@ export function loadConfig(
     throw new Error("R2_ACCOUNT_ID, R2_BUCKET, R2_ACCESS_KEY_ID and R2_SECRET_ACCESS_KEY must be configured together.");
   }
 
+  const googleOAuth = parseGoogleOAuth(env, nodeEnv);
   return {
     nodeEnv,
     port: parsePort(env.PORT),
@@ -111,6 +134,7 @@ export function loadConfig(
     databaseUrl: loadDatabaseUrl(env),
     corsOrigins: parseCorsOrigins(env.CORS_ORIGINS),
     accessTokenSecret: parseAccessTokenSecret(env.AUTH_ACCESS_TOKEN_SECRET),
+    ...(googleOAuth ? { googleOAuth } : {}),
     ...(r2Values.every(Boolean) ? { r2: { accountId: r2Values[0]!, bucket: r2Values[1]!, accessKeyId: r2Values[2]!, secretAccessKey: r2Values[3]! } } : {}),
   };
 }

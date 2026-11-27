@@ -99,6 +99,29 @@ test("configuration accepts staging as a deployment environment", () => {
   assert.equal(config.port, 10000);
 });
 
+test("Google OAuth config is all-or-nothing and requires HTTPS outside local development", () => {
+  const google = {
+    GOOGLE_OAUTH_CLIENT_ID: "client-id.apps.googleusercontent.com",
+    GOOGLE_OAUTH_CLIENT_SECRET: "synthetic-client-secret",
+    GOOGLE_OAUTH_REDIRECT_URI: "https://api.example.test/auth/google/callback",
+    GOOGLE_OAUTH_WEB_RETURN_URL: "https://web.example.test/oauth/google-callback",
+  };
+  const valid = loadConfig({ ...defaultEnvironment, NODE_ENV: "staging", ...google });
+  assert.equal(valid.googleOAuth?.redirectUri, google.GOOGLE_OAUTH_REDIRECT_URI);
+  assert.throws(
+    () => loadConfig({ ...defaultEnvironment, NODE_ENV: "staging", GOOGLE_OAUTH_CLIENT_ID: google.GOOGLE_OAUTH_CLIENT_ID }),
+    /must be configured together/,
+  );
+  assert.throws(
+    () => loadConfig({ ...defaultEnvironment, NODE_ENV: "staging", ...google, GOOGLE_OAUTH_REDIRECT_URI: "http://localhost:3000/auth/google/callback" }),
+    /must be an HTTPS URL/,
+  );
+  assert.throws(
+    () => loadConfig({ ...defaultEnvironment, NODE_ENV: "staging", ...google, GOOGLE_OAUTH_WEB_RETURN_URL: "https://web.example.test/callback?token=bad" }),
+    /without credentials, query, or fragment/,
+  );
+});
+
 test("application starts and returns health with a generated request ID", async () => {
   const { logger, entries } = createTestLogger();
   const app = createApp({
@@ -120,6 +143,38 @@ test("application starts and returns health with a generated request ID", async 
     assert.equal(entries.length, 1);
     assert.equal(entries[0].path, "/health");
     assert.equal(JSON.stringify(entries).includes("private"), false);
+  } finally {
+    await close(running.server);
+  }
+});
+
+test("Google authorization start binds state to an HttpOnly HTTPS browser cookie", async () => {
+  const app = createApp({
+    config: {
+      corsOrigins: [],
+      accessTokenSecret: Buffer.from(defaultEnvironment.AUTH_ACCESS_TOKEN_SECRET),
+      googleOAuth: {
+        clientId: "test-client.apps.googleusercontent.com",
+        clientSecret: "test-only-secret",
+        redirectUri: "https://api.example.test/auth/google/callback",
+        webReturnUrl: "https://web.example.test/oauth/google-callback",
+      },
+    },
+    database: { query: async () => ({ rows: [] }) },
+    authStore: new MemoryAuthStore(),
+    logger: createTestLogger().logger,
+  });
+  const running = await listen(app);
+  try {
+    const response = await fetch(`${running.baseUrl}/auth/google`, { redirect: "manual" });
+    assert.equal(response.status, 302);
+    assert.match(response.headers.get("location") ?? "", /^https:\/\/accounts\.google\.com\//);
+    const cookie = response.headers.get("set-cookie") ?? "";
+    assert.match(cookie, /HttpOnly/i);
+    assert.match(cookie, /Secure/i);
+    assert.match(cookie, /SameSite=Lax/i);
+    assert.match(cookie, /Path=\/auth\/google\/callback/i);
+    assert.doesNotMatch(cookie, /Domain=/i);
   } finally {
     await close(running.server);
   }

@@ -43,6 +43,7 @@ function AuthenticatedNavigation() {
   return (
     <View style={styles.appShell}>
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }}>
+        <Stack.Screen name="oauth/google-callback" />
         <Stack.Protected guard={guards.authentication}>
           <Stack.Screen name="auth" options={{ presentation: "modal" }} />
         </Stack.Protected>

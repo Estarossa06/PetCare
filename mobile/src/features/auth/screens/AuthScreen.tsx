@@ -16,6 +16,7 @@ import { AppTextField } from "../../../components/ui/TextField";
 import { SurfaceCard } from "../../../components/ui/SurfaceCard";
 import { authErrorMessage } from "../authErrorMessage";
 import { useAuth } from "../AuthProvider";
+import { apiClient } from "../apiClient";
 import { useTheme } from "../../../theme/ThemeProvider";
 
 const palettes = {
@@ -55,6 +56,8 @@ export default function AuthScreen() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const googleError = useLocalSearchParams<{ googleError?: string }>().googleError;
+
   const submit = async () => {
     setBusy(true);
     setError(null);
@@ -72,6 +75,24 @@ export default function AuthScreen() {
       setBusy(false);
     }
   };
+
+  const continueWithGoogle = () => {
+    setBusy(true);
+    setError(null);
+    try {
+      if (Platform.OS !== "web") return;
+      window.location.assign(apiClient.googleLoginUrl());
+    } catch (requestError) {
+      setError(authErrorMessage(requestError));
+      setBusy(false);
+    }
+  };
+
+  const googleErrorMessage = googleError === "account_link_required"
+    ? "Esta cuenta de Google usa un correo ya registrado. Inicia sesión con tu cuenta PetCare y vincula Google desde tu perfil."
+    : googleError === "identity_conflict"
+      ? "Esta cuenta de Google ya está vinculada a otra cuenta PetCare."
+      : googleError ? "No pudimos completar el inicio con Google. Inténtalo de nuevo." : null;
 
   const inputStyle = [
     styles.input,
@@ -172,6 +193,17 @@ export default function AuthScreen() {
                   buttonStyle={styles.primaryButton}
                   onPress={() => void submit()}
                 />
+                {Platform.OS === "web" ? <>
+                  <Text style={[styles.dividerLabel, { color: palette.muted }]}>o</Text>
+                  <AppButton
+                    label="Continuar con Google"
+                    variant="secondary"
+                    loading={busy}
+                    disabled={busy}
+                    buttonStyle={styles.primaryButton}
+                    onPress={continueWithGoogle}
+                  />
+                </> : null}
                 <AppButton
                   label={isRegister ? "Ya tengo una cuenta" : "Necesito crear una cuenta"}
                   variant="quiet"
@@ -183,6 +215,7 @@ export default function AuthScreen() {
                     clearError();
                   }}
                 />
+                {googleErrorMessage ? <Text accessibilityRole="alert" style={[styles.error, { color: palette.error }]}>{googleErrorMessage}</Text> : null}
                 {restoreError ? <Text accessibilityRole="alert" style={[styles.error, { color: palette.error }]}>{restoreError}</Text> : null}
                 <Text style={[styles.note, { color: palette.muted }]}>
                   Los datos locales anteriores no se vinculan automáticamente. Cada cuenta mantiene un espacio local separado en este dispositivo.
@@ -215,6 +248,7 @@ const styles = StyleSheet.create({
   primaryButton: { minHeight: 52, borderRadius: 13, marginTop: 2 },
   error: { fontSize: 13, lineHeight: 19 },
   note: { fontSize: 12, lineHeight: 18, textAlign: "center", marginTop: 1 },
+  dividerLabel: { fontSize: 12, textAlign: "center", marginVertical: -5 },
 });
 
 const imageStyles = StyleSheet.create({

@@ -7,8 +7,10 @@ import {
   signAccessToken,
 } from "./tokens.js";
 import {
+  DuplicateEmailError,
   InvalidCredentialsError,
   InvalidRequestError,
+  GoogleAccountLinkRequiredError,
 } from "./errors.js";
 import {
   type AuthStore,
@@ -49,6 +51,7 @@ export class AuthService {
     const sessionId = randomUUID();
     const refreshToken = createRefreshToken();
     const expiresAt = refreshTokenExpiry();
+    const authenticatedAt = new Date();
     const user = await this.store.createUserAndSession({
       email,
       passwordHash,
@@ -56,8 +59,9 @@ export class AuthService {
       sessionId,
       refreshTokenHash: hashRefreshToken(refreshToken),
       expiresAt,
+      authenticatedAt,
     });
-    const access = await signAccessToken(user, sessionId, this.accessTokenSecret);
+    const access = await signAccessToken(user, sessionId, this.accessTokenSecret, new Date(), authenticatedAt);
     return {
       accessToken: access.token,
       accessTokenExpiresAt: access.expiresAt,
@@ -72,10 +76,7 @@ export class AuthService {
   }): Promise<TokenPair> {
     const { email, password } = validateLoginInput(input);
     const user = await this.store.findUserByEmail(email);
-    const matches = await verifyPassword(
-      password,
-      user?.passwordHash ?? DUMMY_PASSWORD_HASH,
-    );
+    const matches = await verifyPassword(password, user?.passwordHash ?? DUMMY_PASSWORD_HASH);
     if (!user || !matches) {
       throw new InvalidCredentialsError();
     }
@@ -97,6 +98,8 @@ export class AuthService {
       result.session.user,
       result.session.id,
       this.accessTokenSecret,
+      new Date(),
+      result.session.authenticatedAt,
     );
     return {
       accessToken: access.token,
@@ -114,16 +117,16 @@ export class AuthService {
     return this.store.findUserById(userId);
   }
 
-  async updateProfile(userId: string, input: unknown): Promise<AuthUser> {
+  async updateProfile(principal: Principal, input: unknown): Promise<AuthUser> {
     const update = validateProfileUpdate(input);
-    await this.verifyCurrentPassword(userId, update.currentPassword);
-    return this.store.updateUserProfile({ userId, email: update.email, name: update.name });
+    await this.verifyAccountProof(principal, update.currentPassword);
+    return this.store.updateUserProfile({ userId: principal.userId, email: update.email, name: update.name });
   }
 
   async changePassword(principal: Principal, input: unknown): Promise<void> {
     const change = validatePasswordChange(input);
-    await this.verifyCurrentPassword(principal.userId, change.currentPassword);
-    if (change.currentPassword === change.newPassword) {
+    const user = await this.verifyAccountProof(principal, change.currentPassword);
+    if (change.currentPassword && change.currentPassword === change.newPassword) {
       throw new InvalidRequestError("Choose a new password different from the current password.");
     }
     await this.store.updatePassword({
@@ -135,33 +138,61 @@ export class AuthService {
 
   async deactivateAccount(principal: Principal, input: unknown): Promise<void> {
     const currentPassword = validateCurrentPassword(input);
-    await this.verifyCurrentPassword(principal.userId, currentPassword);
+    await this.verifyAccountProof(principal, currentPassword);
     await this.store.deactivateUser(principal.userId);
   }
 
   async requestPermanentDeletion(principal: Principal, input: unknown): Promise<{ requestId: string }> {
     const currentPassword = validateCurrentPassword(input);
-    await this.verifyCurrentPassword(principal.userId, currentPassword);
+    await this.verifyAccountProof(principal, currentPassword);
     return this.store.requestPermanentDeletion(principal.userId);
   }
 
-  private async verifyCurrentPassword(userId: string, password: string): Promise<void> {
-    const user = await this.store.findUserCredentialsById(userId);
-    if (!user || !(await verifyPassword(password, user.passwordHash))) {
+  async resolveGoogleLogin(identity: { email: string; name: string; subject: string }): Promise<AuthUser> {
+    const linked = await this.store.findUserByGoogleSubject(identity.subject);
+    if (linked) return linked;
+    if (await this.store.findUserByEmail(identity.email)) throw new GoogleAccountLinkRequiredError();
+    try { return await this.store.createGoogleUserAndIdentity(identity); }
+    catch (error) {
+      if (error instanceof DuplicateEmailError) throw new GoogleAccountLinkRequiredError();
+      throw error;
+    }
+  }
+
+  async verifyGoogleLinkStart(principal: Principal, currentPassword: string | undefined): Promise<void> {
+    await this.verifyAccountProof(principal, currentPassword);
+  }
+
+  async exchangeGoogleHandoff(rawCode: unknown): Promise<TokenPair> {
+    if (typeof rawCode !== "string" || rawCode.length < 32 || rawCode.length > 128) throw new InvalidCredentialsError();
+    const user = await this.store.consumeOAuthHandoff(hashRefreshToken(rawCode));
+    if (!user) throw new InvalidCredentialsError();
+    return this.createSession(user);
+  }
+
+  private async verifyAccountProof(principal: Principal, password: string | undefined) {
+    const user = await this.store.findUserCredentialsById(principal.userId);
+    if (!user) throw new InvalidCredentialsError();
+    if (user.passwordHash) {
+      if (!password || !(await verifyPassword(password, user.passwordHash))) throw new InvalidCredentialsError();
+    } else if (!principal.authTime || Math.floor(Date.now() / 1000) - principal.authTime > 300 || principal.authTime > Math.floor(Date.now() / 1000) + 60) {
       throw new InvalidCredentialsError();
     }
+    return user;
   }
 
   private async createSession(user: AuthUser): Promise<TokenPair> {
     const sessionId = randomUUID();
     const refreshToken = createRefreshToken();
+    const authenticatedAt = new Date();
     await this.store.createSession({
       id: sessionId,
       userId: user.id,
       refreshTokenHash: hashRefreshToken(refreshToken),
       expiresAt: refreshTokenExpiry(),
+      authenticatedAt,
     });
-    const access = await signAccessToken(user, sessionId, this.accessTokenSecret);
+    const access = await signAccessToken(user, sessionId, this.accessTokenSecret, new Date(), authenticatedAt);
     return {
       accessToken: access.token,
       accessTokenExpiresAt: access.expiresAt,

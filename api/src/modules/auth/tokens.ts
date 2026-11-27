@@ -17,10 +17,11 @@ export async function signAccessToken(
   sessionId: string,
   secret: Uint8Array,
   now = new Date(),
+  authenticatedAt = now,
 ): Promise<{ token: string; expiresAt: string }> {
   const issuedAt = Math.floor(now.getTime() / 1000);
   const expiresAt = new Date((issuedAt + ACCESS_TOKEN_TTL_SECONDS) * 1000);
-  const token = await new SignJWT({ sid: sessionId })
+  const token = await new SignJWT({ sid: sessionId, auth_time: Math.floor(authenticatedAt.getTime() / 1000) })
     .setProtectedHeader({ alg: "HS256", typ: "JWT" })
     .setSubject(user.id)
     .setIssuer(ISSUER)
@@ -53,7 +54,10 @@ export async function verifyAccessToken(
   ) {
     throw new Error("Access token claims are invalid.");
   }
-  return { userId: payload.sub, sessionId: payload.sid };
+  const authTime = typeof payload.auth_time === "number" && Number.isInteger(payload.auth_time)
+    ? payload.auth_time
+    : undefined;
+  return { userId: payload.sub, sessionId: payload.sid, ...(authTime === undefined ? {} : { authTime }) };
 }
 
 export function createRefreshToken(): string {

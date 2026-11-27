@@ -1,5 +1,5 @@
 import type { Pool, PoolClient, QueryResultRow } from "pg";
-import { DuplicateEmailError } from "./errors.js";
+import { DuplicateEmailError, GoogleIdentityConflictError } from "./errors.js";
 import {
   type AuthSession,
   type AuthStore,
@@ -11,7 +11,7 @@ interface DatabaseUser extends QueryResultRow {
   id: string;
   email: string;
   name: string;
-  password_hash?: string;
+  password_hash?: string | null;
 }
 
 interface RefreshTokenRow extends QueryResultRow {
@@ -26,6 +26,7 @@ interface RefreshTokenRow extends QueryResultRow {
   session_expires_at: Date;
   session_is_unexpired: boolean;
   user_deleted_at: Date | null;
+  session_authenticated_at: Date;
 }
 
 async function transaction<T>(
@@ -65,6 +66,7 @@ export class PostgresAuthStore implements AuthStore {
     sessionId: string;
     refreshTokenHash: string;
     expiresAt: Date;
+    authenticatedAt?: Date;
   }): Promise<AuthUser> {
     try {
       return await transaction(this.pool, async (client) => {
@@ -76,13 +78,14 @@ export class PostgresAuthStore implements AuthStore {
         );
         await client.query(
           `INSERT INTO auth_sessions
-            (id, user_id, refresh_token_hash, expires_at)
-           VALUES ($1, $2, $3, $4)`,
+            (id, user_id, refresh_token_hash, expires_at, created_at)
+           VALUES ($1, $2, $3, $4, $5)`,
           [
             input.sessionId,
             result.rows[0].id,
             input.refreshTokenHash,
             input.expiresAt,
+            input.authenticatedAt ?? new Date(),
           ],
         );
         await client.query(
@@ -109,7 +112,7 @@ export class PostgresAuthStore implements AuthStore {
 
   async findUserByEmail(
     email: string,
-  ): Promise<(AuthUser & { passwordHash: string }) | undefined> {
+  ): Promise<(AuthUser & { passwordHash: string | null }) | undefined> {
     const result = await this.pool.query<DatabaseUser>(
       `SELECT id, email, name, password_hash
        FROM users
@@ -118,8 +121,134 @@ export class PostgresAuthStore implements AuthStore {
     );
     const row = result.rows[0];
     return row
-      ? { ...toAuthUser(row), passwordHash: row.password_hash ?? "" }
+      ? { ...toAuthUser(row), passwordHash: row.password_hash ?? null }
       : undefined;
+  }
+
+  async findUserByGoogleSubject(subject: string): Promise<AuthUser | undefined> {
+    const result = await this.pool.query<DatabaseUser>(
+      `SELECT users.id, users.email, users.name
+       FROM auth_identities identity
+       JOIN users ON users.id = identity.user_id
+       WHERE identity.provider = 'google' AND identity.provider_subject = $1
+         AND users.deleted_at IS NULL`,
+      [subject],
+    );
+    return result.rows[0] ? toAuthUser(result.rows[0]) : undefined;
+  }
+
+  async createGoogleUserAndIdentity(input: { email: string; name: string; subject: string }): Promise<AuthUser> {
+    try {
+      return await transaction(this.pool, async (client) => {
+        const result = await client.query<DatabaseUser>(
+          `INSERT INTO users (email, password_hash, name) VALUES ($1, NULL, $2)
+           RETURNING id, email, name`,
+          [input.email, input.name],
+        );
+        await client.query(
+          `INSERT INTO auth_identities (user_id, provider, provider_subject, provider_email, email_verified)
+           VALUES ($1, 'google', $2, $3, true)`,
+          [result.rows[0].id, input.subject, input.email],
+        );
+        return toAuthUser(result.rows[0]);
+      });
+    } catch (error) {
+      if (isEmailUniqueViolation(error)) throw new DuplicateEmailError();
+      if (isIdentityUniqueViolation(error)) throw new GoogleIdentityConflictError();
+      throw error;
+    }
+  }
+
+  async linkGoogleIdentity(input: { userId: string; sessionId: string; email: string; subject: string }): Promise<void> {
+    try {
+      const result = await this.pool.query(
+        `INSERT INTO auth_identities (user_id, provider, provider_subject, provider_email, email_verified)
+         SELECT users.id, 'google', $3, $4, true FROM users
+         WHERE users.id = $1 AND users.deleted_at IS NULL
+           AND EXISTS (SELECT 1 FROM auth_sessions session WHERE session.id = $2 AND session.user_id = users.id
+             AND session.revoked_at IS NULL AND session.expires_at > now())`,
+        [input.userId, input.sessionId, input.subject, input.email],
+      );
+      if (result.rowCount !== 1) throw new GoogleIdentityConflictError();
+    } catch (error) {
+      if (isIdentityUniqueViolation(error)) throw new GoogleIdentityConflictError();
+      throw error;
+    }
+  }
+
+  async createOAuthTransaction(input: {
+    stateHash: string; nonceHash: string; codeVerifier: string; mode: "login" | "link";
+    userId?: string; sessionId?: string; expiresAt: Date;
+  }): Promise<void> {
+    await this.pool.query("DELETE FROM auth_oauth_transactions WHERE expires_at <= now()");
+    await this.pool.query(
+      `INSERT INTO auth_oauth_transactions
+         (state_hash, nonce_hash, code_verifier, mode, user_id, session_id, expires_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [input.stateHash, input.nonceHash, input.codeVerifier, input.mode, input.userId ?? null, input.sessionId ?? null, input.expiresAt],
+    );
+  }
+
+  async consumeOAuthTransaction(stateHash: string): Promise<{
+    nonceHash: string; codeVerifier: string; mode: "login" | "link"; userId?: string; sessionId?: string; expiresAt: Date;
+  } | undefined> {
+    const result = await this.pool.query<{
+      nonce_hash: string; code_verifier: string; mode: "login" | "link"; user_id: string | null; session_id: string | null; expires_at: Date;
+    }>(
+      `UPDATE auth_oauth_transactions SET consumed_at = now()
+       WHERE state_hash = $1 AND consumed_at IS NULL AND expires_at > now()
+       RETURNING nonce_hash, code_verifier, mode, user_id, session_id, expires_at`,
+      [stateHash],
+    );
+    const row = result.rows[0];
+    return row ? {
+      nonceHash: row.nonce_hash, codeVerifier: row.code_verifier, mode: row.mode,
+      ...(row.user_id ? { userId: row.user_id } : {}), ...(row.session_id ? { sessionId: row.session_id } : {}),
+      expiresAt: row.expires_at,
+    } : undefined;
+  }
+
+  async createOAuthLinkIntent(input: { intentHash: string; userId: string; sessionId: string; expiresAt: Date }): Promise<void> {
+    await this.pool.query("DELETE FROM auth_oauth_link_intents WHERE expires_at <= now()");
+    await this.pool.query(
+      `INSERT INTO auth_oauth_link_intents (intent_hash, user_id, session_id, expires_at)
+       VALUES ($1, $2, $3, $4)`,
+      [input.intentHash, input.userId, input.sessionId, input.expiresAt],
+    );
+  }
+
+  async consumeOAuthLinkIntent(intentHash: string): Promise<{ userId: string; sessionId: string } | undefined> {
+    const result = await this.pool.query<{ user_id: string; session_id: string }>(
+      `UPDATE auth_oauth_link_intents intent SET consumed_at = now()
+       FROM auth_sessions session, users
+       WHERE intent.intent_hash = $1 AND intent.consumed_at IS NULL AND intent.expires_at > now()
+         AND session.id = intent.session_id AND session.user_id = intent.user_id
+         AND session.revoked_at IS NULL AND session.expires_at > now()
+         AND users.id = intent.user_id AND users.deleted_at IS NULL
+       RETURNING intent.user_id, intent.session_id`,
+      [intentHash],
+    );
+    const row = result.rows[0];
+    return row ? { userId: row.user_id, sessionId: row.session_id } : undefined;
+  }
+
+  async createOAuthHandoff(input: { codeHash: string; userId: string; expiresAt: Date }): Promise<void> {
+    await this.pool.query("DELETE FROM auth_oauth_handoffs WHERE expires_at <= now()");
+    await this.pool.query(
+      `INSERT INTO auth_oauth_handoffs (code_hash, user_id, expires_at) VALUES ($1, $2, $3)`,
+      [input.codeHash, input.userId, input.expiresAt],
+    );
+  }
+
+  async consumeOAuthHandoff(codeHash: string): Promise<AuthUser | undefined> {
+    const result = await this.pool.query<DatabaseUser>(
+      `UPDATE auth_oauth_handoffs handoff SET consumed_at = now()
+       FROM users WHERE handoff.code_hash = $1 AND handoff.user_id = users.id
+         AND handoff.consumed_at IS NULL AND handoff.expires_at > now() AND users.deleted_at IS NULL
+       RETURNING users.id, users.email, users.name`,
+      [codeHash],
+    );
+    return result.rows[0] ? toAuthUser(result.rows[0]) : undefined;
   }
 
   async findUserById(id: string): Promise<AuthUser | undefined> {
@@ -132,13 +261,13 @@ export class PostgresAuthStore implements AuthStore {
     return result.rows[0] ? toAuthUser(result.rows[0]) : undefined;
   }
 
-  async findUserCredentialsById(id: string): Promise<(AuthUser & { passwordHash: string }) | undefined> {
+  async findUserCredentialsById(id: string): Promise<(AuthUser & { passwordHash: string | null }) | undefined> {
     const result = await this.pool.query<DatabaseUser>(
       `SELECT id, email, name, password_hash FROM users WHERE id = $1 AND deleted_at IS NULL`,
       [id],
     );
     const row = result.rows[0];
-    return row ? { ...toAuthUser(row), passwordHash: row.password_hash ?? "" } : undefined;
+    return row ? { ...toAuthUser(row), passwordHash: row.password_hash ?? null } : undefined;
   }
 
   async updateUserProfile(input: { userId: string; email: string; name: string }): Promise<AuthUser> {
@@ -205,13 +334,14 @@ export class PostgresAuthStore implements AuthStore {
     userId: string;
     refreshTokenHash: string;
     expiresAt: Date;
+    authenticatedAt?: Date;
   }): Promise<void> {
     await transaction(this.pool, async (client) => {
       await client.query(
         `INSERT INTO auth_sessions
-          (id, user_id, refresh_token_hash, expires_at)
-         VALUES ($1, $2, $3, $4)`,
-        [input.id, input.userId, input.refreshTokenHash, input.expiresAt],
+          (id, user_id, refresh_token_hash, expires_at, created_at)
+         VALUES ($1, $2, $3, $4, $5)`,
+        [input.id, input.userId, input.refreshTokenHash, input.expiresAt, input.authenticatedAt ?? new Date()],
       );
       await client.query(
         `INSERT INTO auth_refresh_tokens (session_id, token_hash, expires_at)
@@ -234,7 +364,8 @@ export class PostgresAuthStore implements AuthStore {
                 session.revoked_at AS session_revoked_at,
                 session.expires_at AS session_expires_at,
                 session.expires_at > now() AS session_is_unexpired,
-                users.deleted_at AS user_deleted_at
+                users.deleted_at AS user_deleted_at,
+                session.created_at AS session_authenticated_at
          FROM auth_refresh_tokens AS token
          JOIN auth_sessions AS session ON session.id = token.session_id
          JOIN users ON users.id = session.user_id
@@ -291,6 +422,7 @@ export class PostgresAuthStore implements AuthStore {
       const session: AuthSession = {
         id: token.session_id,
         user: { id: token.user_id, email: token.email, name: token.name },
+        authenticatedAt: token.session_authenticated_at,
       };
       return { kind: "rotated", session };
     });
@@ -351,6 +483,10 @@ async function revokeAllUserSessions(client: PoolClient, userId: string): Promis
 
 function isEmailUniqueViolation(error: unknown): boolean {
   return typeof error === "object" && error !== null && "code" in error && error.code === "23505" && "constraint" in error && error.constraint === "users_email_unique_idx";
+}
+
+function isIdentityUniqueViolation(error: unknown): boolean {
+  return typeof error === "object" && error !== null && "code" in error && error.code === "23505";
 }
 
 function toAuthUser(row: DatabaseUser): AuthUser {

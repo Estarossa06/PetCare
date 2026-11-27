@@ -5,6 +5,20 @@ export class DuplicateEmailError extends Error {
   }
 }
 
+export class GoogleIdentityConflictError extends Error {
+  constructor() {
+    super("This Google identity cannot be linked to this account.");
+    this.name = "GoogleIdentityConflictError";
+  }
+}
+
+export class GoogleAccountLinkRequiredError extends Error {
+  constructor() {
+    super("Sign in to the existing PetCare account before linking Google.");
+    this.name = "GoogleAccountLinkRequiredError";
+  }
+}
+
 export class InvalidCredentialsError extends Error {
   constructor() {
     super("Email or password is incorrect.");

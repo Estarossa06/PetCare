@@ -1,14 +1,15 @@
 import { randomUUID } from "node:crypto";
-import { DuplicateEmailError } from "../src/modules/auth/errors.js";
+import { DuplicateEmailError, GoogleIdentityConflictError } from "../src/modules/auth/errors.js";
 import {
   type AuthSession,
   type AuthStore,
   type AuthUser,
   type RefreshResult,
+  type OAuthTransaction,
 } from "../src/modules/auth/types.js";
 
 interface StoredUser extends AuthUser {
-  passwordHash: string;
+  passwordHash: string | null;
   deleted: boolean;
 }
 
@@ -17,6 +18,7 @@ interface StoredSession {
   userId: string;
   expiresAt: Date;
   revoked: boolean;
+  authenticatedAt: Date;
 }
 
 interface StoredRefreshToken {
@@ -30,6 +32,10 @@ export class MemoryAuthStore implements AuthStore {
   readonly sessions = new Map<string, StoredSession>();
   readonly tokens = new Map<string, StoredRefreshToken>();
   readonly deletionRequests = new Set<string>();
+  readonly googleIdentities = new Map<string, string>();
+  readonly oauthTransactions = new Map<string, OAuthTransaction & { expiresAt: Date }>();
+  readonly oauthLinkIntents = new Map<string, { userId: string; sessionId: string; expiresAt: Date }>();
+  readonly oauthHandoffs = new Map<string, { userId: string; expiresAt: Date }>();
 
   async createUserAndSession(input: {
     email: string;
@@ -38,6 +44,7 @@ export class MemoryAuthStore implements AuthStore {
     sessionId: string;
     refreshTokenHash: string;
     expiresAt: Date;
+    authenticatedAt?: Date;
   }): Promise<AuthUser> {
     if ([...this.users.values()].some((user) => user.email === input.email)) {
       throw new DuplicateEmailError();
@@ -55,6 +62,7 @@ export class MemoryAuthStore implements AuthStore {
       userId: user.id,
       expiresAt: input.expiresAt,
       revoked: false,
+      authenticatedAt: input.authenticatedAt ?? new Date(),
     });
     this.tokens.set(input.refreshTokenHash, {
       sessionId: input.sessionId,
@@ -66,9 +74,62 @@ export class MemoryAuthStore implements AuthStore {
 
   async findUserByEmail(
     email: string,
-  ): Promise<(AuthUser & { passwordHash: string }) | undefined> {
+  ): Promise<(AuthUser & { passwordHash: string | null }) | undefined> {
     const user = [...this.users.values()].find((item) => item.email === email && !item.deleted);
     return user ? { ...publicUser(user), passwordHash: user.passwordHash } : undefined;
+  }
+
+  async findUserByGoogleSubject(subject: string): Promise<AuthUser | undefined> {
+    const userId = this.googleIdentities.get(subject);
+    return userId ? this.findUserById(userId) : undefined;
+  }
+
+  async createGoogleUserAndIdentity(input: { email: string; name: string; subject: string }): Promise<AuthUser> {
+    if ([...this.users.values()].some((user) => user.email === input.email)) throw new DuplicateEmailError();
+    if (this.googleIdentities.has(input.subject)) throw new GoogleIdentityConflictError();
+    const user: StoredUser = { id: randomUUID(), email: input.email, name: input.name, passwordHash: null, deleted: false };
+    this.users.set(user.id, user);
+    this.googleIdentities.set(input.subject, user.id);
+    return publicUser(user);
+  }
+
+  async linkGoogleIdentity(input: { userId: string; sessionId: string; email: string; subject: string }): Promise<void> {
+    const user = this.users.get(input.userId);
+    if (!user || user.deleted || this.googleIdentities.has(input.subject) || [...this.googleIdentities.values()].includes(input.userId) || !await this.isSessionActive({ userId: input.userId, sessionId: input.sessionId })) {
+      throw new GoogleIdentityConflictError();
+    }
+    this.googleIdentities.set(input.subject, input.userId);
+  }
+
+  async createOAuthTransaction(input: OAuthTransaction & { stateHash: string; expiresAt: Date }): Promise<void> {
+    this.oauthTransactions.set(input.stateHash, { ...input });
+  }
+
+  async consumeOAuthTransaction(stateHash: string): Promise<(OAuthTransaction & { expiresAt: Date }) | undefined> {
+    const transaction = this.oauthTransactions.get(stateHash);
+    this.oauthTransactions.delete(stateHash);
+    return transaction && transaction.expiresAt > new Date() ? transaction : undefined;
+  }
+
+  async createOAuthLinkIntent(input: { intentHash: string; userId: string; sessionId: string; expiresAt: Date }): Promise<void> {
+    this.oauthLinkIntents.set(input.intentHash, { userId: input.userId, sessionId: input.sessionId, expiresAt: input.expiresAt });
+  }
+
+  async consumeOAuthLinkIntent(intentHash: string): Promise<{ userId: string; sessionId: string } | undefined> {
+    const intent = this.oauthLinkIntents.get(intentHash);
+    this.oauthLinkIntents.delete(intentHash);
+    if (!intent || intent.expiresAt.getTime() <= Date.now() || !(await this.isSessionActive(intent))) return undefined;
+    return { userId: intent.userId, sessionId: intent.sessionId };
+  }
+
+  async createOAuthHandoff(input: { codeHash: string; userId: string; expiresAt: Date }): Promise<void> {
+    this.oauthHandoffs.set(input.codeHash, { userId: input.userId, expiresAt: input.expiresAt });
+  }
+
+  async consumeOAuthHandoff(codeHash: string): Promise<AuthUser | undefined> {
+    const handoff = this.oauthHandoffs.get(codeHash);
+    this.oauthHandoffs.delete(codeHash);
+    return handoff && handoff.expiresAt > new Date() ? this.findUserById(handoff.userId) : undefined;
   }
 
   async findUserById(id: string): Promise<AuthUser | undefined> {
@@ -76,7 +137,7 @@ export class MemoryAuthStore implements AuthStore {
     return user && !user.deleted ? publicUser(user) : undefined;
   }
 
-  async findUserCredentialsById(id: string): Promise<(AuthUser & { passwordHash: string }) | undefined> {
+  async findUserCredentialsById(id: string): Promise<(AuthUser & { passwordHash: string | null }) | undefined> {
     const user = this.users.get(id);
     return user && !user.deleted ? { ...publicUser(user), passwordHash: user.passwordHash } : undefined;
   }
@@ -120,12 +181,14 @@ export class MemoryAuthStore implements AuthStore {
     userId: string;
     refreshTokenHash: string;
     expiresAt: Date;
+    authenticatedAt?: Date;
   }): Promise<void> {
     this.sessions.set(input.id, {
       id: input.id,
       userId: input.userId,
       expiresAt: input.expiresAt,
       revoked: false,
+      authenticatedAt: input.authenticatedAt ?? new Date(),
     });
     this.tokens.set(input.refreshTokenHash, {
       sessionId: input.id,
@@ -171,6 +234,7 @@ export class MemoryAuthStore implements AuthStore {
     const result: AuthSession = {
       id: session.id,
       user: publicUser(user),
+      authenticatedAt: session.authenticatedAt,
     };
     return { kind: "rotated", session: result };
   }

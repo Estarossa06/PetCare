@@ -77,14 +77,14 @@ try {
     await applyHistory(client, legacyLocalMigrations.slice(0, 11));
     const status = await getMigrationStatus(client);
     assert.equal(status.lineage, "legacy-local");
-    assert.deepEqual(status.migrations.filter((m) => m.status === "Pending").map((m) => m.version), [12,13]);
+    assert.deepEqual(status.migrations.filter((m) => m.status === "Pending").map((m) => m.version), [12,13,14]);
     await runMigrations(client, () => {});
     const after = await client.query("SELECT version,name FROM public.schema_migrations ORDER BY version");
-    assert.equal(after.rows.length, 13);
+    assert.equal(after.rows.length, 14);
     assert.deepEqual(after.rows.at(-1), { version: 12, name: "pet_tracking" });
     await runMigrations(client, () => {});
     const rerun = await client.query("SELECT version,name,checksum FROM public.schema_migrations ORDER BY version");
-    assert.equal(rerun.rows.length, 13);
+    assert.equal(rerun.rows.length, 14);
     assert.deepEqual(rerun.rows.map((row) => row.version), after.rows.map((row) => row.version));
   });
   process.stdout.write("PASS PostgreSQL existing local lineage upgrades with tracking at v12\n");
@@ -93,26 +93,26 @@ try {
     await applyHistory(client, remoteMigrations.slice(0, 5));
     const status = await getMigrationStatus(client);
     assert.equal(status.lineage, "remote");
-    assert.deepEqual(status.migrations.filter((m) => m.status === "Pending").map((m) => m.version), [6,7,8,9,10,11,12,13]);
+    assert.deepEqual(status.migrations.filter((m) => m.status === "Pending").map((m) => m.version), [6,7,8,9,10,11,12,13,14]);
     await runMigrations(client, () => {});
     const before = await client.query("SELECT version,name,checksum FROM public.schema_migrations ORDER BY version");
     await runMigrations(client, () => {});
     const after = await client.query("SELECT version,name,checksum FROM public.schema_migrations ORDER BY version");
     assert.deepEqual(after.rows, before.rows);
-    assert.equal(after.rows.length, 13);
+    assert.equal(after.rows.length, 14);
   });
-  process.stdout.write("PASS PostgreSQL existing remote lineage continues 6-13 and reruns without duplicates\n");
+  process.stdout.write("PASS PostgreSQL existing remote lineage continues 6-14 and reruns without duplicates\n");
 
   await withClient(dbUrl(databaseNames[2]), async (client) => {
     let status = await getMigrationStatus(client);
     assert.equal(status.lineage, "remote");
-    assert.equal(status.migrations.filter((m) => m.status === "Pending").length, 13);
+    assert.equal(status.migrations.filter((m) => m.status === "Pending").length, 14);
     await runMigrations(client, () => {});
     const before = await client.query("SELECT version,name,checksum FROM public.schema_migrations ORDER BY version");
     await runMigrations(client, () => {});
     const after = await client.query("SELECT version,name,checksum FROM public.schema_migrations ORDER BY version");
     assert.deepEqual(after.rows, before.rows);
-    assert.equal(after.rows.length, 13);
+    assert.equal(after.rows.length, 14);
   });
   process.stdout.write("PASS PostgreSQL new database applies remote lineage once\n");
 

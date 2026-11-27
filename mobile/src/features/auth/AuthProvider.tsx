@@ -19,6 +19,7 @@ interface AuthContextValue {
   error: string | null;
   clearError(): void;
   login(email: string, password: string): Promise<void>;
+  loginWithGoogleHandoff(code: string): Promise<void>;
   register(email: string, password: string, name: string): Promise<void>;
   logout(): Promise<void>;
   finishDeactivatedAccount(): Promise<void>;
@@ -80,6 +81,14 @@ export function AuthProvider({ children }: PropsWithChildren) {
     [],
   );
 
+  const loginWithGoogleHandoff = useCallback(async (code: string) => {
+    setError(null);
+    await waitForPetSync();
+    const authenticatedUser = await apiClient.exchangeGoogleHandoff(code);
+    setActiveLocalAuthUserId(authenticatedUser.id);
+    setUser(authenticatedUser);
+  }, []);
+
   const logout = useCallback(async () => {
     setError(null);
     await waitForPetSync();
@@ -137,6 +146,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       error,
       clearError: () => setError(null),
       login,
+      loginWithGoogleHandoff,
       register,
       logout,
       finishDeactivatedAccount,
@@ -144,7 +154,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       updateLocalUser,
       restore,
     }),
-    [user, loading, error, login, register, logout, finishDeactivatedAccount, finishPermanentlyDeletedAccount, updateLocalUser, restore],
+    [user, loading, error, login, loginWithGoogleHandoff, register, logout, finishDeactivatedAccount, finishPermanentlyDeletedAccount, updateLocalUser, restore],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

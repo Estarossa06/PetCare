@@ -79,6 +79,42 @@ export class ApiClient {
     return this.authenticate("/auth/login", input);
   }
 
+  googleLoginUrl(): string {
+    return `${this.baseUrl()}/auth/google`;
+  }
+
+  async exchangeGoogleHandoff(code: string): Promise<AuthUser> {
+    const result = await this.request<TokenResponse>("/auth/google/exchange", {
+      method: "POST",
+      body: { code },
+      retryAfterRefresh: false,
+    });
+    if (!isTokenResponse(result)) throw new ApiClientError("Google sign-in response is invalid.", 502, "INVALID_AUTH_RESPONSE");
+    await tokenStorage.write(result);
+    return result.user;
+  }
+
+  async startGoogleLink(currentPassword?: string): Promise<string> {
+    const result = await this.request<{ continuationUrl?: unknown }>("/auth/google/link/start", {
+      method: "POST",
+      authenticated: true,
+      body: currentPassword ? { currentPassword } : {},
+    });
+    if (typeof result.continuationUrl !== "string") {
+      throw new ApiClientError("Google sign-in could not be started.", 502, "INVALID_AUTH_RESPONSE");
+    }
+    let continuation: URL;
+    try { continuation = new URL(result.continuationUrl); } catch { throw new ApiClientError("Google sign-in could not be started.", 502, "INVALID_AUTH_RESPONSE"); }
+    const expectedApiOrigin = new URL(this.baseUrl()).origin;
+    const intentValues = continuation.searchParams.getAll("intent");
+    if (continuation.origin !== expectedApiOrigin || continuation.pathname !== "/auth/google/link/continue" ||
+      intentValues.length !== 1 || continuation.searchParams.size !== 1 || !/^[A-Za-z0-9_-]{32,128}$/.test(intentValues[0]) ||
+      continuation.hash || continuation.username || continuation.password) {
+      throw new ApiClientError("Google sign-in could not be started.", 502, "INVALID_AUTH_RESPONSE");
+    }
+    return continuation.toString();
+  }
+
   async restoreSession(): Promise<AuthUser | null> {
     const stored = await tokenStorage.read();
     if (!stored) return null;
@@ -224,3 +260,11 @@ export class ApiClient {
 }
 
 export const apiClient = new ApiClient();
+
+function isTokenResponse(value: unknown): value is TokenResponse {
+  if (typeof value !== "object" || value === null) return false;
+  const item = value as Partial<TokenResponse>;
+  return typeof item.accessToken === "string" && typeof item.refreshToken === "string" &&
+    typeof item.accessTokenExpiresAt === "string" && typeof item.user === "object" && item.user !== null &&
+    typeof item.user.id === "string" && typeof item.user.email === "string" && typeof item.user.name === "string";
+}

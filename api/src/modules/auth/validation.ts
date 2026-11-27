@@ -17,11 +17,11 @@ export interface LoginInput {
 export interface ProfileUpdateInput {
   email: string;
   name: string;
-  currentPassword: string;
+  currentPassword?: string;
 }
 
 export interface PasswordChangeInput {
-  currentPassword: string;
+  currentPassword?: string;
   newPassword: string;
 }
 
@@ -54,21 +54,21 @@ export function validateProfileUpdate(value: unknown): ProfileUpdateInput {
   return {
     email: normalizeEmail(body.email),
     name: normalizeName(body.name),
-    currentPassword: normalizeCurrentPassword(body.currentPassword),
+    currentPassword: optionalCurrentPassword(body.currentPassword),
   };
 }
 
 export function validatePasswordChange(value: unknown): PasswordChangeInput {
   const body = requestObject(value);
   return {
-    currentPassword: normalizeCurrentPassword(body.currentPassword),
+    currentPassword: optionalCurrentPassword(body.currentPassword),
     newPassword: normalizePassword(body.newPassword),
   };
 }
 
-export function validateCurrentPassword(value: unknown): string {
+export function validateCurrentPassword(value: unknown): string | undefined {
   const body = requestObject(value);
-  return normalizeCurrentPassword(body.currentPassword);
+  return optionalCurrentPassword(body.currentPassword);
 }
 
 function requestObject(value: unknown): Record<string, unknown> {
@@ -106,6 +106,11 @@ function normalizeCurrentPassword(value: unknown): string {
     throw new InvalidRequestError("Current password is required.");
   }
   return value;
+}
+
+function optionalCurrentPassword(value: unknown): string | undefined {
+  if (value === undefined || value === null || value === "") return undefined;
+  return normalizeCurrentPassword(value);
 }
 
 function normalizeName(value: unknown): string {

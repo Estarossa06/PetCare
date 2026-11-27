@@ -5,13 +5,17 @@ import { AuthService } from "./service.js";
 import type { AuthStore } from "./types.js";
 import { AuthController } from "./controller.js";
 import { createAuthRateLimit } from "./rateLimit.js";
+import { GoogleOAuthFlow, type GoogleOAuthConfig } from "./googleOAuth.js";
+import { createGoogleOAuthRouter } from "./googleOAuthRoutes.js";
 
-export function createAuthRouter(store: AuthStore, secret: Uint8Array, logger: Logger): Router {
+export function createAuthRouter(store: AuthStore, secret: Uint8Array, logger: Logger, googleConfig?: GoogleOAuthConfig): Router {
   const router = Router();
   const service = new AuthService(store, secret);
   const controller = new AuthController(service);
   const authenticate = createAuthenticateMiddleware(store, secret);
   const limit = createAuthRateLimit(logger);
+
+  router.use(createGoogleOAuthRouter(store, service, secret, logger, limit, googleConfig));
 
   router.post("/register", limit, controller.register);
   router.post("/login", limit, controller.login);

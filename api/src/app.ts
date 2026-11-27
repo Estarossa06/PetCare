@@ -28,7 +28,7 @@ import { createMediaRouter } from "./modules/media/routes.js";
 import { R2ObjectStore, type MediaObjectStore } from "./modules/media/objectStore.js";
 
 interface AppDependencies {
-  config: Pick<AppConfig, "corsOrigins" | "accessTokenSecret" | "r2">;
+  config: Pick<AppConfig, "corsOrigins" | "accessTokenSecret" | "r2" | "googleOAuth">;
   database: Queryable & ReadinessDatabase;
   authStore: AuthStore;
   logger: Logger;
@@ -63,7 +63,7 @@ export function createApp({
   app.use(requireJsonBody);
   app.use("/pet-identification", createPetIdentificationRouter(visionProvider, authStore, config.accessTokenSecret, logger));
   app.use(express.json({ limit: "1mb", strict: true }));
-  app.use("/auth", createAuthRouter(authStore, config.accessTokenSecret, logger));
+  app.use("/auth", createAuthRouter(authStore, config.accessTokenSecret, logger, config.googleOAuth));
   app.use(
     "/pets",
     createPetsRouter(
