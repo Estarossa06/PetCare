@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type PropsWithChildren } from "react";
 import { Appearance } from "react-native";
-import * as SecureStore from "expo-secure-store";
+import { reportThemeMode } from "../diagnostics/renderDiagnostics";
+import { preferenceStorage } from "../platform/preferenceStorage";
 
 type ThemeMode = "light" | "dark";
 type ThemeContextValue = { mode: ThemeMode; ready: boolean; setMode(mode: ThemeMode): Promise<void> };
@@ -13,9 +14,10 @@ export function ThemeProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     let active = true;
-    void SecureStore.getItemAsync(THEME_KEY).then((stored) => {
+    void preferenceStorage.getItem(THEME_KEY).then((stored) => {
       const next = stored === "dark" ? "dark" : "light";
       Appearance.setColorScheme(next);
+      reportThemeMode(next);
       if (active) setModeState(next);
     }).catch(() => {
       Appearance.setColorScheme("light");
@@ -26,8 +28,9 @@ export function ThemeProvider({ children }: PropsWithChildren) {
   }, []);
 
   const setMode = useCallback(async (next: ThemeMode) => {
-    await SecureStore.setItemAsync(THEME_KEY, next);
+    await preferenceStorage.setItem(THEME_KEY, next);
     Appearance.setColorScheme(next);
+    reportThemeMode(next);
     setModeState(next);
   }, []);
 

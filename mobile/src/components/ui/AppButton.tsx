@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react-native";
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, StyleSheet, Text, View, type StyleProp, type TextStyle, type ViewStyle } from "react-native";
 import { colors, radius, spacing } from "../../theme/tokens";
 
 type AppButtonProps = {
@@ -10,6 +10,9 @@ type AppButtonProps = {
   size?: "regular" | "small";
   loading?: boolean;
   disabled?: boolean;
+  buttonStyle?: StyleProp<ViewStyle>;
+  labelStyle?: StyleProp<TextStyle>;
+  labelColor?: string;
 };
 
 export function AppButton({
@@ -20,6 +23,9 @@ export function AppButton({
   size = "regular",
   loading = false,
   disabled = false,
+  buttonStyle,
+  labelStyle,
+  labelColor,
 }: AppButtonProps) {
   const isPrimary = variant === "primary";
   const isQuiet = variant === "quiet";
@@ -34,16 +40,17 @@ export function AppButton({
         styles.button,
         size === "small" && styles.small,
         isPrimary ? styles.primary : isQuiet ? styles.quiet : styles.secondary,
+        buttonStyle,
         (disabled || loading) && styles.disabled,
         pressed && !disabled && styles.pressed,
       ]}
     >
       {loading ? (
-        <ActivityIndicator color={isPrimary ? colors.surface : colors.blue} size="small" />
+        <ActivityIndicator color={isPrimary ? "#FFFFFF" : colors.blue} size="small" />
       ) : (
         <View style={styles.content}>
-          {Icon ? <Icon color={isPrimary ? colors.surface : colors.blue} size={17} strokeWidth={2.2} /> : null}
-          <Text style={[styles.label, isPrimary && styles.primaryLabel, isQuiet && styles.quietLabel]}>
+          {Icon ? <Icon color={isPrimary ? "#FFFFFF" : colors.blue} size={17} strokeWidth={2.2} /> : null}
+          <Text style={[styles.label, isPrimary && styles.primaryLabel, isQuiet && styles.quietLabel, labelColor ? { color: labelColor } : null, labelStyle]}>
             {label}
           </Text>
         </View>
@@ -91,7 +98,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   primaryLabel: {
-    color: colors.surface,
+    color: "#FFFFFF",
   },
   quietLabel: {
     color: colors.textMuted,

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { StyleSheet, Text, TextInput, View, type TextInputProps } from "react-native";
+import { StyleSheet, Text, TextInput, View, type StyleProp, type TextInputProps, type TextStyle, type ViewStyle } from "react-native";
 import type { LucideIcon } from "lucide-react-native";
 import { colors, radius, spacing } from "../../theme/tokens";
 
@@ -7,13 +7,16 @@ type AppTextFieldProps = TextInputProps & {
   label: string;
   hint?: string;
   leadingIcon?: LucideIcon;
+  labelStyle?: StyleProp<TextStyle>;
+  containerStyle?: StyleProp<ViewStyle>;
 };
 
-export function AppTextField({ label, hint, leadingIcon: LeadingIcon, onFocus, onBlur, style, ...inputProps }: AppTextFieldProps) {
+export function AppTextField({ label, hint, leadingIcon: LeadingIcon, labelStyle, containerStyle, placeholderTextColor, onFocus, onBlur, style, ...inputProps }: AppTextFieldProps) {
   const [focused, setFocused] = useState(false);
   const input = (
     <TextInput
       {...inputProps}
+      accessibilityLabel={inputProps.accessibilityLabel ?? label}
       onFocus={(event) => {
         setFocused(true);
         onFocus?.(event);
@@ -22,18 +25,18 @@ export function AppTextField({ label, hint, leadingIcon: LeadingIcon, onFocus, o
         setFocused(false);
         onBlur?.(event);
       }}
-      placeholderTextColor={colors.textMuted}
+      placeholderTextColor={placeholderTextColor ?? colors.textMuted}
       style={[
         LeadingIcon ? styles.inputWithIcon : styles.input,
-        focused && !LeadingIcon && styles.focused,
         style,
+        focused && !LeadingIcon && styles.focused,
       ]}
     />
   );
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
+    <View style={[styles.container, containerStyle]}>
+      <Text style={[styles.label, labelStyle]}>{label}</Text>
       {LeadingIcon ? (
         <View style={[styles.iconInput, focused && styles.focused]}>
           <LeadingIcon size={18} color={focused ? colors.blue : colors.textMuted} />

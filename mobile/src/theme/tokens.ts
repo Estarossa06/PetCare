@@ -9,6 +9,7 @@ function adaptive(light: string, dark: string, androidResource: string) {
 
 export const colors = {
   blue: "#2563EB",
+  onAccent: "#FFFFFF",
   blueDark: adaptive("#172554", "#DBEAFE", "?android:attr/textColorPrimary"),
   blueSoft: adaptive("#EFF6FF", "#1E293B", "?android:attr/colorBackground"),
   blueMuted: adaptive("#DBEAFE", "#1E3A5F", "?android:attr/colorBackground"),

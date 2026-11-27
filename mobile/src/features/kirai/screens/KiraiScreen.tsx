@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import * as Crypto from "expo-crypto";
 import {
   ActivityIndicator, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView,
@@ -11,6 +11,7 @@ import { AppButton } from "../../../components/ui/AppButton";
 import { useAuth } from "../../auth/AuthProvider";
 import { ApiClientError } from "../../auth/apiClient";
 import { colors, radius, spacing } from "../../../theme/tokens";
+import { reportClientError, reportComponentState, reportScreenOpened } from "../../../diagnostics/renderDiagnostics";
 import { readPendingPetContext } from "../localContext";
 import { deliverKiraiQuestion } from "../delivery";
 import { kiraiDeliveryLabel, mergeKiraiMessagePage } from "../messageState";
@@ -62,7 +63,9 @@ export default function KiraiScreen() {
     setNotice("");
     try {
       let localBefore: KiraiMessage[] = [];
-      try { localBefore = await listLocalKiraiMessages(authUserId, id); } catch { /* Remote history can still be shown if local storage is unavailable. */ }
+      try { localBefore = await listLocalKiraiMessages(authUserId, id); } catch (localError) {
+        reportClientError("kirai", "kirai_chat", localError);
+      }
       const page = await loadKiraiMessagePage(id, 0, 100);
       if (generation !== generationRef.current) return;
       await cacheKiraiMessages(authUserId, id, page.messages);
@@ -71,7 +74,8 @@ export default function KiraiScreen() {
       setOlderOffset(page.messages.length);
       setHasOlderMessages(page.hasMore);
       shouldScrollRef.current = true;
-    } catch {
+    } catch (historyError) {
+      reportClientError("kirai", "kirai_chat", historyError);
       try {
         const local = await listLocalKiraiMessages(authUserId, id);
         if (generation !== generationRef.current) return;
@@ -79,7 +83,8 @@ export default function KiraiScreen() {
         setHasOlderMessages(false);
         setNotice("Mostrando el historial guardado en este dispositivo.");
         shouldScrollRef.current = true;
-      } catch {
+      } catch (localHistoryError) {
+        reportClientError("kirai", "kirai_chat", localHistoryError);
         setMessages([]);
         setNotice("No pudimos abrir esta conversación.");
       }
@@ -102,7 +107,8 @@ export default function KiraiScreen() {
     setAvailability("checking");
     void checkKiraiAvailability().then(() => {
       if (active) setAvailability("available");
-    }).catch(() => {
+    }).catch((availabilityError) => {
+      reportClientError("kirai", "api_client", availabilityError);
       if (active) setAvailability("unavailable");
     });
     void (async () => {
@@ -117,16 +123,22 @@ export default function KiraiScreen() {
           const merged = await listLocalKiraiConversations(user.id);
           setConversations(merged);
           if (merged[0]) await loadConversation(user.id, merged[0].id);
-        } catch {
+        } catch (conversationsError) {
+          reportClientError("kirai", "api_client", conversationsError);
           if (active && local[0]) await loadConversation(user.id, local[0].id);
           else if (active) setNotice("Tus conversaciones anteriores aparecerán cuando haya conexión.");
         }
-      } catch {
+      } catch (localConversationsError) {
+        reportClientError("kirai", "kirai_chat", localConversationsError);
         if (active) setNotice("No pudimos cargar el historial guardado en este dispositivo.");
       }
     })();
     return () => { active = false; generationRef.current += 1; };
   }, [user?.id, loadConversation]);
+
+  useFocusEffect(useCallback(() => {
+    reportScreenOpened("kirai");
+  }, []));
 
   useEffect(() => {
     if (!shouldScrollRef.current) return;
@@ -138,7 +150,9 @@ export default function KiraiScreen() {
     try {
       const remote = await loadKiraiConversations();
       await cacheKiraiConversations(authUserId, remote);
-    } catch { /* Keep the per-account local history available offline. */ }
+    } catch (refreshError) {
+      reportClientError("kirai", "api_client", refreshError);
+    }
     setConversations(await listLocalKiraiConversations(authUserId));
   };
 
@@ -172,6 +186,7 @@ export default function KiraiScreen() {
       setMessages(rows);
       await refreshConversations(user.id);
     } catch (sendError) {
+      reportClientError("kirai", "api_client", sendError);
       if (activeUserRef.current !== user.id || generationRef.current !== requestGeneration) return;
       setMessages((current) => current.map((item) => item.requestId === requestId ? { ...item, requestStatus: "failed" } : item));
       setNotice(requestErrorMessage(sendError));
@@ -196,7 +211,10 @@ export default function KiraiScreen() {
       setMessages((current) => [...page.messages, ...current]);
       setOlderOffset((offset) => offset + page.messages.length);
       setHasOlderMessages(page.hasMore);
-    } catch { setNotice("No pudimos cargar mensajes anteriores."); }
+    } catch (historyError) {
+      reportClientError("kirai", "api_client", historyError);
+      setNotice("No pudimos cargar mensajes anteriores.");
+    }
     finally { if (generation === generationRef.current) setLoadingHistory(false); }
   };
 
@@ -219,6 +237,25 @@ export default function KiraiScreen() {
     shouldScrollRef.current = true;
   };
 
+  useEffect(() => {
+    reportComponentState("kirai", "kirai_chat", {
+      loading: authLoading || loadingHistory,
+      authenticated: Boolean(user),
+      busy,
+      dataCount: messages.length,
+      secondaryCount: conversations.length,
+      errorPresent: Boolean(notice || authError),
+      availability,
+      renderBranch: authLoading || loadingHistory
+        ? "loading"
+        : !user
+          ? "unauthenticated"
+          : messages.length
+            ? "data"
+            : "empty",
+    });
+  }, [authError, authLoading, availability, busy, conversations.length, loadingHistory, messages.length, notice, user]);
+
   if (authLoading) return <SafeAreaView style={styles.safeArea}><View style={styles.center}><ActivityIndicator color={colors.blue} /><Text style={styles.muted}>Comprobando tu sesión…</Text></View></SafeAreaView>;
   if (!user) return (
     <SafeAreaView style={styles.safeArea}>
@@ -231,7 +268,7 @@ export default function KiraiScreen() {
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={Platform.OS === "ios" ? 8 : 0}>
         <View style={[styles.chat, wide && styles.chatWide]}>
           <View style={styles.header}>
-            <View style={styles.agentAvatar}><MessageCircle size={20} color={colors.surface} /></View>
+            <View style={styles.agentAvatar}><MessageCircle size={20} color={colors.onAccent} /></View>
             <View style={styles.headerCopy}><Text style={styles.title}>KIRAI</Text><Text numberOfLines={2} style={styles.status}>{availability === "available" ? "Asistente de bienestar · En línea" : availability === "checking" ? "Preparando el chat…" : "Puede responder cuando recupere conexión"}</Text></View>
             <Pressable accessibilityRole="button" accessibilityLabel="Ver historial de conversaciones" onPress={() => { void refreshConversations(user.id); setHistoryOpen(true); }} style={styles.headerAction}><Clock3 size={18} color={colors.blue} /></Pressable>
             <Pressable accessibilityRole="button" accessibilityLabel="Nueva conversación" onPress={startNewConversation} style={styles.headerAction}><Plus size={19} color={colors.blue} /></Pressable>
@@ -274,7 +311,7 @@ export default function KiraiScreen() {
               onSubmitEditing={() => { if (Platform.OS === "ios") void sendQuestion(question); }}
             />
             <Pressable accessibilityRole="button" accessibilityLabel="Enviar mensaje" disabled={busy || !question.trim()} onPress={() => void sendQuestion(question)} style={[styles.sendButton, (busy || !question.trim()) && styles.sendDisabled]}>
-              {busy ? <ActivityIndicator color={colors.surface} size="small" /> : <Send size={18} color={colors.surface} />}
+              {busy ? <ActivityIndicator color={colors.onAccent} size="small" /> : <Send size={18} color={colors.onAccent} />}
             </Pressable>
           </View>
         </View>
@@ -321,7 +358,7 @@ const styles = StyleSheet.create({
   messageAuthor: { color: colors.blue, fontSize: 10, fontWeight: "800", letterSpacing: 0.3 },
   userAuthor: { color: "#DBEAFE", textAlign: "right" },
   messageText: { color: colors.text, fontSize: 14, lineHeight: 21 },
-  userMessageText: { color: colors.surface },
+  userMessageText: { color: colors.onAccent },
   messageMeta: { color: colors.textMuted, fontSize: 10, lineHeight: 15 },
   deliveryStatus: { color: colors.blueDark, fontSize: 10, textAlign: "right", paddingTop: 2 },
   failedStatus: { color: colors.orange, fontWeight: "700" },

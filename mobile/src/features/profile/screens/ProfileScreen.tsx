@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "expo-router";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
 import Constants from "expo-constants";
 import {
   ActivityIndicator, Alert, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView,
@@ -21,6 +21,7 @@ import { reconcileCalendarNotifications } from "../../calendar/calendarNotificat
 import { getNotificationsEnabled, setNotificationsEnabled } from "../preferences";
 import { useTheme } from "../../../theme/ThemeProvider";
 import { colors, radius, spacing } from "../../../theme/tokens";
+import { reportClientError, reportComponentState, reportScreenOpened } from "../../../diagnostics/renderDiagnostics";
 
 type Page = "profile" | "password" | "notifications" | "about" | "help" | "account" | null;
 type AccountAction = "deactivate" | "delete" | null;
@@ -72,6 +73,20 @@ export default function ProfileScreen() {
   const [accountAction, setAccountAction] = useState<AccountAction>(null);
   const [confirmAccountAction, setConfirmAccountAction] = useState(false);
 
+  useFocusEffect(useCallback(() => {
+    reportScreenOpened("profile");
+  }, []));
+
+  useEffect(() => {
+    reportComponentState("profile", "profile_menu", {
+      loading,
+      authenticated: Boolean(user),
+      dataCount: profile ? 1 : 0,
+      errorPresent: Boolean(error || message),
+      renderBranch: loading ? "loading" : user ? "data" : "unauthenticated",
+    });
+  }, [error, loading, message, profile, user]);
+
   const wide = width >= 760;
   const initials = useMemo(() => (profile?.name ?? user?.name ?? "P").trim().split(/\s+/).slice(0, 2).map((part) => part[0]?.toUpperCase()).join(""), [profile?.name, user?.name]);
 
@@ -81,7 +96,10 @@ export default function ProfileScreen() {
     let active = true;
     void apiClient.request<ApiUserResponse>("/auth/me", { authenticated: true })
       .then((result) => { if (active) setProfile(result.user); })
-      .catch(() => { if (active) setMessage("No pudimos actualizar los datos del perfil. Puedes volver a intentarlo."); });
+      .catch((profileError) => {
+        reportClientError("profile", "api_client", profileError);
+        if (active) setMessage("No pudimos actualizar los datos del perfil. Puedes volver a intentarlo.");
+      });
     return () => { active = false; };
   }, [user]);
 
@@ -93,7 +111,7 @@ export default function ProfileScreen() {
         setNotificationsEnabledState(enabled);
         setNotificationGranted(permission.granted);
         setNotificationSupported(calendarNotificationPlatform.platform === "ios" || calendarNotificationPlatform.platform === "android");
-      }).catch(() => undefined);
+      }).catch((notificationError) => reportClientError("profile", "profile_menu", notificationError));
     return () => { active = false; };
   }, []);
 
@@ -145,6 +163,15 @@ export default function ProfileScreen() {
       setMessage(enabled ? "Las notificaciones de este dispositivo están activas." : "Las notificaciones de PetCare se desactivaron en este dispositivo.");
     } catch { setMessage("No pudimos actualizar las notificaciones de este dispositivo."); }
     finally { setBusy(false); }
+  };
+
+  const toggleTheme = async (enabled: boolean) => {
+    setMessage("");
+    try {
+      await setMode(enabled ? "dark" : "light");
+    } catch {
+      setMessage("No pudimos guardar la preferencia de apariencia en este navegador.");
+    }
   };
 
   const executeAccountAction = async () => {
@@ -249,7 +276,7 @@ export default function ProfileScreen() {
               <SettingRow icon={Bell} title="Notificaciones" subtitle="Preferencias de este dispositivo" onPress={() => openPage("notifications")} />
               <View style={styles.divider} />
               <Text style={styles.groupTitle}>Preferencias</Text>
-              <SettingRow icon={Moon} title="Modo oscuro" subtitle="Apariencia de la aplicación" trailing={<Switch value={mode === "dark"} onValueChange={(value) => void setMode(value ? "dark" : "light")} trackColor={{ true: colors.blue }} />} />
+              <SettingRow icon={Moon} title="Modo oscuro" subtitle="Apariencia de la aplicación" trailing={<Switch value={mode === "dark"} onValueChange={(value) => void toggleTheme(value)} trackColor={{ true: colors.blue }} />} />
               <View style={styles.divider} />
               <Text style={styles.groupTitle}>Información</Text>
               <SettingRow icon={Info} title="Acerca de PetCare" onPress={() => openPage("about")} />

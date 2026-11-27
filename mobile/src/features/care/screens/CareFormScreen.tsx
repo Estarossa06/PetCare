@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
   chip: { paddingHorizontal: 12, paddingVertical: 9, borderRadius: radius.pill, backgroundColor: colors.background, borderWidth: 1, borderColor: colors.border },
   chipSelected: { backgroundColor: colors.blue, borderColor: colors.blue },
   chipText: { color: colors.textMuted, fontSize: 12, fontWeight: "700" },
-  chipTextSelected: { color: colors.surface },
+  chipTextSelected: { color: colors.onAccent },
   customRow: { flexDirection: "row", alignItems: "flex-end", gap: 8 },
   intervalInput: { width: 90 },
   unitChip: { paddingHorizontal: 11, paddingVertical: 10, borderRadius: radius.pill, backgroundColor: colors.background, borderWidth: 1, borderColor: colors.border, marginBottom: 2 },

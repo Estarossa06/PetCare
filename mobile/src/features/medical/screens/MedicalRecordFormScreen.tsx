@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
   categoryButton: { paddingHorizontal: 12, paddingVertical: 9, borderRadius: radius.pill, backgroundColor: colors.background, borderWidth: 1, borderColor: colors.border },
   categorySelected: { backgroundColor: colors.blue, borderColor: colors.blue },
   categoryText: { color: colors.textMuted, fontSize: 12, fontWeight: "700" },
-  categoryTextSelected: { color: colors.surface },
+  categoryTextSelected: { color: colors.onAccent },
   helper: { color: colors.textMuted, fontSize: 12, lineHeight: 18 },
   fileRow: { minHeight: 40, flexDirection: "row", alignItems: "center", gap: 9, paddingHorizontal: 4 },
   fileName: { flex: 1, color: colors.text, fontSize: 13 },

@@ -5,7 +5,15 @@
     "scheme": "petcare",
     "version": "1.0.0",
     "orientation": "portrait",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
     "userInterfaceStyle": "automatic",
+    "web": {
+      "bundler": "metro"
+    },
     "ios": {
       "bundleIdentifier": "com.petcare.mobile",
       "supportsTablet": true

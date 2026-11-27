@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useFocusEffect, useRouter } from "expo-router";
 import {
   ArrowRight,
@@ -25,6 +25,7 @@ import type { CareTask } from "../../care/types";
 import { calendarRepository } from "../../calendar/calendarRepository";
 import type { CalendarItem } from "../../calendar/types";
 import { styles } from "./DashboardScreen.styles";
+import { reportClientError, reportComponentState, reportScreenOpened } from "../../../diagnostics/renderDiagnostics";
 
 type RoutineTask = CareTask & { pet_name: string };
 
@@ -174,6 +175,7 @@ export default function DashboardScreen() {
       );
       setReminderCount(data.reminders.length);
     } catch (error) {
+      reportClientError("dashboard", "dashboard_agenda", error);
       setCalendarError(error instanceof Error ? error.message : "No se pudo cargar el calendario.");
     } finally {
       setCalendarLoading(false);
@@ -186,6 +188,7 @@ export default function DashboardScreen() {
     try {
       setCareData(await careRepository.dashboard());
     } catch (error) {
+      reportClientError("dashboard", "care_dashboard", error);
       setCareError(error instanceof Error ? error.message : "No se pudieron cargar las actividades.");
     } finally {
       setCareLoading(false);
@@ -193,6 +196,7 @@ export default function DashboardScreen() {
   }, []);
 
   useFocusEffect(useCallback(() => {
+    reportScreenOpened("dashboard");
     void loadCare();
     void loadCalendar();
   }, [loadCare, loadCalendar]));
@@ -202,6 +206,22 @@ export default function DashboardScreen() {
     [careData.overdue, careData.today],
   );
   const displayedTasks = todayTasks.length ? todayTasks : careData.upcoming.slice(0, 3);
+  useEffect(() => {
+    reportComponentState("dashboard", "care_dashboard", {
+      loading: careLoading,
+      dataCount: displayedTasks.length,
+      secondaryCount: careData.overdue.length,
+      errorPresent: Boolean(careError),
+      renderBranch: careLoading ? "loading" : careError ? "error" : displayedTasks.length ? "data" : "empty",
+    });
+    reportComponentState("dashboard", "dashboard_agenda", {
+      loading: calendarLoading,
+      dataCount: calendarItems.length,
+      secondaryCount: reminderCount,
+      errorPresent: Boolean(calendarError),
+      renderBranch: calendarLoading ? "loading" : calendarError ? "error" : calendarItems.length ? "data" : "empty",
+    });
+  }, [careData.overdue.length, careError, careLoading, calendarError, calendarItems.length, calendarLoading, displayedTasks.length, reminderCount]);
   const date = new Date().toLocaleDateString("es-ES", {
     weekday: "long",
     day: "numeric",

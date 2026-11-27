@@ -540,7 +540,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.orange,
   },
   confirmDeleteText: {
-    color: colors.surface,
+    color: colors.onAccent,
     fontSize: 14,
     fontWeight: "800",
   },

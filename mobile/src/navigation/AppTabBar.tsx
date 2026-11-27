@@ -56,7 +56,7 @@ function NavigationItem({
     >
       <Icon
         size={21}
-        color={selected ? colors.blue : colors.textMuted}
+        color={selected ? colors.onAccent : colors.textMuted}
         strokeWidth={selected ? 2.4 : 1.9}
       />
       <Text style={[styles.navLabel, selected && styles.selectedLabel, !wide && styles.mobileLabel]}>
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.sm,
   },
   selectedItem: {
-    backgroundColor: colors.blueSoft,
+    backgroundColor: colors.blue,
   },
   pressed: {
     opacity: 0.75,
@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   selectedLabel: {
-    color: colors.blue,
+    color: colors.onAccent,
     fontWeight: "800",
   },
   selectionMark: {

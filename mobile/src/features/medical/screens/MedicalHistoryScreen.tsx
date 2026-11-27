@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
   chip: { paddingHorizontal: 14, paddingVertical: 9, borderRadius: radius.pill, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border },
   chipSelected: { backgroundColor: colors.blue, borderColor: colors.blue },
   chipText: { color: colors.textMuted, fontSize: 12, fontWeight: "700" },
-  chipTextSelected: { color: colors.surface },
+  chipTextSelected: { color: colors.onAccent },
   section: { gap: spacing.md },
   sectionTitle: { color: colors.blueDark, fontSize: 16, fontWeight: "700" },
   timeline: { backgroundColor: colors.surface, borderRadius: radius.md, borderWidth: 1, borderColor: colors.border, paddingHorizontal: spacing.md },

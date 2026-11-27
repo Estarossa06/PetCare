@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
   choice: { paddingHorizontal: 13, paddingVertical: 10, borderRadius: radius.pill, backgroundColor: colors.blueSoft },
   choiceSelected: { backgroundColor: colors.blue },
   choiceText: { color: colors.textMuted, fontSize: 12, fontWeight: "700" },
-  choiceTextSelected: { color: colors.surface },
+  choiceTextSelected: { color: colors.onAccent },
   info: { flexDirection: "row", alignItems: "flex-start", gap: 8 },
   error: { color: colors.orange, fontSize: 13 },
   loading: { padding: spacing.xl, flexDirection: "row", gap: spacing.sm, alignItems: "center", justifyContent: "center" },

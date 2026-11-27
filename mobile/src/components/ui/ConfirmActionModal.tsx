@@ -33,7 +33,7 @@ export function ConfirmActionModal({
               <Text style={styles.cancelText}>Cancelar</Text>
             </Pressable>
             <Pressable accessibilityRole="button" disabled={busy} onPress={onConfirm} style={[styles.confirm, busy && styles.disabled]}>
-              {busy ? <ActivityIndicator color={colors.surface} /> : <Text style={styles.confirmText}>{confirmLabel}</Text>}
+              {busy ? <ActivityIndicator color={colors.onAccent} /> : <Text style={styles.confirmText}>{confirmLabel}</Text>}
             </Pressable>
           </View>
         </View>
@@ -52,6 +52,6 @@ const styles = StyleSheet.create({
   cancel: { minHeight: 46, flex: 1, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: colors.border, borderRadius: radius.sm, backgroundColor: colors.surface },
   cancelText: { color: colors.text, fontSize: 14, fontWeight: "700" },
   confirm: { minHeight: 46, flex: 1, alignItems: "center", justifyContent: "center", borderRadius: radius.sm, backgroundColor: colors.orange },
-  confirmText: { color: colors.surface, fontSize: 14, fontWeight: "800" },
+  confirmText: { color: colors.onAccent, fontSize: 14, fontWeight: "800" },
   disabled: { opacity: 0.6 },
 });

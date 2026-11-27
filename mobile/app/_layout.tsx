@@ -9,6 +9,7 @@ import { AuthProvider, useAuth } from "../src/features/auth/AuthProvider";
 import { getAuthRouteGuards } from "../src/features/auth/routeAccess";
 import { PersistentAppTabBar } from "../src/navigation/AppTabBar";
 import { ThemeProvider, useTheme } from "../src/theme/ThemeProvider";
+import { reportRuntimeInfo } from "../src/diagnostics/renderDiagnostics";
 
 function AuthenticatedNavigation() {
   useNotificationNavigation();
@@ -77,6 +78,9 @@ function AuthenticatedNavigation() {
 
 function RootContent() {
   const { mode } = useTheme();
+  useEffect(() => {
+    reportRuntimeInfo(Platform.OS, __DEV__);
+  }, []);
   return (
     <View style={styles.root}>
       <StatusBar barStyle={mode === "dark" ? "light-content" : "dark-content"} />

@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   chip: { paddingHorizontal: 12, paddingVertical: 9, borderRadius: radius.pill, backgroundColor: colors.blueSoft },
   chipSelected: { backgroundColor: colors.blue },
   chipText: { color: colors.textMuted, fontSize: 12, fontWeight: "700" },
-  chipTextSelected: { color: colors.surface },
+  chipTextSelected: { color: colors.onAccent },
   muted: { color: colors.textMuted, fontSize: 13 },
   error: { color: colors.orange, fontSize: 13 },
   loading: { padding: spacing.xl, flexDirection: "row", gap: spacing.sm, alignItems: "center", justifyContent: "center" },

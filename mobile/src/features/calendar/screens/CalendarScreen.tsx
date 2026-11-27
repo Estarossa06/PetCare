@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useFocusEffect, useRouter } from "expo-router";
 import { Bell, CalendarDays, ChevronDown, ChevronLeft, ChevronRight, Clock3, Plus, SlidersHorizontal } from "lucide-react-native";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from "react-native";
@@ -9,6 +9,7 @@ import { SurfaceCard } from "../../../components/ui/SurfaceCard";
 import { calendarRepository } from "../calendarRepository";
 import type { CalendarFilters, CalendarItem, CalendarPetOption } from "../types";
 import { colors, radius, spacing } from "../../../theme/tokens";
+import { reportClientError, reportComponentState, reportScreenOpened } from "../../../diagnostics/renderDiagnostics";
 
 type ViewMode = "month" | "week" | "day";
 const sourceLabels: Record<CalendarItem["source"], string> = {
@@ -108,12 +109,16 @@ export default function CalendarScreen() {
       setItems(rows);
       setPets(petRows);
     } catch (loadError) {
+      reportClientError("calendar", "calendar_view", loadError);
       setError(loadError instanceof Error ? loadError.message : "No se pudo cargar el calendario local.");
     } finally {
       setLoading(false);
     }
   }, [filters, mode, selected]);
-  useFocusEffect(useCallback(() => { void load(); }, [load]));
+  useFocusEffect(useCallback(() => {
+    reportScreenOpened("calendar");
+    void load();
+  }, [load]));
 
   const visibleDates = useMemo(() => {
     const date = parseDay(selected);
@@ -185,6 +190,18 @@ export default function CalendarScreen() {
     Number(Boolean(filters.category)) +
     Number(Boolean(filters.status)) +
     Number(Boolean(filters.type));
+
+  useEffect(() => {
+    reportComponentState("calendar", "calendar_view", {
+      loading,
+      dataCount: items.length,
+      secondaryCount: pets.length,
+      selectedCount: selectedItems.length,
+      filtersCount: activeFilterCount,
+      errorPresent: Boolean(error),
+      renderBranch: loading ? "loading" : error ? "error" : selectedItems.length ? "data" : "empty",
+    });
+  }, [activeFilterCount, error, items.length, loading, pets.length, selectedItems.length]);
 
   return (
     <SafeAreaView edges={["top"]} style={styles.safe}>
@@ -332,7 +349,7 @@ const styles = StyleSheet.create({
   chip: { paddingHorizontal: 12, paddingVertical: 8, borderRadius: radius.pill, backgroundColor: colors.blueSoft },
   chipSelected: { backgroundColor: colors.blue },
   chipText: { color: colors.textMuted, fontSize: 12, fontWeight: "700" },
-  chipTextSelected: { color: colors.surface },
+  chipTextSelected: { color: colors.onAccent },
   calendarCard: { paddingVertical: spacing.xs },
   weekdays: { flexDirection: "row", marginBottom: 6 },
   weekday: { flex: 1, textAlign: "center", color: colors.textMuted, fontWeight: "800", paddingVertical: 6 },
@@ -341,9 +358,9 @@ const styles = StyleSheet.create({
   outsideMonth: { opacity: 0.35 },
   selectedDay: { backgroundColor: colors.blue },
   dayNumber: { color: colors.text, fontWeight: "700", fontSize: 13 },
-  selectedDayText: { color: colors.surface },
+  selectedDayText: { color: colors.onAccent },
   dayDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: colors.yellow, marginTop: 3 },
-  selectedDot: { backgroundColor: colors.surface },
+  selectedDot: { backgroundColor: colors.onAccent },
   weekStrip: { flexDirection: "row", justifyContent: "space-between", gap: 4 },
   weekDay: { flex: 1, minHeight: 76, alignItems: "center", justifyContent: "center", borderRadius: radius.sm, backgroundColor: colors.background },
   selectedWeekDay: { backgroundColor: colors.blue },

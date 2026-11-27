@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useFocusEffect, useRouter } from "expo-router";
 import { AlertCircle, PawPrint, Plus, Search, X } from "lucide-react-native";
 import {
@@ -19,6 +19,7 @@ import { SurfaceCard } from "../../../components/ui/SurfaceCard";
 import { petPhotoStorage, petService } from "../petService";
 import type { Pet } from "../types";
 import { colors, radius, spacing } from "../../../theme/tokens";
+import { reportClientError, reportComponentState, reportScreenOpened } from "../../../diagnostics/renderDiagnostics";
 
 type PetWithPhoto = Pet & { photoUri: string | null };
 
@@ -127,6 +128,7 @@ export default function PetListScreen() {
       })));
       setPets(withPhotos);
     } catch (loadError) {
+      reportClientError("pets", "pet_list", loadError);
       setError(loadError instanceof Error ? loadError.message : "No se pudieron cargar las mascotas.");
     } finally {
       setLoading(false);
@@ -134,6 +136,7 @@ export default function PetListScreen() {
   }, [search, species]);
 
   useFocusEffect(useCallback(() => {
+    reportScreenOpened("pets");
     void loadPets();
   }, [loadPets]));
 
@@ -142,6 +145,16 @@ export default function PetListScreen() {
       .filter((item) => !commonSpecies.some(({ value }) => value === item));
     return [...commonSpecies, ...customSpecies.map((value) => ({ value, label: `${speciesLabel(value)}s` }))];
   }, [pets]);
+
+  useEffect(() => {
+    reportComponentState("pets", "pet_list", {
+      loading,
+      dataCount: pets.length,
+      filtersCount: filters.length,
+      errorPresent: Boolean(error),
+      renderBranch: loading ? "loading" : error ? "error" : pets.length ? "data" : "empty",
+    });
+  }, [error, filters.length, loading, pets.length]);
 
   return (
     <SafeAreaView edges={["top"]} style={styles.safeArea}>
@@ -319,8 +332,8 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   filterChipSelected: {
-    backgroundColor: colors.blueSoft,
-    borderColor: colors.blueMuted,
+    backgroundColor: colors.blue,
+    borderColor: colors.blue,
   },
   filterText: {
     color: colors.textMuted,
@@ -328,7 +341,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   filterTextSelected: {
-    color: colors.blue,
+    color: colors.onAccent,
   },
   listHeading: {
     flexDirection: "row",
