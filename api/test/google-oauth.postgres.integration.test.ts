@@ -1,6 +1,6 @@
 import "dotenv/config";
 import assert from "node:assert/strict";
-import { randomUUID } from "node:crypto";
+import { createHmac, randomUUID } from "node:crypto";
 import test from "node:test";
 import { createDatabasePool } from "../src/db/pool.js";
 import { hashPassword } from "../src/modules/auth/passwords.js";
@@ -33,12 +33,12 @@ test("Google identities and OAuth one-use records persist safely in petcare_test
       context.skip("Apply migration 0014 to the disposable petcare_test database before Google persistence integration assertions.");
       return;
     }
-    const migration = await pool.query("SELECT 1 FROM public.schema_migrations WHERE version = 14 AND name = 'google_oauth_identities'");
+    const migration = await pool.query("SELECT 1 FROM public.schema_migrations WHERE version = 16 AND name = 'google_account_recovery'");
     if (migration.rowCount !== 1) {
-      context.skip("Migration 0014 is not applied to petcare_test; no schema changes are made by this test.");
+      context.skip("Migration 0016 is not applied to petcare_test; no schema changes are made by this test.");
       return;
     }
-    await assertMigrationsApplied(pool, ["google_oauth_identities"]);
+    await assertMigrationsApplied(pool, ["google_oauth_identities", "google_account_link_challenges", "google_account_recovery"]);
     schemaReady = true;
     const store = new PostgresAuthStore(pool);
     const user = await store.createGoogleUserAndIdentity({
@@ -83,7 +83,7 @@ test("Google identities and OAuth one-use records persist safely in petcare_test
   }
 });
 
-test("Google account-link challenges require an unchanged password and are consumed once in petcare_test", {
+test("Google account recovery atomically links identity, invalidates credentials and revokes prior sessions in petcare_test", {
   skip: !enabled && "Set PETCARE_TEST_DATABASE_URL and PETCARE_RUN_AUTH_DB_TESTS=1 for disposable petcare_test only.",
 }, async (context) => {
   const parsed = new URL(databaseUrl!);
@@ -91,39 +91,66 @@ test("Google account-link challenges require an unchanged password and are consu
   assert.equal(decodeURIComponent(parsed.pathname.replace(/^\//, "")), "petcare_test", "Refusing any database except petcare_test.");
   const pool = createDatabasePool(databaseUrl!);
   const run = randomUUID();
-  const challengeHash = `link-challenge-${run}`;
-  const subject = `google-link-sub-${run}`;
+  const flowHash = `recovery-flow-${run}`;
+  const subject = `google-recovery-sub-${run}`;
+  const sessionId = randomUUID();
+  const nextSessionId = randomUUID();
+  const petId = randomUUID();
   let userId: string | undefined;
   let schemaReady = false;
   try {
     const db = await pool.query<{ database: string }>("SELECT current_database() AS database");
     assert.equal(db.rows[0].database, "petcare_test", "Refusing fixtures outside petcare_test.");
-    const migration = await pool.query("SELECT 1 FROM public.schema_migrations WHERE version = 15 AND name = 'google_account_link_challenges'");
+    const migration = await pool.query("SELECT 1 FROM public.schema_migrations WHERE version = 16 AND name = 'google_account_recovery'");
     if (migration.rowCount !== 1) {
-      context.skip("Migration 0015 is not applied to petcare_test; no schema changes are made by this test.");
+      context.skip("Migration 0016 is not applied to petcare_test; no schema changes are made by this test.");
       return;
     }
-    await assertMigrationsApplied(pool, ["google_oauth_identities", "google_account_link_challenges"]);
+    await assertMigrationsApplied(pool, ["google_oauth_identities", "google_account_link_challenges", "google_account_recovery"]);
     schemaReady = true;
     const store = new PostgresAuthStore(pool);
-    const passwordHash = await hashPassword("link-test-password-123");
+    const oldPasswordHash = await hashPassword("old-recovery-password-123");
     const user = await store.createUserAndSession({
-      email: `link-${run}@example.test`, name: "OAuth link integration", passwordHash,
-      sessionId: randomUUID(), refreshTokenHash: `refresh-link-${run}`, expiresAt: new Date(Date.now() + 60_000),
+      email: `recovery-${run}@example.test`, name: "OAuth recovery integration", passwordHash: oldPasswordHash,
+      sessionId, refreshTokenHash: `refresh-old-${run}`, expiresAt: new Date(Date.now() + 60_000),
     });
     userId = user.id;
-    await store.createGoogleAccountLinkChallenge({
-      challengeHash, userId: user.id, providerSubject: subject, providerEmail: user.email,
-      providerName: "OAuth link integration", expiresAt: new Date(Date.now() + 60_000),
+    await pool.query(
+      "INSERT INTO pets (id, owner_id, name, species) VALUES ($1, $2, 'Recovery preservation fixture', 'dog')",
+      [petId, user.id],
+    );
+    const emailCode = "38472910";
+    const secret = Buffer.from("synthetic-recovery-test-secret-at-least-32-bytes");
+    const codeHash = createHmac("sha256", secret).update("petcare:google-account-recovery:email-code:").update(flowHash).update(":").update(emailCode).digest("hex");
+    await store.createGoogleAccountRecoveryChallenge({
+      flowHash, userId: user.id, providerSubject: subject, providerEmail: user.email, providerName: "OAuth recovery integration",
+      codeHash, expiresAt: new Date(Date.now() + 60_000),
     });
-    assert.equal((await store.findGoogleAccountLinkChallenge(challengeHash))?.userId, user.id);
-    assert.equal(await store.consumeGoogleAccountLinkChallenge({ challengeHash, expectedPasswordHash: "changed-password-hash" }), undefined);
-    assert.equal((await store.findGoogleAccountLinkChallenge(challengeHash))?.userId, user.id, "wrong password proof must not consume the challenge");
-    const credentials = await store.findUserCredentialsById(user.id);
-    assert.ok(credentials?.passwordHash);
-    assert.equal((await store.consumeGoogleAccountLinkChallenge({ challengeHash, expectedPasswordHash: credentials.passwordHash }))?.id, user.id);
-    assert.equal(await store.consumeGoogleAccountLinkChallenge({ challengeHash, expectedPasswordHash: credentials.passwordHash }), undefined);
+    await assert.rejects(store.recoverGoogleAccount({
+      flowHash, codeHash, newPasswordHash: null, sessionId, refreshTokenHash: `refresh-rollback-${run}`,
+      sessionExpiresAt: new Date(Date.now() + 60_000), authenticatedAt: new Date(),
+    }), (error: unknown) => typeof error === "object" && error !== null && "code" in error && error.code === "23505");
+    assert.equal(await store.findUserByGoogleSubject(subject), undefined, "identity insertion must roll back");
+    assert.equal((await store.findUserCredentialsById(user.id))?.passwordHash, oldPasswordHash, "password changes must roll back");
+    assert.equal(await store.isSessionActive({ userId: user.id, sessionId }), true, "session revocation must roll back");
+
+    const recovered = await store.recoverGoogleAccount({
+      flowHash, codeHash, newPasswordHash: null, sessionId: nextSessionId, refreshTokenHash: `refresh-new-${run}`,
+      sessionExpiresAt: new Date(Date.now() + 60_000), authenticatedAt: new Date(),
+    });
+    assert.deepEqual(recovered, { kind: "completed", userId: user.id });
     assert.equal((await store.findUserByGoogleSubject(subject))?.id, user.id);
+    const preservedPet = await pool.query<{ owner_id: string; name: string }>(
+      "SELECT owner_id, name FROM pets WHERE id=$1", [petId],
+    );
+    assert.deepEqual(preservedPet.rows[0], { owner_id: user.id, name: "Recovery preservation fixture" });
+    assert.equal((await store.findUserCredentialsById(user.id))?.passwordHash, null);
+    assert.equal(await store.isSessionActive({ userId: user.id, sessionId }), false, "old sessions must be revoked");
+    assert.equal(await store.isSessionActive({ userId: user.id, sessionId: nextSessionId }), true, "a new recovery session must be created atomically");
+    assert.deepEqual(await store.recoverGoogleAccount({
+      flowHash, codeHash, newPasswordHash: null, sessionId: randomUUID(), refreshTokenHash: `refresh-replay-${run}`,
+      sessionExpiresAt: new Date(Date.now() + 60_000), authenticatedAt: new Date(),
+    }), { kind: "invalid" }, "the recovery challenge must be consumed once");
   } finally {
     try {
       if (schemaReady && userId) {
@@ -136,9 +163,7 @@ test("Google account-link challenges require an unchanged password and are consu
         } catch (error) {
           await client.query("ROLLBACK");
           throw error;
-        } finally {
-          client.release();
-        }
+        } finally { client.release(); }
       }
     } finally { await pool.end(); }
   }

@@ -1,8 +1,9 @@
-import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
+import { createHash, createHmac, randomBytes, randomInt, timingSafeEqual } from "node:crypto";
 import { CodeChallengeMethod, OAuth2Client } from "google-auth-library";
 import type { Logger } from "../../observability/logger.js";
 import { GoogleIdentityConflictError, InvalidCredentialsError } from "./errors.js";
 import type { AuthService } from "./service.js";
+import type { AccountRecoveryEmailSender } from "./recoveryEmail.js";
 import type { AuthStore, OAuthTransaction, Principal } from "./types.js";
 
 export interface GoogleOAuthConfig {
@@ -74,7 +75,12 @@ export class GoogleOAuthProvider implements GoogleCodeProvider {
 const OAUTH_TTL_MS = 5 * 60_000;
 const LINK_INTENT_TTL_MS = 60_000;
 const HANDOFF_TTL_MS = 60_000;
-const ACCOUNT_LINK_CHALLENGE_TTL_MS = 5 * 60_000;
+const ACCOUNT_RECOVERY_TTL_MS = 10 * 60_000;
+
+export interface GoogleRecoveryOptions {
+  emailSender?: AccountRecoveryEmailSender;
+  codeSecret: Uint8Array;
+}
 
 function digest(value: string): string {
   return createHash("sha256").update(value, "utf8").digest("hex");
@@ -93,14 +99,14 @@ export class GoogleOAuthFlow {
     private readonly config: GoogleOAuthConfig,
     private readonly logger: Logger,
     private readonly provider: GoogleCodeProvider = new GoogleOAuthProvider(config),
+    private readonly recovery: GoogleRecoveryOptions = { codeSecret: new Uint8Array(0) },
   ) {}
 
   async startLogin(): Promise<{ url: string; state: string }> {
     return this.start("login");
   }
 
-  async startLink(principal: Principal, currentPassword: string | undefined): Promise<string> {
-    await this.auth.verifyGoogleLinkStart(principal, currentPassword);
+  async startLink(principal: Principal): Promise<string> {
     if (!(await this.store.isSessionActive(principal))) throw new InvalidCredentialsError();
     const intent = randomBytes(32).toString("base64url");
     await this.store.createOAuthLinkIntent({
@@ -146,19 +152,32 @@ export class GoogleOAuthFlow {
 
       const resolution = await this.auth.resolveGoogleLogin({ email: identity.email, name: identity.name, subject: identity.subject });
       if (resolution.kind === "account_recovery_required") {
-        return this.returnUrl({ error: "account_recovery_required" });
-      }
-      if (resolution.kind === "link_required") {
-        const linkCode = randomBytes(32).toString("base64url");
-        await this.store.createGoogleAccountLinkChallenge({
-          challengeHash: digest(linkCode),
+        if (!this.recovery.emailSender || this.recovery.codeSecret.byteLength < 32) {
+          this.logger.info({ event: "google_account_recovery_unavailable", requestId: input.requestId });
+          throw new InvalidCredentialsError();
+        }
+        const recoveryCode = randomBytes(32).toString("base64url");
+        const flowHash = digest(recoveryCode);
+        const emailCode = String(randomInt(0, 100_000_000)).padStart(8, "0");
+        const codeHash = createHmac("sha256", this.recovery.codeSecret)
+          .update("petcare:google-account-recovery:email-code:").update(flowHash).update(":").update(emailCode).digest("hex");
+        await this.store.createGoogleAccountRecoveryChallenge({
+          flowHash,
           userId: resolution.userId,
           providerSubject: identity.subject,
           providerEmail: identity.email,
           providerName: identity.name,
-          expiresAt: new Date(Date.now() + ACCOUNT_LINK_CHALLENGE_TTL_MS),
+          codeHash,
+          expiresAt: new Date(Date.now() + ACCOUNT_RECOVERY_TTL_MS),
         });
-        return this.returnUrl({ linkCode });
+        try {
+          await this.recovery.emailSender.sendAccountRecoveryCode(identity.email, emailCode);
+        } catch {
+          await this.store.invalidateGoogleAccountRecoveryChallenge(flowHash);
+          this.logger.info({ event: "google_account_recovery_email_failed", requestId: input.requestId });
+          throw new InvalidCredentialsError();
+        }
+        return this.returnUrl({ recoveryCode });
       }
       const code = randomBytes(32).toString("base64url");
       await this.store.createOAuthHandoff({ codeHash: digest(code), userId: resolution.user.id, expiresAt: new Date(Date.now() + HANDOFF_TTL_MS) });
@@ -185,9 +204,10 @@ export class GoogleOAuthFlow {
 
   private returnUrl(parameters: Record<string, string>): string {
     const target = new URL(this.config.webReturnUrl);
-    const { linkCode, ...queryParameters } = parameters;
+    const { code, recoveryCode, ...queryParameters } = parameters;
     for (const [key, value] of Object.entries(queryParameters)) target.searchParams.set(key, value);
-    if (linkCode) target.hash = new URLSearchParams({ linkCode }).toString();
+    if (code) target.hash = new URLSearchParams({ code }).toString();
+    else if (recoveryCode) target.hash = new URLSearchParams({ recoveryCode }).toString();
     return target.toString();
   }
 }

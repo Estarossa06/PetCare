@@ -1,4 +1,4 @@
-import { randomUUID } from "node:crypto";
+import { createHmac, randomUUID } from "node:crypto";
 import { hashPassword, verifyPassword } from "./passwords.js";
 import {
   createRefreshToken,
@@ -24,6 +24,7 @@ import {
   validateProfileUpdate,
   validatePasswordChange,
   validateCurrentPassword,
+  validateRecoveryPassword,
 } from "./validation.js";
 const DUMMY_PASSWORD_HASH =
   "scrypt$32768$8$1$AAAAAAAAAAAAAAAAAAAAAA$AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
@@ -150,24 +151,19 @@ export class AuthService {
 
   async resolveGoogleLogin(identity: { email: string; name: string; subject: string }): Promise<
     | { kind: "authenticated"; user: AuthUser }
-    | { kind: "link_required"; userId: string }
-    | { kind: "account_recovery_required" }
+    | { kind: "account_recovery_required"; userId: string }
   > {
     const linked = await this.store.findUserByGoogleSubject(identity.subject);
     if (linked) return { kind: "authenticated", user: linked };
     const existing = await this.store.findUserByEmail(identity.email);
-    if (existing) return existing.passwordHash
-      ? { kind: "link_required", userId: existing.id }
-      : { kind: "account_recovery_required" };
+    if (existing) return { kind: "account_recovery_required", userId: existing.id };
     try {
       return { kind: "authenticated", user: await this.store.createGoogleUserAndIdentity(identity) };
     }
     catch (error) {
       if (error instanceof DuplicateEmailError) {
         const racedUser = await this.store.findUserByEmail(identity.email);
-        if (racedUser) return racedUser.passwordHash
-          ? { kind: "link_required", userId: racedUser.id }
-          : { kind: "account_recovery_required" };
+        if (racedUser) return { kind: "account_recovery_required", userId: racedUser.id };
       }
       if (error instanceof GoogleIdentityConflictError) {
         const racedIdentity = await this.store.findUserByGoogleSubject(identity.subject);
@@ -177,29 +173,50 @@ export class AuthService {
     }
   }
 
-  async completeGoogleAccountLink(rawCode: unknown, rawPassword: unknown): Promise<TokenPair> {
-    if (typeof rawCode !== "string" || rawCode.length < 32 || rawCode.length > 128 ||
-      typeof rawPassword !== "string" || rawPassword.length < 1 || rawPassword.length > 128) {
+  async completeGoogleAccountRecovery(input: {
+    flowCode: unknown;
+    emailCode: unknown;
+    credentialChoice: unknown;
+    newPassword?: unknown;
+  }): Promise<TokenPair> {
+    if (typeof input.flowCode !== "string" || input.flowCode.length < 32 || input.flowCode.length > 128 ||
+      typeof input.emailCode !== "string" || !/^\d{8}$/.test(input.emailCode)) {
       throw new InvalidCredentialsError();
     }
-    const challengeHash = hashRefreshToken(rawCode);
-    const challenge = await this.store.findGoogleAccountLinkChallenge(challengeHash);
-    if (!challenge) throw new InvalidCredentialsError();
-    const account = await this.store.findUserCredentialsById(challenge.userId);
-    if (!account || !account.passwordHash || account.email !== challenge.providerEmail ||
-      !(await verifyPassword(rawPassword, account.passwordHash))) {
-      throw new InvalidCredentialsError();
+    if (input.credentialChoice !== "google_only" && input.credentialChoice !== "google_and_password") {
+      throw new InvalidRequestError("Choose Google only or set a new PetCare password.");
     }
-    const linked = await this.store.consumeGoogleAccountLinkChallenge({
-      challengeHash,
-      expectedPasswordHash: account.passwordHash,
+    const passwordHash = input.credentialChoice === "google_and_password"
+      ? await hashPassword(validateRecoveryPassword(input.newPassword))
+      : null;
+    if (input.credentialChoice === "google_only" && input.newPassword !== undefined && input.newPassword !== "") {
+      throw new InvalidRequestError("A password is only accepted when choosing Google and a new password.");
+    }
+    const flowHash = hashRefreshToken(input.flowCode);
+    const codeHash = createHmac("sha256", this.accessTokenSecret)
+      .update("petcare:google-account-recovery:email-code:")
+      .update(flowHash)
+      .update(":")
+      .update(input.emailCode)
+      .digest("hex");
+    const sessionId = randomUUID();
+    const refreshToken = createRefreshToken();
+    const authenticatedAt = new Date();
+    const expiresAt = refreshTokenExpiry();
+    const result = await this.store.recoverGoogleAccount({
+      flowHash,
+      codeHash,
+      newPasswordHash: passwordHash,
+      sessionId,
+      refreshTokenHash: hashRefreshToken(refreshToken),
+      sessionExpiresAt: expiresAt,
+      authenticatedAt,
     });
-    if (!linked) throw new InvalidCredentialsError();
-    return this.createSession(linked);
-  }
-
-  async verifyGoogleLinkStart(principal: Principal, currentPassword: string | undefined): Promise<void> {
-    await this.verifyAccountProof(principal, currentPassword);
+    if (result.kind !== "completed") throw new InvalidCredentialsError();
+    const user = await this.store.findUserById(result.userId);
+    if (!user) throw new InvalidCredentialsError();
+    const access = await signAccessToken(user, sessionId, this.accessTokenSecret, new Date(), authenticatedAt);
+    return { accessToken: access.token, accessTokenExpiresAt: access.expiresAt, refreshToken, user };
   }
 
   async exchangeGoogleHandoff(rawCode: unknown): Promise<TokenPair> {

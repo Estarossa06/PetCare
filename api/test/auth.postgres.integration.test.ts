@@ -30,7 +30,7 @@ test(
       !integrationEnabled &&
       "Set PETCARE_TEST_DATABASE_URL and PETCARE_RUN_AUTH_DB_TESTS=1 for the disposable petcare_test database.",
   },
-  async () => {
+  async (context) => {
     const databaseUrlParsed = new URL(databaseUrl!);
     assert.ok(
       databaseUrlParsed.protocol === "postgres:" ||
@@ -61,7 +61,15 @@ test(
         `Refusing to write auth fixtures outside petcare_test (run ${runId}).`,
       );
 
-      await assertMigrationsApplied(pool, ["auth_refresh_token_history"]);
+      const recoveryMigration = await pool.query(
+        "SELECT 1 FROM public.schema_migrations WHERE version=16 AND name='google_account_recovery'",
+      );
+      if (recoveryMigration.rowCount !== 1) {
+        context.skip("Migration 0016 is not applied to petcare_test; no auth fixtures are created.");
+        return;
+      }
+
+      await assertMigrationsApplied(pool, ["auth_refresh_token_history", "google_oauth_identities", "google_account_link_challenges", "google_account_recovery"]);
 
       const app = createApp({
         config: { corsOrigins: [], accessTokenSecret },

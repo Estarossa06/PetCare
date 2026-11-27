@@ -4,7 +4,8 @@ import {
   type AuthSession,
   type AuthStore,
   type AuthUser,
-  type GoogleAccountLinkChallenge,
+  type GoogleAccountRecoveryChallenge,
+  type GoogleAccountRecoverySessionInput,
   type RefreshResult,
   type OAuthTransaction,
 } from "../src/modules/auth/types.js";
@@ -37,7 +38,7 @@ export class MemoryAuthStore implements AuthStore {
   readonly oauthTransactions = new Map<string, OAuthTransaction & { expiresAt: Date }>();
   readonly oauthLinkIntents = new Map<string, { userId: string; sessionId: string; expiresAt: Date }>();
   readonly oauthHandoffs = new Map<string, { userId: string; expiresAt: Date }>();
-  readonly googleLinkChallenges = new Map<string, GoogleAccountLinkChallenge & { consumed: boolean }>();
+  readonly googleRecoveryChallenges = new Map<string, GoogleAccountRecoveryChallenge & { attempts: number; consumed: boolean }>();
 
   async createUserAndSession(input: {
     email: string;
@@ -134,30 +135,44 @@ export class MemoryAuthStore implements AuthStore {
     return handoff && handoff.expiresAt > new Date() ? this.findUserById(handoff.userId) : undefined;
   }
 
-  async createGoogleAccountLinkChallenge(input: GoogleAccountLinkChallenge & { challengeHash: string }): Promise<void> {
-    this.googleLinkChallenges.set(input.challengeHash, { ...input, consumed: false });
+  async createGoogleAccountRecoveryChallenge(input: GoogleAccountRecoveryChallenge & { flowHash: string }): Promise<void> {
+    const user = this.users.get(input.userId);
+    if (!user || user.deleted || user.email !== input.providerEmail) throw new Error("Recovery account changed.");
+    if ([...this.googleRecoveryChallenges.values()].some((challenge) => challenge.userId === input.userId && !challenge.consumed && challenge.expiresAt > new Date())) {
+      throw new Error("A recovery email has already been sent for this account.");
+    }
+    this.googleRecoveryChallenges.set(input.flowHash, { ...input, attempts: 0, consumed: false });
   }
 
-  async findGoogleAccountLinkChallenge(challengeHash: string): Promise<GoogleAccountLinkChallenge | undefined> {
-    const challenge = this.googleLinkChallenges.get(challengeHash);
-    const user = challenge ? this.users.get(challenge.userId) : undefined;
-    if (!challenge || challenge.consumed || challenge.expiresAt <= new Date() || !user || user.deleted ||
-      user.email !== challenge.providerEmail || !user.passwordHash) return undefined;
-    const { consumed: _consumed, ...result } = challenge;
-    return result;
+  async invalidateGoogleAccountRecoveryChallenge(flowHash: string): Promise<void> {
+    const challenge = this.googleRecoveryChallenges.get(flowHash);
+    if (challenge) challenge.consumed = true;
   }
 
-  async consumeGoogleAccountLinkChallenge(input: { challengeHash: string; expectedPasswordHash: string }): Promise<AuthUser | undefined> {
-    const challenge = this.googleLinkChallenges.get(input.challengeHash);
+  async recoverGoogleAccount(input: GoogleAccountRecoverySessionInput): Promise<
+    { kind: "completed"; userId: string } | { kind: "invalid" | "incorrect_code" }
+  > {
+    const challenge = this.googleRecoveryChallenges.get(input.flowHash);
     const user = challenge ? this.users.get(challenge.userId) : undefined;
-    if (!challenge || challenge.consumed || challenge.expiresAt <= new Date() || !user || user.deleted ||
-      user.email !== challenge.providerEmail || user.passwordHash !== input.expectedPasswordHash) return undefined;
+    if (!challenge || challenge.consumed || challenge.expiresAt <= new Date() || challenge.attempts >= 5 ||
+      !user || user.deleted || user.email !== challenge.providerEmail) return { kind: "invalid" };
+    if (challenge.codeHash !== input.codeHash) {
+      challenge.attempts += 1;
+      if (challenge.attempts >= 5) challenge.consumed = true;
+      return { kind: "incorrect_code" };
+    }
     if (this.googleIdentities.has(challenge.providerSubject) || [...this.googleIdentities.values()].includes(user.id)) {
       throw new GoogleIdentityConflictError();
     }
     challenge.consumed = true;
     this.googleIdentities.set(challenge.providerSubject, user.id);
-    return publicUser(user);
+    user.passwordHash = input.newPasswordHash;
+    this.revokeEverySession(user.id);
+    this.sessions.set(input.sessionId, {
+      id: input.sessionId, userId: user.id, expiresAt: input.sessionExpiresAt, revoked: false, authenticatedAt: input.authenticatedAt,
+    });
+    this.tokens.set(input.refreshTokenHash, { sessionId: input.sessionId, consumed: false, revoked: false });
+    return { kind: "completed", userId: user.id };
   }
 
   async findUserById(id: string): Promise<AuthUser | undefined> {

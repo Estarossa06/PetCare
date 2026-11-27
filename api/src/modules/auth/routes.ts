@@ -7,15 +7,16 @@ import { AuthController } from "./controller.js";
 import { createAuthRateLimit } from "./rateLimit.js";
 import { GoogleOAuthFlow, type GoogleOAuthConfig } from "./googleOAuth.js";
 import { createGoogleOAuthRouter } from "./googleOAuthRoutes.js";
+import type { AccountRecoveryEmailSender } from "./recoveryEmail.js";
 
-export function createAuthRouter(store: AuthStore, secret: Uint8Array, logger: Logger, googleConfig?: GoogleOAuthConfig): Router {
+export function createAuthRouter(store: AuthStore, secret: Uint8Array, logger: Logger, googleConfig?: GoogleOAuthConfig, recoveryEmailSender?: AccountRecoveryEmailSender): Router {
   const router = Router();
   const service = new AuthService(store, secret);
   const controller = new AuthController(service);
   const authenticate = createAuthenticateMiddleware(store, secret);
   const limit = createAuthRateLimit(logger);
 
-  router.use(createGoogleOAuthRouter(store, service, secret, logger, limit, googleConfig));
+  router.use(createGoogleOAuthRouter(store, service, secret, logger, limit, googleConfig, recoveryEmailSender));
 
   router.post("/register", limit, controller.register);
   router.post("/login", limit, controller.login);

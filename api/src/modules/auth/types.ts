@@ -18,12 +18,23 @@ export interface OAuthTransaction {
   sessionId?: string;
 }
 
-export interface GoogleAccountLinkChallenge {
+export interface GoogleAccountRecoveryChallenge {
   userId: string;
   providerSubject: string;
   providerEmail: string;
   providerName: string;
+  codeHash: string;
   expiresAt: Date;
+}
+
+export interface GoogleAccountRecoverySessionInput {
+  flowHash: string;
+  codeHash: string;
+  newPasswordHash: string | null;
+  sessionId: string;
+  refreshTokenHash: string;
+  sessionExpiresAt: Date;
+  authenticatedAt: Date;
 }
 
 export interface AuthSession {
@@ -66,9 +77,9 @@ export interface AuthStore {
   consumeOAuthLinkIntent(intentHash: string): Promise<{ userId: string; sessionId: string } | undefined>;
   createOAuthHandoff(input: { codeHash: string; userId: string; expiresAt: Date }): Promise<void>;
   consumeOAuthHandoff(codeHash: string): Promise<AuthUser | undefined>;
-  createGoogleAccountLinkChallenge(input: GoogleAccountLinkChallenge & { challengeHash: string }): Promise<void>;
-  findGoogleAccountLinkChallenge(challengeHash: string): Promise<GoogleAccountLinkChallenge | undefined>;
-  consumeGoogleAccountLinkChallenge(input: { challengeHash: string; expectedPasswordHash: string }): Promise<AuthUser | undefined>;
+  createGoogleAccountRecoveryChallenge(input: GoogleAccountRecoveryChallenge & { flowHash: string }): Promise<void>;
+  invalidateGoogleAccountRecoveryChallenge(flowHash: string): Promise<void>;
+  recoverGoogleAccount(input: GoogleAccountRecoverySessionInput): Promise<{ kind: "completed"; userId: string } | { kind: "invalid" | "incorrect_code" }>;
   createSession(input: {
     id: string;
     userId: string;

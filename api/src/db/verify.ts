@@ -37,6 +37,9 @@ async function verifySchema(client: PoolClient): Promise<void> {
     "sync_cursors",
     "pet_trackers",
     "account_deletion_requests",
+    "auth_identities",
+    "auth_oauth_account_link_challenges",
+    "auth_oauth_account_recovery_challenges",
     "kirai_conversations",
     "kirai_messages",
     "media_objects",
@@ -78,6 +81,10 @@ async function verifySchema(client: PoolClient): Promise<void> {
     "media_objects_active_pet_photo_idx",
     "account_deletion_requests_due_idx",
     "account_deletion_requests_active_user_idx",
+    "auth_identities_user_idx",
+    "auth_oauth_account_link_challenges_expiry_idx",
+    "auth_oauth_account_recovery_challenges_expiry_idx",
+    "auth_oauth_account_recovery_challenges_active_user_idx",
   ];
   const indexes = await client.query<{ indexname: string }>(
     "SELECT indexname FROM pg_indexes WHERE schemaname = 'public'",
@@ -107,6 +114,7 @@ async function verifySchema(client: PoolClient): Promise<void> {
     "media_objects_parent_matches_purpose",
     "account_deletion_requests_attempt_count_nonnegative",
     "account_deletion_requests_status_valid",
+    "auth_oauth_account_recovery_challenges_attempt_count_check",
   ];
   const missingConstraints = expectedConstraints.filter(
     (constraint) => !actualConstraints.has(constraint),

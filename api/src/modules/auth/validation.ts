@@ -49,6 +49,10 @@ export function validateRefreshToken(value: unknown): string {
   return value;
 }
 
+export function validateRecoveryPassword(value: unknown): string {
+  return normalizePassword(value);
+}
+
 export function validateProfileUpdate(value: unknown): ProfileUpdateInput {
   const body = requestObject(value);
   return {

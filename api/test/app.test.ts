@@ -105,9 +105,23 @@ test("Google OAuth config is all-or-nothing and requires HTTPS outside local dev
     GOOGLE_OAUTH_CLIENT_SECRET: "synthetic-client-secret",
     GOOGLE_OAUTH_REDIRECT_URI: "https://api.example.test/auth/google/callback",
     GOOGLE_OAUTH_WEB_RETURN_URL: "https://web.example.test/oauth/google-callback",
+    AUTH_EMAIL_PROVIDER: "resend",
+    RESEND_API_KEY: "synthetic-resend-key",
+    AUTH_EMAIL_FROM: "PetCare <accounts@example.test>",
   };
   const valid = loadConfig({ ...defaultEnvironment, NODE_ENV: "staging", ...google });
   assert.equal(valid.googleOAuth?.redirectUri, google.GOOGLE_OAUTH_REDIRECT_URI);
+  assert.equal(valid.accountRecoveryEmail?.provider, "resend");
+  const withoutRecoveryEmail = loadConfig({
+    ...defaultEnvironment,
+    NODE_ENV: "staging",
+    GOOGLE_OAUTH_CLIENT_ID: google.GOOGLE_OAUTH_CLIENT_ID,
+    GOOGLE_OAUTH_CLIENT_SECRET: google.GOOGLE_OAUTH_CLIENT_SECRET,
+    GOOGLE_OAUTH_REDIRECT_URI: google.GOOGLE_OAUTH_REDIRECT_URI,
+    GOOGLE_OAUTH_WEB_RETURN_URL: google.GOOGLE_OAUTH_WEB_RETURN_URL,
+  });
+  assert.ok(withoutRecoveryEmail.googleOAuth);
+  assert.equal(withoutRecoveryEmail.accountRecoveryEmail, undefined);
   assert.throws(
     () => loadConfig({ ...defaultEnvironment, NODE_ENV: "staging", GOOGLE_OAUTH_CLIENT_ID: google.GOOGLE_OAUTH_CLIENT_ID }),
     /must be configured together/,
@@ -120,6 +134,18 @@ test("Google OAuth config is all-or-nothing and requires HTTPS outside local dev
     () => loadConfig({ ...defaultEnvironment, NODE_ENV: "staging", ...google, GOOGLE_OAUTH_WEB_RETURN_URL: "https://web.example.test/callback?token=bad" }),
     /without credentials, query, or fragment/,
   );
+});
+
+test("account recovery email settings are optional but must be configured together", () => {
+  const valid = loadConfig({
+    ...defaultEnvironment,
+    AUTH_EMAIL_PROVIDER: "resend",
+    RESEND_API_KEY: "synthetic-test-key",
+    AUTH_EMAIL_FROM: "PetCare <accounts@example.test>",
+  });
+  assert.equal(valid.accountRecoveryEmail?.provider, "resend");
+  assert.throws(() => loadConfig({ ...defaultEnvironment, RESEND_API_KEY: "synthetic-test-key" }), /configured together/);
+  assert.throws(() => loadConfig({ ...defaultEnvironment, AUTH_EMAIL_PROVIDER: "unsupported", RESEND_API_KEY: "synthetic-test-key", AUTH_EMAIL_FROM: "accounts@example.test" }), /configured together/);
 });
 
 test("application starts and returns health with a generated request ID", async () => {

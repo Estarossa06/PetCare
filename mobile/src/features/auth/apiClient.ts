@@ -94,22 +94,27 @@ export class ApiClient {
     return result.user;
   }
 
-  async completeGoogleAccountLink(linkCode: string, currentPassword: string): Promise<AuthUser> {
-    const result = await this.request<TokenResponse>("/auth/google/link/complete", {
+  async completeGoogleAccountRecovery(input: {
+    recoveryCode: string;
+    emailCode: string;
+    credentialChoice: "google_only" | "google_and_password";
+    newPassword?: string;
+  }): Promise<AuthUser> {
+    const result = await this.request<TokenResponse>("/auth/google/recovery/complete", {
       method: "POST",
-      body: { linkCode, currentPassword },
+      body: input,
       retryAfterRefresh: false,
     });
-    if (!isTokenResponse(result)) throw new ApiClientError("Google account linking response is invalid.", 502, "INVALID_AUTH_RESPONSE");
+    if (!isTokenResponse(result)) throw new ApiClientError("Google account recovery response is invalid.", 502, "INVALID_AUTH_RESPONSE");
     await tokenStorage.write(result);
     return result.user;
   }
 
-  async startGoogleLink(currentPassword?: string): Promise<string> {
+  async startGoogleLink(): Promise<string> {
     const result = await this.request<{ continuationUrl?: unknown }>("/auth/google/link/start", {
       method: "POST",
       authenticated: true,
-      body: currentPassword ? { currentPassword } : {},
+      body: {},
     });
     if (typeof result.continuationUrl !== "string") {
       throw new ApiClientError("Google sign-in could not be started.", 502, "INVALID_AUTH_RESPONSE");

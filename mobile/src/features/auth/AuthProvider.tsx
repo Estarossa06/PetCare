@@ -20,7 +20,7 @@ interface AuthContextValue {
   clearError(): void;
   login(email: string, password: string): Promise<void>;
   loginWithGoogleHandoff(code: string): Promise<void>;
-  completeGoogleAccountLink(linkCode: string, currentPassword: string): Promise<void>;
+  completeGoogleAccountRecovery(input: { recoveryCode: string; emailCode: string; credentialChoice: "google_only" | "google_and_password"; newPassword?: string }): Promise<void>;
   register(email: string, password: string, name: string): Promise<void>;
   logout(): Promise<void>;
   finishDeactivatedAccount(): Promise<void>;
@@ -90,10 +90,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
     setUser(authenticatedUser);
   }, []);
 
-  const completeGoogleAccountLink = useCallback(async (linkCode: string, currentPassword: string) => {
+  const completeGoogleAccountRecovery = useCallback(async (input: { recoveryCode: string; emailCode: string; credentialChoice: "google_only" | "google_and_password"; newPassword?: string }) => {
     setError(null);
     await waitForPetSync();
-    const authenticatedUser = await apiClient.completeGoogleAccountLink(linkCode, currentPassword);
+    const authenticatedUser = await apiClient.completeGoogleAccountRecovery(input);
     setActiveLocalAuthUserId(authenticatedUser.id);
     setUser(authenticatedUser);
   }, []);
@@ -156,7 +156,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       clearError: () => setError(null),
       login,
       loginWithGoogleHandoff,
-      completeGoogleAccountLink,
+      completeGoogleAccountRecovery,
       register,
       logout,
       finishDeactivatedAccount,
@@ -164,7 +164,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       updateLocalUser,
       restore,
     }),
-    [user, loading, error, login, loginWithGoogleHandoff, completeGoogleAccountLink, register, logout, finishDeactivatedAccount, finishPermanentlyDeletedAccount, updateLocalUser, restore],
+    [user, loading, error, login, loginWithGoogleHandoff, completeGoogleAccountRecovery, register, logout, finishDeactivatedAccount, finishPermanentlyDeletedAccount, updateLocalUser, restore],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

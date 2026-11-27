@@ -10,9 +10,11 @@
       "android",
       "web"
     ],
+    "icon": "./assets/brand/petcare-heart-paw.png",
     "userInterfaceStyle": "automatic",
     "web": {
-      "bundler": "metro"
+      "bundler": "metro",
+      "favicon": "./assets/brand/petcare-heart-paw.png"
     },
     "ios": {
       "bundleIdentifier": "com.petcare.mobile",
@@ -20,8 +22,16 @@
     },
     "android": {
       "package": "com.petcare.mobile",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/brand/petcare-heart-paw.png",
+        "backgroundColor": "#022B9E"
+      },
       "blockedPermissions": [
         "android.permission.SYSTEM_ALERT_WINDOW"
+      ],
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
       ]
     },
     "plugins": [
@@ -42,7 +52,35 @@
         }
       ],
       "./plugins/withCmakeObjectPathLimit",
-      "expo-secure-store"
-    ]
+      "expo-secure-store",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/brand/petcare-mark.png",
+          "imageWidth": 160,
+          "resizeMode": "contain",
+          "backgroundColor": "#F5F8FC",
+          "dark": {
+            "image": "./assets/brand/petcare-adaptive-foreground.png",
+            "backgroundColor": "#0B1220"
+          }
+        }
+      ]
+    ],
+    "extra": {
+      "router": {
+        "headers": {
+          "Cross-Origin-Embedder-Policy": "credentialless",
+          "Cross-Origin-Opener-Policy": "same-origin"
+        },
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "6a301adf-597e-4b4f-9f67-99c8e652f514"
+      }
+    },
+    "owner": "xxestarossaxx"
   }
 }

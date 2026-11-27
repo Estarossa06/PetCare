@@ -6,6 +6,7 @@ import { GoogleIdentityConflictError, InvalidCredentialsError, InvalidRequestErr
 import { GoogleOAuthFlow, type GoogleOAuthConfig } from "./googleOAuth.js";
 import type { AuthService } from "./service.js";
 import type { AuthStore } from "./types.js";
+import type { AccountRecoveryEmailSender } from "./recoveryEmail.js";
 
 export function createGoogleOAuthRouter(
   store: AuthStore,
@@ -14,12 +15,13 @@ export function createGoogleOAuthRouter(
   logger: Logger,
   limit: RequestHandler,
   config?: GoogleOAuthConfig,
+  recoveryEmailSender?: AccountRecoveryEmailSender,
 ): Router {
   const secureCookie = config ? new URL(config.redirectUri).protocol === "https:" : true;
   const cookieOptions = { httpOnly: true, secure: secureCookie, sameSite: "lax" as const, path: "/auth/google/callback" };
   const router = Router();
   const authenticate = createAuthenticateMiddleware(store, secret);
-  const flow = config ? new GoogleOAuthFlow(store, service, config, logger) : undefined;
+  const flow = config ? new GoogleOAuthFlow(store, service, config, logger, undefined, { emailSender: recoveryEmailSender, codeSecret: secret }) : undefined;
 
   router.get("/google", limit, async (_request, response, next) => {
     if (!flow) {
@@ -87,16 +89,21 @@ export function createGoogleOAuthRouter(
     }
   });
 
-  router.post("/google/link/complete", limit, async (request, response, next) => {
+  router.post("/google/recovery/complete", limit, async (request, response, next) => {
     try {
-      const tokens = await service.completeGoogleAccountLink(request.body?.linkCode, request.body?.currentPassword);
+      const tokens = await service.completeGoogleAccountRecovery({
+        flowCode: request.body?.recoveryCode,
+        emailCode: request.body?.emailCode,
+        credentialChoice: request.body?.credentialChoice,
+        newPassword: request.body?.newPassword,
+      });
       response.setHeader("Cache-Control", "no-store");
       response.status(200).json(tokens);
     } catch (error) {
       if (error instanceof InvalidCredentialsError) {
-        response.status(401).json({ error: { code: "INVALID_GOOGLE_LINK_CHALLENGE", message: "The PetCare password or Google link challenge is invalid or expired." } });
+        response.status(401).json({ error: { code: "INVALID_GOOGLE_ACCOUNT_RECOVERY", message: "El código no es válido, caducó o ya fue utilizado. Inicia Google de nuevo para solicitar otro." } });
       } else if (error instanceof GoogleIdentityConflictError) {
-        response.status(409).json({ error: { code: "GOOGLE_IDENTITY_CONFLICT", message: "This Google account is already linked to another PetCare account." } });
+        response.status(409).json({ error: { code: "GOOGLE_IDENTITY_CONFLICT", message: "Esta identidad de Google ya está vinculada a otra cuenta." } });
       } else if (error instanceof InvalidRequestError) {
         response.status(400).json({ error: { code: error.code, message: error.message } });
       } else next(error);
@@ -109,12 +116,12 @@ export function createGoogleOAuthRouter(
       return;
     }
     try {
-      const continuationUrl = await flow.startLink(request.principal!, request.body?.currentPassword);
+      const continuationUrl = await flow.startLink(request.principal!);
       response.setHeader("Cache-Control", "no-store");
       response.status(200).json({ continuationUrl });
     } catch (error) {
       if (error instanceof InvalidCredentialsError) {
-        response.status(401).json({ error: { code: "INVALID_CREDENTIALS", message: "Email or password is incorrect." } });
+        response.status(401).json({ error: { code: "INVALID_CREDENTIALS", message: "La sesión PetCare no está activa. Inicia sesión de nuevo." } });
       } else if (error instanceof InvalidRequestError) {
         response.status(400).json({ error: { code: error.code, message: error.message } });
       } else next(error);

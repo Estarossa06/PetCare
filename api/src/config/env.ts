@@ -9,6 +9,7 @@ export interface AppConfig {
   accessTokenSecret: Uint8Array;
   r2?: { accountId: string; bucket: string; accessKeyId: string; secretAccessKey: string };
   googleOAuth?: { clientId: string; clientSecret: string; redirectUri: string; webReturnUrl: string };
+  accountRecoveryEmail?: { provider: "resend"; apiKey: string; from: string };
 }
 
 function requiredValue(value: string | undefined, name: string): string {
@@ -103,6 +104,17 @@ function parseGoogleOAuth(env: NodeJS.ProcessEnv, nodeEnv: NodeEnvironment): App
   return { clientId, clientSecret, redirectUri, webReturnUrl };
 }
 
+function parseAccountRecoveryEmail(env: NodeJS.ProcessEnv): AppConfig["accountRecoveryEmail"] {
+  const provider = env.AUTH_EMAIL_PROVIDER?.trim() ?? "";
+  const apiKey = env.RESEND_API_KEY?.trim() ?? "";
+  const from = env.AUTH_EMAIL_FROM?.trim() ?? "";
+  if (!provider && !apiKey && !from) return undefined;
+  if (provider !== "resend" || !apiKey || !from || apiKey.length > 512 || from.length > 254 || /[\r\n]/.test(from)) {
+    throw new Error("AUTH_EMAIL_PROVIDER=resend, RESEND_API_KEY and AUTH_EMAIL_FROM must be configured together.");
+  }
+  return { provider: "resend", apiKey, from };
+}
+
 export function loadConfig(
   env: NodeJS.ProcessEnv = process.env,
 ): AppConfig {
@@ -127,6 +139,7 @@ export function loadConfig(
   }
 
   const googleOAuth = parseGoogleOAuth(env, nodeEnv);
+  const accountRecoveryEmail = parseAccountRecoveryEmail(env);
   return {
     nodeEnv,
     port: parsePort(env.PORT),
@@ -135,6 +148,7 @@ export function loadConfig(
     corsOrigins: parseCorsOrigins(env.CORS_ORIGINS),
     accessTokenSecret: parseAccessTokenSecret(env.AUTH_ACCESS_TOKEN_SECRET),
     ...(googleOAuth ? { googleOAuth } : {}),
+    ...(accountRecoveryEmail ? { accountRecoveryEmail } : {}),
     ...(r2Values.every(Boolean) ? { r2: { accountId: r2Values[0]!, bucket: r2Values[1]!, accessKeyId: r2Values[2]!, secretAccessKey: r2Values[3]! } } : {}),
   };
 }

@@ -65,7 +65,6 @@ export default function ProfileScreen() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
-  const [googleLinkPassword, setGoogleLinkPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [notificationsEnabled, setNotificationsEnabledState] = useState(true);
@@ -148,7 +147,7 @@ export default function ProfileScreen() {
   const startGoogleLink = async () => {
     setBusy(true); setMessage("");
     try {
-      const url = await apiClient.startGoogleLink(googleLinkPassword || undefined);
+      const url = await apiClient.startGoogleLink();
       if (Platform.OS === "web") window.location.assign(url);
       else setMessage("La vinculación Google está disponible en PetCare Web.");
     } catch (linkError) { setMessage(userMessage(linkError)); }
@@ -240,8 +239,7 @@ export default function ProfileScreen() {
       </>;
       case "google-link": return <>
         <Text style={styles.modalTitle}>Vincular cuenta Google</Text>
-        <Text style={styles.modalIntro}>Confirma tu contraseña PetCare para vincular una cuenta Google. Si tu cuenta no tiene contraseña local, una sesión Google reciente es suficiente.</Text>
-        <Field label="Contraseña actual (si aplica)" value={googleLinkPassword} onChangeText={setGoogleLinkPassword} secureTextEntry />
+        <Text style={styles.modalIntro}>Vincula tu cuenta Google a esta cuenta PetCare mientras mantienes tu sesión activa. No necesitas introducir tu contraseña.</Text>
         <AppButton label="Continuar con Google" onPress={() => void startGoogleLink()} loading={busy} />
       </>;
       case "notifications": return <>
@@ -290,7 +288,7 @@ export default function ProfileScreen() {
               <SettingRow icon={UserRound} title="Datos del perfil" subtitle="Nombre y correo electrónico" onPress={() => openPage("profile")} />
               <SettingRow icon={RefreshCw} title="Sincronización" subtitle="Cambios pendientes y versiones en conflicto" onPress={() => router.push("/sync-status")} />
               <SettingRow icon={LockKeyhole} title="Contraseña" subtitle="Actualiza tu contraseña de acceso" onPress={() => openPage("password")} />
-              {Platform.OS === "web" ? <SettingRow icon={UserRound} title="Vincular Google" subtitle="Accede con Google a esta cuenta PetCare" onPress={() => { setGoogleLinkPassword(""); openPage("google-link"); }} /> : null}
+              {Platform.OS === "web" ? <SettingRow icon={UserRound} title="Vincular Google" subtitle="Accede con Google a esta cuenta PetCare" onPress={() => openPage("google-link")} /> : null}
               <SettingRow icon={Bell} title="Notificaciones" subtitle="Preferencias de este dispositivo" onPress={() => openPage("notifications")} />
               <View style={styles.divider} />
               <Text style={styles.groupTitle}>Preferencias</Text>

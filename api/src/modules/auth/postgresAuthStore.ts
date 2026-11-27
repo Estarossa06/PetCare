@@ -1,10 +1,12 @@
 import type { Pool, PoolClient, QueryResultRow } from "pg";
-import { DuplicateEmailError, GoogleIdentityConflictError } from "./errors.js";
+import { timingSafeEqual } from "node:crypto";
+import { DuplicateEmailError, GoogleIdentityConflictError, InvalidCredentialsError } from "./errors.js";
 import {
   type AuthSession,
   type AuthStore,
   type AuthUser,
-  type GoogleAccountLinkChallenge,
+  type GoogleAccountRecoveryChallenge,
+  type GoogleAccountRecoverySessionInput,
   type RefreshResult,
 } from "./types.js";
 
@@ -142,7 +144,7 @@ export class PostgresAuthStore implements AuthStore {
     try {
       return await transaction(this.pool, async (client) => {
         const result = await client.query<DatabaseUser>(
-          `INSERT INTO users (email, password_hash, name) VALUES ($1, NULL, $2)
+          `INSERT INTO users (email, password_hash, name, email_verified_at) VALUES ($1, NULL, $2, now())
            RETURNING id, email, name`,
           [input.email, input.name],
         );
@@ -252,60 +254,111 @@ export class PostgresAuthStore implements AuthStore {
     return result.rows[0] ? toAuthUser(result.rows[0]) : undefined;
   }
 
-  async createGoogleAccountLinkChallenge(input: GoogleAccountLinkChallenge & { challengeHash: string }): Promise<void> {
-    await this.pool.query("DELETE FROM auth_oauth_account_link_challenges WHERE expires_at <= now() OR consumed_at IS NOT NULL");
+  async createGoogleAccountRecoveryChallenge(input: GoogleAccountRecoveryChallenge & { flowHash: string }): Promise<void> {
+    await transaction(this.pool, async (client) => {
+      await client.query(
+        `SELECT flow_hash FROM auth_oauth_account_recovery_challenges
+         WHERE user_id=$1 AND consumed_at IS NULL FOR UPDATE`, [input.userId],
+      );
+      const user = await client.query(
+        "SELECT id FROM users WHERE id=$1 AND email=$2 AND deleted_at IS NULL FOR UPDATE",
+        [input.userId, input.providerEmail],
+      );
+      if (user.rowCount !== 1) throw new InvalidCredentialsError();
+      await client.query(
+        `UPDATE auth_oauth_account_recovery_challenges SET consumed_at=now()
+         WHERE user_id=$1 AND consumed_at IS NULL`, [input.userId],
+      );
+      await client.query(
+        `DELETE FROM auth_oauth_account_recovery_challenges
+         WHERE user_id=$1 AND (expires_at <= now() OR consumed_at IS NOT NULL)`, [input.userId],
+      );
+      await client.query(
+        `INSERT INTO auth_oauth_account_recovery_challenges
+           (flow_hash, user_id, provider_subject, provider_email, provider_name, code_hash, expires_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        [input.flowHash, input.userId, input.providerSubject, input.providerEmail, input.providerName, input.codeHash, input.expiresAt],
+      );
+    });
+  }
+
+  async invalidateGoogleAccountRecoveryChallenge(flowHash: string): Promise<void> {
     await this.pool.query(
-      `INSERT INTO auth_oauth_account_link_challenges
-         (challenge_hash, user_id, provider_subject, provider_email, provider_name, expires_at)
-       VALUES ($1, $2, $3, $4, $5, $6)`,
-      [input.challengeHash, input.userId, input.providerSubject, input.providerEmail, input.providerName, input.expiresAt],
+      `UPDATE auth_oauth_account_recovery_challenges SET consumed_at=now()
+       WHERE flow_hash=$1 AND consumed_at IS NULL`, [flowHash],
     );
   }
 
-  async findGoogleAccountLinkChallenge(challengeHash: string): Promise<GoogleAccountLinkChallenge | undefined> {
-    const result = await this.pool.query<{
-      user_id: string; provider_subject: string; provider_email: string; provider_name: string; expires_at: Date;
-    }>(
-      `SELECT challenge.user_id, challenge.provider_subject, challenge.provider_email,
-              challenge.provider_name, challenge.expires_at
-       FROM auth_oauth_account_link_challenges challenge
-       JOIN users ON users.id = challenge.user_id
-       WHERE challenge.challenge_hash = $1 AND challenge.consumed_at IS NULL
-         AND challenge.expires_at > now() AND users.deleted_at IS NULL
-         AND users.email = challenge.provider_email`,
-      [challengeHash],
-    );
-    const row = result.rows[0];
-    return row ? {
-      userId: row.user_id,
-      providerSubject: row.provider_subject,
-      providerEmail: row.provider_email,
-      providerName: row.provider_name,
-      expiresAt: row.expires_at,
-    } : undefined;
-  }
-
-  async consumeGoogleAccountLinkChallenge(input: { challengeHash: string; expectedPasswordHash: string }): Promise<AuthUser | undefined> {
+  async recoverGoogleAccount(input: GoogleAccountRecoverySessionInput): Promise<
+    { kind: "completed"; userId: string } | { kind: "invalid" | "incorrect_code" }
+  > {
     try {
       return await transaction(this.pool, async (client) => {
-        const result = await client.query<DatabaseUser & { provider_subject: string; provider_email: string }>(
-          `UPDATE auth_oauth_account_link_challenges challenge SET consumed_at = now()
-           FROM users
-           WHERE challenge.challenge_hash = $1 AND challenge.consumed_at IS NULL
-             AND challenge.expires_at > now() AND users.id = challenge.user_id
-             AND users.deleted_at IS NULL AND users.email = challenge.provider_email
-             AND users.password_hash = $2
-           RETURNING users.id, users.email, users.name, challenge.provider_subject, challenge.provider_email`,
-          [input.challengeHash, input.expectedPasswordHash],
+        const result = await client.query<{
+          user_id: string; provider_subject: string; provider_email: string; provider_name: string;
+          code_hash: string; attempt_count: number; expires_at: Date; consumed_at: Date | null;
+        } & QueryResultRow>(
+          `SELECT user_id, provider_subject, provider_email, provider_name, code_hash,
+                  attempt_count, expires_at, consumed_at
+           FROM auth_oauth_account_recovery_challenges WHERE flow_hash=$1 FOR UPDATE`, [input.flowHash],
         );
-        const row = result.rows[0];
-        if (!row) return undefined;
+        const challenge = result.rows[0];
+        if (!challenge || challenge.consumed_at || challenge.expires_at <= new Date() || challenge.attempt_count >= 5) {
+          return { kind: "invalid" };
+        }
+        const storedCodeHash = Buffer.from(challenge.code_hash, "hex");
+        const suppliedCodeHash = Buffer.from(input.codeHash, "hex");
+        if (storedCodeHash.byteLength !== suppliedCodeHash.byteLength || !timingSafeEqual(storedCodeHash, suppliedCodeHash)) {
+          await client.query(
+            `UPDATE auth_oauth_account_recovery_challenges
+             SET attempt_count=attempt_count+1,
+                 consumed_at=CASE WHEN attempt_count+1 >= 5 THEN now() ELSE consumed_at END
+             WHERE flow_hash=$1`, [input.flowHash],
+          );
+          return { kind: "incorrect_code" };
+        }
+        const userResult = await client.query<DatabaseUser>(
+          `SELECT id, email, name FROM users
+           WHERE id=$1 AND email=$2 AND deleted_at IS NULL FOR UPDATE`,
+          [challenge.user_id, challenge.provider_email],
+        );
+        const user = userResult.rows[0];
+        if (!user) return { kind: "invalid" };
+        const identity = await client.query(
+          `SELECT 1 FROM auth_identities WHERE provider='google'
+           AND (provider_subject=$1 OR user_id=$2) LIMIT 1`,
+          [challenge.provider_subject, challenge.user_id],
+        );
+        if (identity.rowCount) throw new GoogleIdentityConflictError();
+
+        const consumed = await client.query(
+          `UPDATE auth_oauth_account_recovery_challenges SET consumed_at=now()
+           WHERE flow_hash=$1 AND consumed_at IS NULL AND expires_at>now() AND attempt_count<5`,
+          [input.flowHash],
+        );
+        if (consumed.rowCount !== 1) return { kind: "invalid" };
         await client.query(
           `INSERT INTO auth_identities (user_id, provider, provider_subject, provider_email, email_verified)
            VALUES ($1, 'google', $2, $3, true)`,
-          [row.id, row.provider_subject, row.provider_email],
+          [challenge.user_id, challenge.provider_subject, challenge.provider_email],
         );
-        return toAuthUser(row);
+        await client.query(
+          `UPDATE users SET password_hash=$2, email_verified_at=now(), updated_at=now()
+           WHERE id=$1 AND deleted_at IS NULL`,
+          [challenge.user_id, input.newPasswordHash],
+        );
+        await revokeAllUserSessions(client, challenge.user_id);
+        await client.query(
+          `INSERT INTO auth_sessions (id, user_id, refresh_token_hash, expires_at, created_at)
+           VALUES ($1, $2, $3, $4, $5)`,
+          [input.sessionId, challenge.user_id, input.refreshTokenHash, input.sessionExpiresAt, input.authenticatedAt],
+        );
+        await client.query(
+          `INSERT INTO auth_refresh_tokens (session_id, token_hash, expires_at)
+           VALUES ($1, $2, $3)`,
+          [input.sessionId, input.refreshTokenHash, input.sessionExpiresAt],
+        );
+        return { kind: "completed", userId: challenge.user_id };
       });
     } catch (error) {
       if (isIdentityUniqueViolation(error)) throw new GoogleIdentityConflictError();
@@ -335,7 +388,9 @@ export class PostgresAuthStore implements AuthStore {
   async updateUserProfile(input: { userId: string; email: string; name: string }): Promise<AuthUser> {
     try {
       const result = await this.pool.query<DatabaseUser>(
-        `UPDATE users SET email = $2, name = $3, updated_at = now()
+        `UPDATE users SET email = $2, name = $3,
+           email_verified_at = CASE WHEN email = $2 THEN email_verified_at ELSE NULL END,
+           updated_at = now()
          WHERE id = $1 AND deleted_at IS NULL RETURNING id, email, name`,
         [input.userId, input.email, input.name],
       );
@@ -548,7 +603,11 @@ function isEmailUniqueViolation(error: unknown): boolean {
 }
 
 function isIdentityUniqueViolation(error: unknown): boolean {
-  return typeof error === "object" && error !== null && "code" in error && error.code === "23505";
+  if (typeof error !== "object" || error === null || !("code" in error) || error.code !== "23505" || !("constraint" in error)) {
+    return false;
+  }
+  return error.constraint === "auth_identities_provider_subject_unique" ||
+    error.constraint === "auth_identities_user_provider_unique";
 }
 
 function toAuthUser(row: DatabaseUser): AuthUser {

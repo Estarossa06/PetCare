@@ -41,6 +41,7 @@ const legacyRuntimeChecksums: Record<string, readonly string[]> = {
   kirai_conversations: ["b041ced165e3815e969e934b676b5442da60d426b99cbedd587819687c81e821", "3c470bebe973ce6ad830b131095ce031dd2995e7718d09eb58b1257894672c96"],
   media_storage: ["8244e5a25dfb9559f937dec729c80c79f80897a4b3493c40a174268c47834ec0", "e7bf9c1a294195cd1db9e833a75af1be96eeacae2544a9c929e9dfbef68cbeda"],
   account_deletion_worker: ["1e91cb83533937bc417a06ddb8f57a0c977c813d0ab45c22910593cdd1b5123c", "d332684edac9f738b509806d1f4d78f807b21508f20f79812018c64349d4f760"],
+  google_oauth_identities: ["ceeff5f287b31a8972d158732123c15992a06f282ed91723425b0b36d88ca2ab", "216dfcf12e6a30b9b21460671683337d6eb19afb3b6ba7063035e4106a2aca3d"],
 };
 
 export function canonicalMigrationSource(source: string): string {
