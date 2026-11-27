@@ -105,9 +105,10 @@ test("registration normalizes email, hashes password, returns a session, and rej
       name: "Another Name",
     });
     assert.equal(duplicate.status, 409);
-    const duplicateBody = await duplicate.text();
-    assert.match(duplicateBody, /REGISTRATION_FAILED/);
-    assert.equal(duplicateBody.includes("pet.owner@example.com"), false);
+    const duplicateBody = await duplicate.json();
+    assert.equal(duplicateBody.error.code, "EMAIL_ALREADY_REGISTERED");
+    assert.match(duplicateBody.error.message, /already exists/i);
+    assert.equal(duplicateBody.error.message.includes("pet.owner@example.com"), false);
     assert.equal(harness.store.users.size, 1);
 
     const secondAccount = await postJson(harness.baseUrl, "/auth/register", {

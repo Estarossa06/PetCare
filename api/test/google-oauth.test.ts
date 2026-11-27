@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { randomUUID } from "node:crypto";
+import { createHash, createHmac, randomUUID } from "node:crypto";
 import test from "node:test";
 import { AuthService } from "../src/modules/auth/service.js";
 import { InvalidCredentialsError } from "../src/modules/auth/errors.js";
@@ -36,18 +36,14 @@ function createHarness() {
   const entries: LogFields[] = [];
   const logger: Logger = { info: (fields) => entries.push(fields), error: (fields) => entries.push(fields) };
   const provider = new TestGoogleCodeProvider();
-  const sentEmailCodes: string[] = [];
   const config = {
     clientId: "test-web-client.apps.googleusercontent.com",
     clientSecret: "test-only-secret-value",
     redirectUri: "https://api.example.test/auth/google/callback",
     webReturnUrl: "https://web.example.test/oauth/google-callback",
   };
-  const flow = new GoogleOAuthFlow(store, auth, config, logger, provider, {
-    codeSecret: SECRET,
-    emailSender: { sendAccountRecoveryCode: async (_email, code) => { sentEmailCodes.push(code); } },
-  });
-  return { store, auth, entries, provider, flow, sentEmailCodes };
+  const flow = new GoogleOAuthFlow(store, auth, config, logger, provider);
+  return { store, auth, entries, provider, flow };
 }
 
 function verifiedIdentity(provider: TestGoogleCodeProvider, values: Partial<VerifiedGoogleIdentity> = {}): VerifiedGoogleIdentity {
@@ -59,6 +55,19 @@ function verifiedIdentity(provider: TestGoogleCodeProvider, values: Partial<Veri
     nonce: provider.lastNonce,
     ...values,
   };
+}
+
+async function createRecoveryChallenge(h: ReturnType<typeof createHarness>, userId: string, email: string, subject: string) {
+  const flowCode = randomUUID() + randomUUID();
+  const flowHash = createHash("sha256").update(flowCode, "utf8").digest("hex");
+  const emailCode = "24791368";
+  const codeHash = createHmac("sha256", SECRET)
+    .update("petcare:google-account-recovery:email-code:").update(flowHash).update(":").update(emailCode).digest("hex");
+  await h.store.createGoogleAccountRecoveryChallenge({
+    flowHash, userId, providerSubject: subject, providerEmail: email, providerName: "Recovery fixture",
+    codeHash, expiresAt: new Date(Date.now() + 10 * 60_000),
+  });
+  return { flowCode, flowHash, emailCode };
 }
 
 test("Google OAuth flow exchanges a one-use handoff into a PetCare session without storing a password", async () => {
@@ -106,117 +115,86 @@ test("Google OAuth rejects wrong nonce and replayed state without creating an ac
   assert.equal(h.entries.every((entry) => !JSON.stringify(entry).includes("authorization-code")), true);
 });
 
-test("email provider failures invalidate recovery and logs omit codes and provider details", async () => {
-  const store = new MemoryAuthStore();
-  const auth = new AuthService(store, SECRET);
-  const entries: LogFields[] = [];
-  const logger: Logger = { info: (fields) => entries.push(fields), error: (fields) => entries.push(fields) };
-  const provider = new TestGoogleCodeProvider();
-  let deliveredCode = "";
-  const flow = new GoogleOAuthFlow(store, auth, {
-    clientId: "test-web-client.apps.googleusercontent.com",
-    clientSecret: "test-only-secret-value",
-    redirectUri: "https://api.example.test/auth/google/callback",
-    webReturnUrl: "https://web.example.test/oauth/google-callback",
-  }, logger, provider, {
-    codeSecret: SECRET,
-    emailSender: { sendAccountRecoveryCode: async (_email, code) => {
-      deliveredCode = code;
-      throw new Error("synthetic provider response contains secret data");
-    } },
-  });
-  const recoveryAccount = await auth.register({ email: "person@example.test", password: PASSWORD, name: "Existing PetCare" });
-  store.users.get(recoveryAccount.user.id)!.passwordHash = null;
-  const authorization = await flow.startLogin();
-  provider.identity = verifiedIdentity(provider);
-  const callback = await flow.callback({ code: "synthetic-authorization-code", state: authorization.state, stateCookie: authorization.state, requestId: "safe-request-id" });
-  const callbackUrl = new URL(callback);
-  assert.equal(callbackUrl.searchParams.get("error"), "google_sign_in_failed");
-  assert.equal(callbackUrl.hash, "", "failed email delivery must not return a recovery bearer code");
-  assert.match(deliveredCode, /^\d{8}$/);
-  assert.equal(store.googleRecoveryChallenges.size, 1);
-  assert.equal([...store.googleRecoveryChallenges.values()][0].consumed, true);
-  const serializedLogs = JSON.stringify(entries);
-  for (const secret of [deliveredCode, "synthetic-authorization-code", "synthetic provider response contains secret data"]) {
-    assert.equal(serializedLogs.includes(secret), false, `logs must not contain ${secret}`);
-  }
-  assert.ok(entries.some((entry) => entry.event === "google_account_recovery_email_failed" && entry.requestId === "safe-request-id"));
-});
-
-test("Google login for a passwordless existing account stays clear when email recovery is not configured", async () => {
-  const store = new MemoryAuthStore();
-  const auth = new AuthService(store, SECRET);
-  const logger: Logger = { info: () => undefined, error: () => undefined };
-  const provider = new TestGoogleCodeProvider();
-  const flow = new GoogleOAuthFlow(store, auth, {
-    clientId: "test-web-client.apps.googleusercontent.com", clientSecret: "test-only-secret-value",
-    redirectUri: "https://api.example.test/auth/google/callback", webReturnUrl: "https://web.example.test/oauth/google-callback",
-  }, logger, provider, { codeSecret: SECRET });
-  const account = await auth.register({ email: "passwordless@example.test", password: PASSWORD, name: "Existing" });
-  store.users.get(account.user.id)!.passwordHash = null;
-  const authorization = await flow.startLogin();
-  provider.identity = verifiedIdentity(provider, { email: account.user.email });
-  const callback = await flow.callback({ code: "passwordless-account-code", state: authorization.state, stateCookie: authorization.state, requestId: "passwordless-account" });
-  assert.equal(new URL(callback).searchParams.get("error"), "account_password_unavailable");
-  assert.equal(store.users.size, 1);
-  assert.equal(store.googleIdentities.size, 0);
-  assert.equal(store.googleRecoveryChallenges.size, 0);
-});
-
-test("Google password link verifies the existing password, preserves the account and sessions, and is one-use", async () => {
+test("existing PetCare account with password links to verified Google and logs in without changing credentials or sessions", async () => {
   const h = createHarness();
   const registered = await h.auth.register({ email: "person@example.test", password: PASSWORD, name: "Existing PetCare" });
-  const existingPasswordHash = h.store.users.get(registered.user.id)?.passwordHash;
+  const passwordHash = h.store.users.get(registered.user.id)?.passwordHash;
   const oldSession = [...h.store.sessions.values()].find((session) => session.userId === registered.user.id);
   assert.ok(oldSession);
   const authorization = await h.flow.startLogin();
   h.provider.identity = verifiedIdentity(h.provider);
-  const callback = await h.flow.callback({ code: "link-google-code", state: authorization.state, stateCookie: authorization.state, requestId: "password-link-request" });
-  const linkCode = new URLSearchParams(new URL(callback).hash.slice(1)).get("passwordLinkCode");
-  assert.ok(linkCode);
-  assert.equal(new URL(callback).hash.includes("recoveryCode"), false);
-  assert.equal(h.sentEmailCodes.length, 0, "password link must not depend on email delivery");
-  const challenge = [...h.store.googleRecoveryChallenges.values()][0];
-  assert.ok(challenge);
-  assert.ok(challenge.expiresAt.getTime() <= Date.now() + 5 * 60_000);
-
-  await assert.rejects(h.auth.completeGoogleAccountLink({ linkCode, currentPassword: "wrong password" }), InvalidCredentialsError);
-  assert.equal(challenge.attempts, 1);
-  const tokens = await h.auth.completeGoogleAccountLink({ linkCode, currentPassword: PASSWORD });
+  const callback = await h.flow.callback({ code: "link-google-code", state: authorization.state, stateCookie: authorization.state, requestId: "verified-link" });
+  const handoff = new URLSearchParams(new URL(callback).hash.slice(1)).get("code");
+  assert.ok(handoff);
+  assert.equal(new URL(callback).hash.includes("passwordLinkCode"), false);
+  const tokens = await h.auth.exchangeGoogleHandoff(handoff);
   assert.equal(tokens.user.id, registered.user.id);
-  assert.equal(h.store.googleIdentities.get("google-subject-123"), registered.user.id);
-  assert.equal(h.store.users.get(registered.user.id)?.passwordHash, existingPasswordHash);
-  assert.equal(await h.store.isSessionActive({ userId: registered.user.id, sessionId: oldSession.id }), true);
-  const newSession = [...h.store.sessions.values()].find((session) => session.id !== oldSession.id && session.userId === registered.user.id);
-  assert.ok(newSession && await h.store.isSessionActive({ userId: registered.user.id, sessionId: newSession.id }));
-  await assert.rejects(h.auth.completeGoogleAccountLink({ linkCode, currentPassword: PASSWORD }), InvalidCredentialsError);
   assert.equal(h.store.users.size, 1);
+  assert.equal(h.store.googleIdentities.get("google-subject-123"), registered.user.id);
+  assert.equal(h.store.users.get(registered.user.id)?.passwordHash, passwordHash);
+  assert.equal(await h.store.isSessionActive({ userId: registered.user.id, sessionId: oldSession.id }), true);
+  assert.equal(h.store.googleRecoveryChallenges.size, 0);
 });
 
-test("Google password link expires and consumes its challenge after five bad passwords", async () => {
+test("passwordless existing accounts link and authenticate without Resend", async () => {
   const h = createHarness();
-  await h.auth.register({ email: "person@example.test", password: PASSWORD, name: "Existing PetCare" });
+  const account = await h.auth.register({ email: "person@example.test", password: PASSWORD, name: "Existing PetCare" });
+  h.store.users.get(account.user.id)!.passwordHash = null;
   const authorization = await h.flow.startLogin();
   h.provider.identity = verifiedIdentity(h.provider);
-  const callback = await h.flow.callback({ code: "link-google-code", state: authorization.state, stateCookie: authorization.state, requestId: "password-link-attempts" });
-  const linkCode = new URLSearchParams(new URL(callback).hash.slice(1)).get("passwordLinkCode");
-  assert.ok(linkCode);
-  for (let attempt = 0; attempt < 5; attempt += 1) {
-    await assert.rejects(h.auth.completeGoogleAccountLink({ linkCode, currentPassword: "incorrect password" }), InvalidCredentialsError);
-  }
-  assert.equal([...h.store.googleRecoveryChallenges.values()][0].attempts, 5);
-  assert.equal([...h.store.googleRecoveryChallenges.values()][0].consumed, true);
-  await assert.rejects(h.auth.completeGoogleAccountLink({ linkCode, currentPassword: PASSWORD }), InvalidCredentialsError);
+  const callback = await h.flow.callback({ code: "passwordless-google", state: authorization.state, stateCookie: authorization.state, requestId: "passwordless-link" });
+  const handoff = new URLSearchParams(new URL(callback).hash.slice(1)).get("code");
+  assert.ok(handoff);
+  assert.equal((await h.auth.exchangeGoogleHandoff(handoff)).user.id, account.user.id);
+  assert.equal(h.store.users.size, 1);
+  assert.equal(h.store.googleIdentities.get("google-subject-123"), account.user.id);
+  assert.equal(h.store.googleRecoveryChallenges.size, 0);
+});
 
-  const expiredAuthorization = await h.flow.startLogin();
+test("unverified Google email cannot link to an existing account", async () => {
+  const h = createHarness();
+  const account = await h.auth.register({ email: "person@example.test", password: PASSWORD, name: "Existing PetCare" });
+  const passwordHash = h.store.users.get(account.user.id)?.passwordHash;
+  const authorization = await h.flow.startLogin();
+  h.provider.identity = verifiedIdentity(h.provider, { emailVerified: false });
+  const callback = await h.flow.callback({ code: "unverified-google", state: authorization.state, stateCookie: authorization.state, requestId: "unverified-email" });
+  assert.equal(new URL(callback).searchParams.get("error"), "google_sign_in_failed");
+  assert.equal(h.store.googleIdentities.size, 0);
+  assert.equal(h.store.users.size, 1);
+  assert.equal(h.store.users.get(account.user.id)?.passwordHash, passwordHash);
+});
+
+test("a linked Google identity logs into its owner and cannot be reassigned to a same-email account", async () => {
+  const h = createHarness();
+  const target = await h.auth.register({ email: "person@example.test", password: PASSWORD, name: "Target" });
+  const owner = await h.auth.register({ email: "owner@example.test", password: PASSWORD, name: "Identity owner" });
+  h.store.googleIdentities.set("google-subject-123", owner.user.id);
+  const authorization = await h.flow.startLogin();
   h.provider.identity = verifiedIdentity(h.provider);
-  const expiredCallback = await h.flow.callback({ code: "another-link-google-code", state: expiredAuthorization.state, stateCookie: expiredAuthorization.state, requestId: "password-link-expired" });
-  const expiredCode = new URLSearchParams(new URL(expiredCallback).hash.slice(1)).get("passwordLinkCode");
-  assert.ok(expiredCode);
-  const expired = [...h.store.googleRecoveryChallenges.values()].find((challenge) => !challenge.consumed);
-  assert.ok(expired);
-  expired.expiresAt = new Date(Date.now() - 1);
-  await assert.rejects(h.auth.completeGoogleAccountLink({ linkCode: expiredCode, currentPassword: PASSWORD }), InvalidCredentialsError);
+  const callback = await h.flow.callback({ code: "claimed-google", state: authorization.state, stateCookie: authorization.state, requestId: "identity-conflict" });
+  const handoff = new URLSearchParams(new URL(callback).hash.slice(1)).get("code");
+  assert.ok(handoff);
+  assert.equal((await h.auth.exchangeGoogleHandoff(handoff)).user.id, owner.user.id, "an already-linked subject authenticates its existing owner");
+  await assert.rejects(h.store.linkGoogleIdentityByVerifiedEmail({
+    userId: target.user.id, email: target.user.email, subject: "google-subject-123", emailVerified: true,
+  }), (error: unknown) => error instanceof Error && error.name === "GoogleIdentityConflictError");
+  assert.equal(h.store.googleIdentities.get("google-subject-123"), owner.user.id);
+  assert.notEqual(h.store.users.get(target.user.id)?.passwordHash, null);
+  assert.equal(h.store.users.size, 2);
+});
+
+test("concurrent verified callbacks reuse one existing user and one Google identity", async () => {
+  const h = createHarness();
+  const account = await h.auth.register({ email: "person@example.test", password: PASSWORD, name: "Existing PetCare" });
+  const passwordHash = h.store.users.get(account.user.id)?.passwordHash;
+  const outcomes = await Promise.all(Array.from({ length: 12 }, () => h.auth.resolveGoogleLogin({
+    email: account.user.email, emailVerified: true, name: "Google name", subject: "google-subject-123",
+  })));
+  assert.ok(outcomes.every((outcome) => outcome.kind === "authenticated" && outcome.user.id === account.user.id));
+  assert.equal(h.store.users.size, 1);
+  assert.equal(h.store.googleIdentities.size, 1);
+  assert.equal(h.store.googleIdentities.get("google-subject-123"), account.user.id);
+  assert.equal(h.store.users.get(account.user.id)?.passwordHash, passwordHash);
 });
 
 test("recovery code links an existing account, preserves its user id, revokes old sessions and supports Google-only", async () => {
@@ -225,24 +203,17 @@ test("recovery code links an existing account, preserves its user id, revokes ol
   h.store.users.get(existing.user.id)!.passwordHash = null;
   const previousSession = [...h.store.sessions.values()].find((session) => session.userId === existing.user.id);
   assert.ok(previousSession);
-  await h.flow.startLogin();
-  h.provider.identity = verifiedIdentity(h.provider);
-  const callback = await h.flow.callback({ code: "login-code", state: h.provider.lastState, stateCookie: h.provider.lastState, requestId: randomUUID() });
-  const callbackUrl = new URL(callback);
-  const recoveryCode = new URLSearchParams(callbackUrl.hash.slice(1)).get("recoveryCode");
-  assert.ok(recoveryCode);
-  assert.equal(callbackUrl.searchParams.has("recoveryCode"), false, "recovery bearer code must stay out of HTTP requests");
+  const challenge = await createRecoveryChallenge(h, existing.user.id, existing.user.email, "google-subject-123");
   assert.equal(h.store.users.size, 1);
   assert.equal(h.store.googleIdentities.size, 0);
-  assert.equal(h.sentEmailCodes.length, 1);
-  const recovered = await h.auth.completeGoogleAccountRecovery({ flowCode: recoveryCode, emailCode: h.sentEmailCodes[0], credentialChoice: "google_only" });
+  const recovered = await h.auth.completeGoogleAccountRecovery({ flowCode: challenge.flowCode, emailCode: challenge.emailCode, credentialChoice: "google_only" });
   assert.equal(recovered.user.id, existing.user.id);
   assert.equal(h.store.googleIdentities.get("google-subject-123"), existing.user.id);
   assert.equal(h.store.users.size, 1);
   assert.equal(h.store.users.get(existing.user.id)?.passwordHash, null, "the prior local password must be invalidated");
   assert.equal(previousSession.revoked, true, "all prior sessions must be revoked");
   await assert.rejects(h.auth.login({ email: existing.user.email, password: PASSWORD }), InvalidCredentialsError);
-  await assert.rejects(h.auth.completeGoogleAccountRecovery({ flowCode: recoveryCode, emailCode: h.sentEmailCodes[0], credentialChoice: "google_only" }), InvalidCredentialsError);
+  await assert.rejects(h.auth.completeGoogleAccountRecovery({ flowCode: challenge.flowCode, emailCode: challenge.emailCode, credentialChoice: "google_only" }), InvalidCredentialsError);
 
   await h.flow.startLogin();
   h.provider.identity = verifiedIdentity(h.provider);
@@ -257,30 +228,23 @@ test("recovery rejects bad codes, expires, enforces five attempts and permits a 
   const h = createHarness();
   const existing = await h.auth.register({ email: "person@example.test", password: PASSWORD, name: "Existing PetCare" });
   h.store.users.get(existing.user.id)!.passwordHash = null;
-  const startRecovery = async () => {
-    const authorization = await h.flow.startLogin();
-    h.provider.identity = verifiedIdentity(h.provider);
-    const callback = await h.flow.callback({ code: "recovery-code", state: authorization.state, stateCookie: authorization.state, requestId: randomUUID() });
-    const code = new URLSearchParams(new URL(callback).hash.slice(1)).get("recoveryCode");
-    assert.ok(code);
-    return code;
-  };
-  const expiredCode = await startRecovery();
-  const expiredChallenge = [...h.store.googleRecoveryChallenges.values()][0];
-  expiredChallenge.expiresAt = new Date(Date.now() - 1);
-  await assert.rejects(h.auth.completeGoogleAccountRecovery({ flowCode: expiredCode, emailCode: h.sentEmailCodes.at(-1), credentialChoice: "google_only" }), InvalidCredentialsError);
+  const expiredChallenge = await createRecoveryChallenge(h, existing.user.id, existing.user.email, "google-subject-expired");
+  const expiredCode = expiredChallenge.flowCode;
+  const storedExpiredChallenge = h.store.googleRecoveryChallenges.get(expiredChallenge.flowHash)!;
+  storedExpiredChallenge.expiresAt = new Date(Date.now() - 1);
+  await assert.rejects(h.auth.completeGoogleAccountRecovery({ flowCode: expiredCode, emailCode: expiredChallenge.emailCode, credentialChoice: "google_only" }), InvalidCredentialsError);
 
-  const blockedCode = await startRecovery();
-  const blockedEmailCode = h.sentEmailCodes.at(-1)!;
+  const blockedChallenge = await createRecoveryChallenge(h, existing.user.id, existing.user.email, "google-subject-blocked");
+  const blockedCode = blockedChallenge.flowCode;
   for (let attempt = 0; attempt < 5; attempt += 1) {
     await assert.rejects(h.auth.completeGoogleAccountRecovery({ flowCode: blockedCode, emailCode: "00000000", credentialChoice: "google_only" }), InvalidCredentialsError);
   }
-  await assert.rejects(h.auth.completeGoogleAccountRecovery({ flowCode: blockedCode, emailCode: blockedEmailCode, credentialChoice: "google_only" }), InvalidCredentialsError);
+  await assert.rejects(h.auth.completeGoogleAccountRecovery({ flowCode: blockedCode, emailCode: blockedChallenge.emailCode, credentialChoice: "google_only" }), InvalidCredentialsError);
   assert.equal(h.store.googleIdentities.size, 0, "exhausted attempts must not link the identity");
 
-  const usableCode = await startRecovery();
+  const usableChallenge = await createRecoveryChallenge(h, existing.user.id, existing.user.email, "google-subject-usable");
   const newPassword = "a newly chosen password 2026";
-  const recovered = await h.auth.completeGoogleAccountRecovery({ flowCode: usableCode, emailCode: h.sentEmailCodes.at(-1), credentialChoice: "google_and_password", newPassword });
+  const recovered = await h.auth.completeGoogleAccountRecovery({ flowCode: usableChallenge.flowCode, emailCode: usableChallenge.emailCode, credentialChoice: "google_and_password", newPassword });
   assert.equal(recovered.user.id, existing.user.id);
   assert.equal((await h.auth.login({ email: existing.user.email, password: newPassword })).user.id, existing.user.id);
   await assert.rejects(h.auth.login({ email: existing.user.email, password: PASSWORD }), InvalidCredentialsError);
@@ -290,14 +254,10 @@ test("recovery refuses a Google subject claimed by another account without movin
   const h = createHarness();
   const existing = await h.auth.register({ email: "person@example.test", password: PASSWORD, name: "Existing PetCare" });
   h.store.users.get(existing.user.id)!.passwordHash = null;
-  const recoveryAuthorization = await h.flow.startLogin();
-  h.provider.identity = verifiedIdentity(h.provider);
-  const recoveryCallback = await h.flow.callback({ code: "recovery-code", state: recoveryAuthorization.state, stateCookie: recoveryAuthorization.state, requestId: randomUUID() });
-  const recoveryCode = new URLSearchParams(new URL(recoveryCallback).hash.slice(1)).get("recoveryCode");
-  assert.ok(recoveryCode);
+  const challenge = await createRecoveryChallenge(h, existing.user.id, existing.user.email, "google-subject-123");
   const other = await h.auth.register({ email: "other@example.test", password: PASSWORD, name: "Other account" });
   h.store.googleIdentities.set("google-subject-123", other.user.id);
-  await assert.rejects(h.auth.completeGoogleAccountRecovery({ flowCode: recoveryCode, emailCode: h.sentEmailCodes.at(-1), credentialChoice: "google_only" }));
+  await assert.rejects(h.auth.completeGoogleAccountRecovery({ flowCode: challenge.flowCode, emailCode: challenge.emailCode, credentialChoice: "google_only" }));
   assert.equal(h.store.googleIdentities.get("google-subject-123"), other.user.id);
   assert.equal(h.store.users.get(existing.user.id)?.passwordHash, null, "conflict must leave the existing account unchanged");
 });
@@ -318,22 +278,13 @@ test("profile-initiated Google linking needs only the active session", async () 
   assert.equal(h.store.users.size, 1);
 });
 
-/*
- * A normal Google callback remains a direct login after the email recovery flow has linked its subject.
- */
-test("Google identity linked by recovery signs in directly on the next OAuth attempt", async () => {
+test("an already linked Google identity signs in directly", async () => {
   const h = createHarness();
   const account = await h.auth.register({ email: "person@example.test", password: PASSWORD, name: "Existing PetCare" });
-  h.store.users.get(account.user.id)!.passwordHash = null;
+  h.store.googleIdentities.set("google-subject-123", account.user.id);
   const authorization = await h.flow.startLogin();
   h.provider.identity = verifiedIdentity(h.provider);
-  const callback = await h.flow.callback({ code: "recovery-code", state: authorization.state, stateCookie: authorization.state, requestId: randomUUID() });
-  const recoveryCode = new URLSearchParams(new URL(callback).hash.slice(1)).get("recoveryCode");
-  assert.ok(recoveryCode);
-  await h.auth.completeGoogleAccountRecovery({ flowCode: recoveryCode, emailCode: h.sentEmailCodes.at(-1), credentialChoice: "google_only" });
-  const next = await h.flow.startLogin();
-  h.provider.identity = verifiedIdentity(h.provider);
-  const direct = await h.flow.callback({ code: "next-google-code", state: next.state, stateCookie: next.state, requestId: randomUUID() });
+  const direct = await h.flow.callback({ code: "next-google-code", state: authorization.state, stateCookie: authorization.state, requestId: randomUUID() });
   assert.ok(new URLSearchParams(new URL(direct).hash.slice(1)).get("code"));
   assert.equal(h.store.users.size, 1);
   assert.equal(h.store.googleIdentities.size, 1);

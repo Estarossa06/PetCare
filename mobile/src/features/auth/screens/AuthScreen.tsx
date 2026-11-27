@@ -90,8 +90,6 @@ export default function AuthScreen() {
 
   const googleErrorMessage = googleError === "identity_conflict"
     ? "Esta identidad de Google ya est\u00e1 vinculada a otra cuenta PetCare."
-    : googleError === "account_password_unavailable"
-      ? "Esta cuenta no tiene una contrase\u00f1a PetCare para verificar. Inicia sesi\u00f3n con el m\u00e9todo que ya utilizas o usa la recuperaci\u00f3n por correo si est\u00e1 habilitada."
     : googleError ? "No pudimos completar el inicio con Google. Int\u00e9ntalo de nuevo." : null;
 
   const inputStyle = [

@@ -7,8 +7,6 @@ import {
   type AuthUser,
   type GoogleAccountRecoveryChallenge,
   type GoogleAccountRecoverySessionInput,
-  type GoogleAccountLinkChallenge,
-  type GoogleAccountLinkSessionInput,
   type RefreshResult,
 } from "./types.js";
 
@@ -146,7 +144,7 @@ export class PostgresAuthStore implements AuthStore {
     try {
       return await transaction(this.pool, async (client) => {
         const result = await client.query<DatabaseUser>(
-          `INSERT INTO users (email, password_hash, name, email_verified_at) VALUES ($1, NULL, $2, now())
+          `INSERT INTO users (email, password_hash, name) VALUES ($1, NULL, $2)
            RETURNING id, email, name`,
           [input.email, input.name],
         );
@@ -159,6 +157,47 @@ export class PostgresAuthStore implements AuthStore {
       });
     } catch (error) {
       if (isEmailUniqueViolation(error)) throw new DuplicateEmailError();
+      if (isIdentityUniqueViolation(error)) throw new GoogleIdentityConflictError();
+      throw error;
+    }
+  }
+
+  async linkGoogleIdentityByVerifiedEmail(input: { userId: string; email: string; subject: string; emailVerified: boolean }): Promise<AuthUser> {
+    if (!input.emailVerified) throw new InvalidCredentialsError();
+    try {
+      return await transaction(this.pool, async (client) => {
+        const result = await client.query<DatabaseUser>(
+          `SELECT id, email, name FROM users
+           WHERE id=$1 AND email=$2 AND deleted_at IS NULL
+           FOR UPDATE`,
+          [input.userId, input.email],
+        );
+        const user = result.rows[0];
+        if (!user) throw new InvalidCredentialsError();
+
+        const identityResult = await client.query<{ user_id: string; provider_subject: string } & QueryResultRow>(
+          `SELECT user_id, provider_subject FROM auth_identities
+           WHERE provider='google' AND (provider_subject=$1 OR user_id=$2)
+           FOR UPDATE`,
+          [input.subject, input.userId],
+        );
+        const subjectOwner = identityResult.rows.find((identity) => identity.provider_subject === input.subject);
+        if (subjectOwner) {
+          if (subjectOwner.user_id === input.userId && identityResult.rows.length === 1) return toAuthUser(user);
+          throw new GoogleIdentityConflictError();
+        }
+        if (identityResult.rows.some((identity) => identity.user_id === input.userId)) {
+          throw new GoogleIdentityConflictError();
+        }
+
+        await client.query(
+          `INSERT INTO auth_identities (user_id, provider, provider_subject, provider_email, email_verified)
+           VALUES ($1, 'google', $2, $3, true)`,
+          [input.userId, input.subject, input.email],
+        );
+        return toAuthUser(user);
+      });
+    } catch (error) {
       if (isIdentityUniqueViolation(error)) throw new GoogleIdentityConflictError();
       throw error;
     }
@@ -358,92 +397,6 @@ export class PostgresAuthStore implements AuthStore {
         await client.query(
           `INSERT INTO auth_refresh_tokens (session_id, token_hash, expires_at)
            VALUES ($1, $2, $3)`,
-          [input.sessionId, input.refreshTokenHash, input.sessionExpiresAt],
-        );
-        return { kind: "completed", userId: challenge.user_id };
-      });
-    } catch (error) {
-      if (isIdentityUniqueViolation(error)) throw new GoogleIdentityConflictError();
-      throw error;
-    }
-  }
-
-  async getGoogleAccountLinkChallenge(input: GoogleAccountLinkChallenge): Promise<(AuthUser & { passwordHash: string | null }) | undefined> {
-    const result = await this.pool.query<{
-      user_id: string; provider_email: string; code_hash: string; attempt_count: number;
-      expires_at: Date; consumed_at: Date | null; id: string; email: string; name: string; password_hash: string | null;
-    } & QueryResultRow>(
-      `SELECT challenge.user_id, challenge.provider_email, challenge.code_hash, challenge.attempt_count,
-              challenge.expires_at, challenge.consumed_at, users.id, users.email, users.name, users.password_hash
-       FROM auth_oauth_account_recovery_challenges challenge
-       JOIN users ON users.id=challenge.user_id
-       WHERE challenge.flow_hash=$1 AND users.deleted_at IS NULL`, [input.flowHash],
-    );
-    const row = result.rows[0];
-    if (!row || row.consumed_at || row.expires_at <= new Date() || row.attempt_count >= 5 || row.email !== row.provider_email ||
-      !safeHashEqual(row.code_hash, input.codeHash)) return undefined;
-    return { id: row.id, email: row.email, name: row.name, passwordHash: row.password_hash };
-  }
-
-  async recordGoogleAccountLinkFailure(input: GoogleAccountLinkChallenge): Promise<void> {
-    await transaction(this.pool, async (client) => {
-      const result = await client.query<{ code_hash: string; attempt_count: number; expires_at: Date; consumed_at: Date | null } & QueryResultRow>(
-        `SELECT code_hash, attempt_count, expires_at, consumed_at
-         FROM auth_oauth_account_recovery_challenges WHERE flow_hash=$1 FOR UPDATE`, [input.flowHash],
-      );
-      const challenge = result.rows[0];
-      if (!challenge || challenge.consumed_at || challenge.expires_at <= new Date() || challenge.attempt_count >= 5 ||
-        !safeHashEqual(challenge.code_hash, input.codeHash)) return;
-      await client.query(
-        `UPDATE auth_oauth_account_recovery_challenges
-         SET attempt_count=attempt_count+1,
-             consumed_at=CASE WHEN attempt_count+1>=5 THEN now() ELSE consumed_at END
-         WHERE flow_hash=$1`, [input.flowHash],
-      );
-    });
-  }
-
-  async completeGoogleAccountLink(input: GoogleAccountLinkSessionInput): Promise<{ kind: "completed"; userId: string } | { kind: "invalid" }> {
-    try {
-      return await transaction(this.pool, async (client) => {
-        const result = await client.query<{
-          user_id: string; provider_subject: string; provider_email: string; code_hash: string;
-          attempt_count: number; expires_at: Date; consumed_at: Date | null;
-        } & QueryResultRow>(
-          `SELECT user_id, provider_subject, provider_email, code_hash, attempt_count, expires_at, consumed_at
-           FROM auth_oauth_account_recovery_challenges WHERE flow_hash=$1 FOR UPDATE`, [input.flowHash],
-        );
-        const challenge = result.rows[0];
-        if (!challenge || challenge.consumed_at || challenge.expires_at <= new Date() || challenge.attempt_count >= 5 ||
-          !safeHashEqual(challenge.code_hash, input.codeHash)) return { kind: "invalid" };
-        const userResult = await client.query<DatabaseUser>(
-          `SELECT id, email, name, password_hash FROM users
-           WHERE id=$1 AND email=$2 AND deleted_at IS NULL FOR UPDATE`,
-          [challenge.user_id, challenge.provider_email],
-        );
-        const user = userResult.rows[0];
-        if (!user || user.password_hash !== input.expectedPasswordHash) return { kind: "invalid" };
-        const identity = await client.query(
-          `SELECT 1 FROM auth_identities WHERE provider='google'
-           AND (provider_subject=$1 OR user_id=$2) LIMIT 1`, [challenge.provider_subject, challenge.user_id],
-        );
-        if (identity.rowCount) throw new GoogleIdentityConflictError();
-        const consumed = await client.query(
-          `UPDATE auth_oauth_account_recovery_challenges SET consumed_at=now()
-           WHERE flow_hash=$1 AND consumed_at IS NULL AND expires_at>now() AND attempt_count<5`, [input.flowHash],
-        );
-        if (consumed.rowCount !== 1) return { kind: "invalid" };
-        await client.query(
-          `INSERT INTO auth_identities (user_id, provider, provider_subject, provider_email, email_verified)
-           VALUES ($1, 'google', $2, $3, true)`, [challenge.user_id, challenge.provider_subject, challenge.provider_email],
-        );
-        await client.query(
-          `INSERT INTO auth_sessions (id, user_id, refresh_token_hash, expires_at, created_at)
-           VALUES ($1, $2, $3, $4, $5)`,
-          [input.sessionId, challenge.user_id, input.refreshTokenHash, input.sessionExpiresAt, input.authenticatedAt],
-        );
-        await client.query(
-          `INSERT INTO auth_refresh_tokens (session_id, token_hash, expires_at) VALUES ($1, $2, $3)`,
           [input.sessionId, input.refreshTokenHash, input.sessionExpiresAt],
         );
         return { kind: "completed", userId: challenge.user_id };
@@ -688,13 +641,6 @@ async function revokeAllUserSessions(client: PoolClient, userId: string): Promis
 
 function isEmailUniqueViolation(error: unknown): boolean {
   return typeof error === "object" && error !== null && "code" in error && error.code === "23505" && "constraint" in error && error.constraint === "users_email_unique_idx";
-}
-
-function safeHashEqual(storedHex: string, suppliedHex: string): boolean {
-  if (!/^[a-f0-9]{64}$/i.test(storedHex) || !/^[a-f0-9]{64}$/i.test(suppliedHex)) return false;
-  const stored = Buffer.from(storedHex, "hex");
-  const supplied = Buffer.from(suppliedHex, "hex");
-  return stored.byteLength === supplied.byteLength && timingSafeEqual(stored, supplied);
 }
 
 function isIdentityUniqueViolation(error: unknown): boolean {

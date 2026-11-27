@@ -18,3 +18,27 @@ services:
         sync: false
       - key: AUTH_ACCESS_TOKEN_SECRET
         sync: false
+  - type: web
+    name: petcare-web-staging
+    runtime: static
+    rootDir: mobile
+    autoDeployTrigger: "off"
+    buildCommand: npm ci && npx expo export --platform web
+    staticPublishPath: dist
+    envVars:
+      - key: EXPO_PUBLIC_API_URL
+        value: https://petcare-api-staging-zmu4.onrender.com
+    headers:
+      - path: /*
+        name: Cross-Origin-Opener-Policy
+        value: same-origin
+      - path: /*
+        name: Cross-Origin-Embedder-Policy
+        value: credentialless
+      - path: /*
+        name: Referrer-Policy
+        value: no-referrer
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

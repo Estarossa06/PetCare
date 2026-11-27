@@ -3,8 +3,8 @@ import { ApiClientError } from "./apiClient";
 export function authErrorMessage(error: unknown): string {
   if (error instanceof ApiClientError) {
     switch (error.code) {
-      case "REGISTRATION_FAILED":
-        return "No se pudo crear una cuenta con los datos proporcionados.";
+      case "EMAIL_ALREADY_REGISTERED":
+        return "Ya existe una cuenta con este correo. Inicia sesi\u00f3n en lugar de registrarte.";
       case "INVALID_CREDENTIALS":
         return "El correo o la contraseña no son correctos.";
       case "INVALID_REFRESH_TOKEN":

@@ -110,17 +110,6 @@ export class ApiClient {
     return result.user;
   }
 
-  async completeGoogleAccountLink(input: { linkCode: string; currentPassword: string }): Promise<AuthUser> {
-    const result = await this.request<TokenResponse>("/auth/google/link/complete", {
-      method: "POST",
-      body: input,
-      retryAfterRefresh: false,
-    });
-    if (!isTokenResponse(result)) throw new ApiClientError("Google account link response is invalid.", 502, "INVALID_AUTH_RESPONSE");
-    await tokenStorage.write(result);
-    return result.user;
-  }
-
   async startGoogleLink(): Promise<string> {
     const result = await this.request<{ continuationUrl?: unknown }>("/auth/google/link/start", {
       method: "POST",

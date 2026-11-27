@@ -19,13 +19,6 @@ export class InvalidCredentialsError extends Error {
   }
 }
 
-export class GoogleAccountPasswordUnavailableError extends Error {
-  constructor() {
-    super("This PetCare account does not have a password credential.");
-    this.name = "GoogleAccountPasswordUnavailableError";
-  }
-}
-
 export class InvalidRequestError extends Error {
   readonly statusCode = 400;
   readonly code = "VALIDATION_ERROR";

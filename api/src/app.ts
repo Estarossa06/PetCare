@@ -25,11 +25,10 @@ import { createSyncRouter } from "./modules/sync/routes.js";
 import { createDomainSyncRouter } from "./modules/sync/domainRoutes.js";
 import type { KiraiStore } from "./modules/kirai/repository.js";
 import { createMediaRouter } from "./modules/media/routes.js";
-import { ResendAccountRecoveryEmailSender } from "./modules/auth/recoveryEmail.js";
 import { R2ObjectStore, type MediaObjectStore } from "./modules/media/objectStore.js";
 
 interface AppDependencies {
-  config: Pick<AppConfig, "corsOrigins" | "accessTokenSecret" | "r2" | "googleOAuth" | "accountRecoveryEmail">;
+  config: Pick<AppConfig, "corsOrigins" | "accessTokenSecret" | "r2" | "googleOAuth">;
   database: Queryable & ReadinessDatabase;
   authStore: AuthStore;
   logger: Logger;
@@ -66,10 +65,7 @@ export function createApp({
   app.use(requireJsonBody);
   app.use("/pet-identification", createPetIdentificationRouter(visionProvider, authStore, config.accessTokenSecret, logger));
   app.use(express.json({ limit: "1mb", strict: true }));
-  const recoveryEmailSender = config.accountRecoveryEmail
-    ? new ResendAccountRecoveryEmailSender(config.accountRecoveryEmail)
-    : undefined;
-  app.use("/auth", createAuthRouter(authStore, config.accessTokenSecret, logger, config.googleOAuth, recoveryEmailSender));
+  app.use("/auth", createAuthRouter(authStore, config.accessTokenSecret, logger, config.googleOAuth));
   app.use(
     "/pets",
     createPetsRouter(

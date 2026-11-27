@@ -1,9 +1,8 @@
-import { createHash, createHmac, randomBytes, randomInt, timingSafeEqual } from "node:crypto";
+import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
 import { CodeChallengeMethod, OAuth2Client } from "google-auth-library";
 import type { Logger } from "../../observability/logger.js";
-import { GoogleAccountPasswordUnavailableError, GoogleIdentityConflictError, InvalidCredentialsError } from "./errors.js";
+import { GoogleIdentityConflictError, InvalidCredentialsError } from "./errors.js";
 import type { AuthService } from "./service.js";
-import type { AccountRecoveryEmailSender } from "./recoveryEmail.js";
 import type { AuthStore, OAuthTransaction, Principal } from "./types.js";
 
 export interface GoogleOAuthConfig {
@@ -75,14 +74,6 @@ export class GoogleOAuthProvider implements GoogleCodeProvider {
 const OAUTH_TTL_MS = 5 * 60_000;
 const LINK_INTENT_TTL_MS = 60_000;
 const HANDOFF_TTL_MS = 60_000;
-const ACCOUNT_RECOVERY_TTL_MS = 10 * 60_000;
-const PASSWORD_LINK_TTL_MS = 5 * 60_000;
-
-export interface GoogleRecoveryOptions {
-  emailSender?: AccountRecoveryEmailSender;
-  codeSecret: Uint8Array;
-}
-
 function digest(value: string): string {
   return createHash("sha256").update(value, "utf8").digest("hex");
 }
@@ -100,7 +91,6 @@ export class GoogleOAuthFlow {
     private readonly config: GoogleOAuthConfig,
     private readonly logger: Logger,
     private readonly provider: GoogleCodeProvider = new GoogleOAuthProvider(config),
-    private readonly recovery: GoogleRecoveryOptions = { codeSecret: new Uint8Array(0) },
   ) {}
 
   async startLogin(): Promise<{ url: string; state: string }> {
@@ -151,58 +141,17 @@ export class GoogleOAuthFlow {
         return this.returnUrl({ linked: "1" });
       }
 
-      const resolution = await this.auth.resolveGoogleLogin({ email: identity.email, name: identity.name, subject: identity.subject });
-      if (resolution.kind === "password_link_required") {
-        if (this.recovery.codeSecret.byteLength < 32) throw new InvalidCredentialsError();
-        const linkCode = randomBytes(32).toString("base64url");
-        const flowHash = digest(linkCode);
-        const codeHash = createHmac("sha256", this.recovery.codeSecret)
-          .update("petcare:google-account-link:password-proof:").update(flowHash).digest("hex");
-        await this.store.createGoogleAccountRecoveryChallenge({
-          flowHash,
-          userId: resolution.userId,
-          providerSubject: identity.subject,
-          providerEmail: identity.email,
-          providerName: identity.name,
-          codeHash,
-          expiresAt: new Date(Date.now() + PASSWORD_LINK_TTL_MS),
-        });
-        return this.returnUrl({ passwordLinkCode: linkCode });
-      }
-      if (resolution.kind === "account_recovery_required") {
-        if (!this.recovery.emailSender || this.recovery.codeSecret.byteLength < 32) {
-          this.logger.info({ event: "google_account_recovery_unavailable", requestId: input.requestId });
-          throw new GoogleAccountPasswordUnavailableError();
-        }
-        const recoveryCode = randomBytes(32).toString("base64url");
-        const flowHash = digest(recoveryCode);
-        const emailCode = String(randomInt(0, 100_000_000)).padStart(8, "0");
-        const codeHash = createHmac("sha256", this.recovery.codeSecret)
-          .update("petcare:google-account-recovery:email-code:").update(flowHash).update(":").update(emailCode).digest("hex");
-        await this.store.createGoogleAccountRecoveryChallenge({
-          flowHash,
-          userId: resolution.userId,
-          providerSubject: identity.subject,
-          providerEmail: identity.email,
-          providerName: identity.name,
-          codeHash,
-          expiresAt: new Date(Date.now() + ACCOUNT_RECOVERY_TTL_MS),
-        });
-        try {
-          await this.recovery.emailSender.sendAccountRecoveryCode(identity.email, emailCode);
-        } catch {
-          await this.store.invalidateGoogleAccountRecoveryChallenge(flowHash);
-          this.logger.info({ event: "google_account_recovery_email_failed", requestId: input.requestId });
-          throw new InvalidCredentialsError();
-        }
-        return this.returnUrl({ recoveryCode });
-      }
+      const resolution = await this.auth.resolveGoogleLogin({
+        email: identity.email,
+        emailVerified: identity.emailVerified,
+        name: identity.name,
+        subject: identity.subject,
+      });
       const code = randomBytes(32).toString("base64url");
       await this.store.createOAuthHandoff({ codeHash: digest(code), userId: resolution.user.id, expiresAt: new Date(Date.now() + HANDOFF_TTL_MS) });
       return this.returnUrl({ code });
     } catch (error) {
-      const publicError = error instanceof GoogleIdentityConflictError ? "identity_conflict"
-        : error instanceof GoogleAccountPasswordUnavailableError ? "account_password_unavailable" : "google_sign_in_failed";
+      const publicError = error instanceof GoogleIdentityConflictError ? "identity_conflict" : "google_sign_in_failed";
       this.logger.info({ event: "google_oauth_callback_rejected", requestId: input.requestId, code: publicError });
       return this.returnUrl({ error: publicError });
     }
@@ -223,11 +172,10 @@ export class GoogleOAuthFlow {
 
   private returnUrl(parameters: Record<string, string>): string {
     const target = new URL(this.config.webReturnUrl);
-    const { code, recoveryCode, passwordLinkCode, ...queryParameters } = parameters;
+    const { code, recoveryCode, ...queryParameters } = parameters;
     for (const [key, value] of Object.entries(queryParameters)) target.searchParams.set(key, value);
     if (code) target.hash = new URLSearchParams({ code }).toString();
     else if (recoveryCode) target.hash = new URLSearchParams({ recoveryCode }).toString();
-    else if (passwordLinkCode) target.hash = new URLSearchParams({ passwordLinkCode }).toString();
     return target.toString();
   }
 }

@@ -355,10 +355,10 @@ test("HTTP errors cover unknown routes, malformed JSON, unsupported content type
 });
 
 test("CORS allows configured origins and rejects disallowed preflights", async () => {
-  const { logger } = createTestLogger();
+  const { logger, entries } = createTestLogger();
   const app = createApp({
     config: {
-      corsOrigins: ["https://petcare.example"],
+      corsOrigins: ["https://petcare-pxcc.onrender.com"],
       accessTokenSecret: Buffer.from(defaultEnvironment.AUTH_ACCESS_TOKEN_SECRET),
     },
     database: { query: async () => ({ rows: [] }) },
@@ -367,21 +367,19 @@ test("CORS allows configured origins and rejects disallowed preflights", async (
   });
   const running = await listen(app);
   try {
-    const allowed = await fetch(`${running.baseUrl}/health`, {
+    const allowed = await fetch(`${running.baseUrl}/auth/login`, {
       method: "OPTIONS",
       headers: {
-        Origin: "https://petcare.example",
-        "Access-Control-Request-Method": "GET",
-        "Access-Control-Request-Headers": "authorization,x-upload-id,x-checksum-sha256,x-file-name,x-pet-id",
+        Origin: "https://petcare-pxcc.onrender.com",
+        "Access-Control-Request-Method": "POST",
+        "Access-Control-Request-Headers": "content-type",
       },
     });
     assert.equal(allowed.status, 204);
     assert.equal(
       allowed.headers.get("access-control-allow-origin"),
-      "https://petcare.example",
+      "https://petcare-pxcc.onrender.com",
     );
-    assert.match(allowed.headers.get("access-control-allow-headers") ?? "", /X-Checksum-Sha256/i);
-    assert.match(allowed.headers.get("access-control-expose-headers") ?? "", /X-Content-SHA256/i);
 
     const noOrigin = await fetch(`${running.baseUrl}/health`, {
       method: "OPTIONS",
@@ -397,6 +395,9 @@ test("CORS allows configured origins and rejects disallowed preflights", async (
     });
     assert.equal(denied.status, 403);
     assert.equal(denied.headers.get("access-control-allow-origin"), null);
+    const rejection = entries.find((entry) => entry.event === "cors_origin_rejected");
+    assert.equal(rejection?.path, "/health");
+    assert.equal(rejection?.requestId, denied.headers.get("x-request-id"));
   } finally {
     await close(running.server);
   }

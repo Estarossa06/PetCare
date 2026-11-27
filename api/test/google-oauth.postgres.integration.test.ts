@@ -33,12 +33,7 @@ test("Google identities and OAuth one-use records persist safely in petcare_test
       context.skip("Apply migration 0014 to the disposable petcare_test database before Google persistence integration assertions.");
       return;
     }
-    const migration = await pool.query("SELECT 1 FROM public.schema_migrations WHERE version = 16 AND name = 'google_account_recovery'");
-    if (migration.rowCount !== 1) {
-      context.skip("Migration 0016 is not applied to petcare_test; no schema changes are made by this test.");
-      return;
-    }
-    await assertMigrationsApplied(pool, ["google_oauth_identities", "google_account_link_challenges", "google_account_recovery"]);
+    await assertMigrationsApplied(pool, ["google_oauth_identities"]);
     schemaReady = true;
     const store = new PostgresAuthStore(pool);
     const user = await store.createGoogleUserAndIdentity({
@@ -169,7 +164,7 @@ test("Google account recovery atomically links identity, invalidates credentials
   }
 });
 
-test("Google password linking is atomic, one-use, preserves pet data and existing sessions in petcare_test", {
+test("verified Google email linking is transactional, conflict-safe and preserves existing account data in petcare_test", {
   skip: !enabled && "Set PETCARE_TEST_DATABASE_URL and PETCARE_RUN_AUTH_DB_TESTS=1 for disposable petcare_test only.",
 }, async (context) => {
   const parsed = new URL(databaseUrl!);
@@ -177,69 +172,69 @@ test("Google password linking is atomic, one-use, preserves pet data and existin
   assert.equal(decodeURIComponent(parsed.pathname.replace(/^\//, "")), "petcare_test", "Refusing any database except petcare_test.");
   const pool = createDatabasePool(databaseUrl!);
   const run = randomUUID();
-  const flowHash = `password-link-flow-${run}`;
-  const subject = `google-password-link-sub-${run}`;
+  const subject = `google-verified-link-sub-${run}`;
+  const racingSubject = `google-racing-link-sub-${run}`;
   const oldSessionId = randomUUID();
-  const nextSessionId = randomUUID();
   const competingSessionId = randomUUID();
   const petId = randomUUID();
   let userId: string | undefined;
+  const fixtureUserIds: string[] = [];
   let schemaReady = false;
   try {
     const db = await pool.query<{ database: string }>("SELECT current_database() AS database");
     assert.equal(db.rows[0].database, "petcare_test", "Refusing fixtures outside petcare_test.");
-    const migration = await pool.query("SELECT 1 FROM public.schema_migrations WHERE version = 16 AND name = 'google_account_recovery'");
-    if (migration.rowCount !== 1) {
-      context.skip("Migration 0016 is not applied to petcare_test; this test makes no schema changes.");
-      return;
-    }
-    await assertMigrationsApplied(pool, ["google_oauth_identities", "google_account_link_challenges", "google_account_recovery"]);
+    await assertMigrationsApplied(pool, ["google_oauth_identities"]);
     schemaReady = true;
     const store = new PostgresAuthStore(pool);
     const passwordHash = await hashPassword("existing-petcare-password-123");
     const user = await store.createUserAndSession({
-      email: `password-link-${run}@example.test`, name: "Password link integration", passwordHash,
-      sessionId: oldSessionId, refreshTokenHash: `password-link-old-${run}`, expiresAt: new Date(Date.now() + 60_000),
+      email: `verified-link-${run}@example.test`, name: "Verified email link integration", passwordHash,
+      sessionId: oldSessionId, refreshTokenHash: `verified-link-old-${run}`, expiresAt: new Date(Date.now() + 60_000),
     });
     userId = user.id;
+    fixtureUserIds.push(user.id);
     await pool.query("INSERT INTO pets (id, owner_id, name, species) VALUES ($1, $2, 'Link preservation fixture', 'cat')", [petId, user.id]);
-    const secret = Buffer.from("synthetic-google-link-test-secret-at-least-32-bytes");
-    const codeHash = createHmac("sha256", secret).update("petcare:google-account-link:password-proof:").update(flowHash).digest("hex");
-    await store.createGoogleAccountRecoveryChallenge({
-      flowHash, userId: user.id, providerSubject: subject, providerEmail: user.email,
-      providerName: user.name, codeHash, expiresAt: new Date(Date.now() + 5 * 60_000),
-    });
-    assert.equal((await store.getGoogleAccountLinkChallenge({ flowHash, codeHash }))?.passwordHash, passwordHash);
-
-    const completeInput = {
-      flowHash, codeHash, expectedPasswordHash: passwordHash,
-      refreshTokenHash: `password-link-next-${run}`, sessionExpiresAt: new Date(Date.now() + 60_000), authenticatedAt: new Date(),
-    };
-    await assert.rejects(store.completeGoogleAccountLink({ ...completeInput, sessionId: oldSessionId }));
-    assert.equal(await store.findUserByGoogleSubject(subject), undefined, "identity insertion must roll back if session creation fails");
-    assert.equal((await store.getGoogleAccountLinkChallenge({ flowHash, codeHash }))?.passwordHash, passwordHash, "failed transaction must not consume the challenge");
-    assert.equal(await store.isSessionActive({ userId: user.id, sessionId: oldSessionId }), true, "existing session stays active after rollback");
+    await assert.rejects(store.linkGoogleIdentityByVerifiedEmail({ userId: user.id, email: user.email, subject, emailVerified: false }));
+    assert.equal(await store.findUserByGoogleSubject(subject), undefined, "an unverified email cannot link an identity");
     const results = await Promise.all([
-      store.completeGoogleAccountLink({ ...completeInput, sessionId: nextSessionId }),
-      store.completeGoogleAccountLink({ ...completeInput, sessionId: competingSessionId }),
+      store.linkGoogleIdentityByVerifiedEmail({ userId: user.id, email: user.email, subject, emailVerified: true }),
+      store.linkGoogleIdentityByVerifiedEmail({ userId: user.id, email: user.email, subject, emailVerified: true }),
     ]);
-    assert.equal(results.filter((result) => result.kind === "completed").length, 1, "only one concurrent completion may consume the challenge");
+    assert.deepEqual(results.map((result) => result.id), [user.id, user.id], "same-account concurrent linking is idempotent");
     assert.equal((await store.findUserByGoogleSubject(subject))?.id, user.id);
     assert.equal((await store.findUserCredentialsById(user.id))?.passwordHash, passwordHash, "linking preserves the password hash");
     assert.equal(await store.isSessionActive({ userId: user.id, sessionId: oldSessionId }), true, "existing sessions remain valid");
-    const successfulSession = results[0].kind === "completed" ? nextSessionId : competingSessionId;
-    assert.equal(await store.isSessionActive({ userId: user.id, sessionId: successfulSession }), true);
     const pet = await pool.query<{ owner_id: string; name: string }>("SELECT owner_id, name FROM pets WHERE id=$1", [petId]);
     assert.deepEqual(pet.rows[0], { owner_id: user.id, name: "Link preservation fixture" });
-    assert.deepEqual(await store.completeGoogleAccountLink({ ...completeInput, sessionId: randomUUID() }), { kind: "invalid" }, "challenge must be single-use");
+
+    const other = await store.createGoogleUserAndIdentity({ email: `other-link-${run}@example.test`, name: "Other owner", subject: `google-owner-${run}` });
+    fixtureUserIds.push(other.id);
+    await assert.rejects(store.linkGoogleIdentityByVerifiedEmail({ userId: user.id, email: user.email, subject: `google-owner-${run}`, emailVerified: true }), GoogleIdentityConflictError);
+    assert.equal((await store.findUserByGoogleSubject(`google-owner-${run}`))?.id, other.id, "identity ownership must not move");
+
+    const competitor = await store.createUserAndSession({
+      email: `competing-link-${run}@example.test`, name: "Competing account", passwordHash,
+      sessionId: competingSessionId, refreshTokenHash: `verified-link-competitor-${run}`, expiresAt: new Date(Date.now() + 60_000),
+    });
+    fixtureUserIds.push(competitor.id);
+    const race = await Promise.allSettled([
+      store.linkGoogleIdentityByVerifiedEmail({ userId: user.id, email: user.email, subject: racingSubject, emailVerified: true }),
+      store.linkGoogleIdentityByVerifiedEmail({ userId: competitor.id, email: competitor.email, subject: racingSubject, emailVerified: true }),
+    ]);
+    assert.equal(race.filter((result) => result.status === "fulfilled").length, 1, "only one account can win a cross-account subject race");
+    assert.equal(race.filter((result) => result.status === "rejected" && result.reason instanceof GoogleIdentityConflictError).length, 1);
+    assert.ok([user.id, competitor.id].includes((await store.findUserByGoogleSubject(racingSubject))?.id ?? ""));
   } finally {
     try {
-      if (schemaReady && userId) {
+      if (schemaReady && userId && fixtureUserIds.length) {
         const client = await pool.connect();
         try {
           await client.query("BEGIN");
-          await client.query("DELETE FROM auth_sessions WHERE user_id=$1", [userId]);
-          await client.query("DELETE FROM users WHERE id=$1", [userId]);
+          await client.query("DELETE FROM pets WHERE id=$1", [petId]);
+          await client.query("DELETE FROM auth_sessions WHERE user_id=ANY($1::uuid[])", [fixtureUserIds]);
+          await client.query("DELETE FROM sync_changes WHERE owner_id=ANY($1::uuid[])", [fixtureUserIds]);
+          await client.query("DELETE FROM sync_cursors WHERE owner_id=ANY($1::uuid[])", [fixtureUserIds]);
+          await client.query("DELETE FROM users WHERE id=ANY($1::uuid[])", [fixtureUserIds]);
           await client.query("COMMIT");
         } catch (error) {
           await client.query("ROLLBACK");

@@ -39,8 +39,8 @@ export class AuthController {
         sendError(
           response,
           409,
-          "REGISTRATION_FAILED",
-          "Unable to create an account with the provided details.",
+          "EMAIL_ALREADY_REGISTERED",
+          "An account already exists with this email. Sign in instead.",
         );
       } else if (!handleValidationError(error, response)) {
         next(error);

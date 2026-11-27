@@ -37,19 +37,6 @@ export interface GoogleAccountRecoverySessionInput {
   authenticatedAt: Date;
 }
 
-export interface GoogleAccountLinkChallenge {
-  flowHash: string;
-  codeHash: string;
-}
-
-export interface GoogleAccountLinkSessionInput extends GoogleAccountLinkChallenge {
-  expectedPasswordHash: string;
-  sessionId: string;
-  refreshTokenHash: string;
-  sessionExpiresAt: Date;
-  authenticatedAt: Date;
-}
-
 export interface AuthSession {
   id: string;
   user: AuthUser;
@@ -83,6 +70,7 @@ export interface AuthStore {
   >;
   findUserByGoogleSubject(subject: string): Promise<AuthUser | undefined>;
   createGoogleUserAndIdentity(input: { email: string; name: string; subject: string }): Promise<AuthUser>;
+  linkGoogleIdentityByVerifiedEmail(input: { userId: string; email: string; subject: string; emailVerified: boolean }): Promise<AuthUser>;
   linkGoogleIdentity(input: { userId: string; sessionId: string; email: string; subject: string }): Promise<void>;
   createOAuthTransaction(input: OAuthTransaction & { stateHash: string; expiresAt: Date }): Promise<void>;
   consumeOAuthTransaction(stateHash: string): Promise<(OAuthTransaction & { expiresAt: Date }) | undefined>;
@@ -93,9 +81,6 @@ export interface AuthStore {
   createGoogleAccountRecoveryChallenge(input: GoogleAccountRecoveryChallenge & { flowHash: string }): Promise<void>;
   invalidateGoogleAccountRecoveryChallenge(flowHash: string): Promise<void>;
   recoverGoogleAccount(input: GoogleAccountRecoverySessionInput): Promise<{ kind: "completed"; userId: string } | { kind: "invalid" | "incorrect_code" }>;
-  getGoogleAccountLinkChallenge(input: GoogleAccountLinkChallenge): Promise<(AuthUser & { passwordHash: string | null }) | undefined>;
-  recordGoogleAccountLinkFailure(input: GoogleAccountLinkChallenge): Promise<void>;
-  completeGoogleAccountLink(input: GoogleAccountLinkSessionInput): Promise<{ kind: "completed"; userId: string } | { kind: "invalid" }>;
   createSession(input: {
     id: string;
     userId: string;
