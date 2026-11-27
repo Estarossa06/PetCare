@@ -56,6 +56,8 @@ export function createApp({
   const remoteMediaStore = mediaStore ?? ("r2" in config && config.r2 ? new R2ObjectStore(config.r2) : undefined);
 
   app.disable("x-powered-by");
+  // Render's ingress is one trusted hop; never trust arbitrary forwarded chains.
+  app.set("trust proxy", 1);
   app.use(requestIdMiddleware);
   app.use(createRequestLoggingMiddleware(logger));
   app.use(createCorsMiddleware(config, logger));

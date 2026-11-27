@@ -4,6 +4,7 @@ import { createHmac, createHash, randomUUID } from "node:crypto";
 import { createServer, type Server } from "node:http";
 import test from "node:test";
 import { createApp } from "../src/app.js";
+import { hashPassword } from "../src/modules/auth/passwords.js";
 import type { Logger, LogFields } from "../src/observability/logger.js";
 import { MemoryAuthStore } from "./memoryAuthStore.js";
 
@@ -134,6 +135,66 @@ test("recovery API route surfaces an identity conflict as a specific 409 without
     assert.equal(store.googleIdentities.get(subject), second.id);
     assert.equal(store.users.get(first.id)?.passwordHash, "first-password-hash");
     assert.equal(store.users.get(second.id)?.passwordHash, "second-password-hash");
+  } finally {
+    await app.close();
+  }
+});
+
+test("password link API verifies credentials, returns a session, and does not revoke existing sessions", async () => {
+  const store = new MemoryAuthStore();
+  const currentPassword = "route-test-current-password";
+  const previousSessionId = randomUUID();
+  const account = await store.createUserAndSession({
+    email: "password-link@example.test", passwordHash: await hashPassword(currentPassword), name: "Existing", sessionId: previousSessionId,
+    refreshTokenHash: "old-refresh-hash", expiresAt: new Date(Date.now() + 60_000),
+  });
+  const linkCode = randomUUID() + randomUUID();
+  const flowHash = createHash("sha256").update(linkCode, "utf8").digest("hex");
+  const codeHash = createHmac("sha256", SECRET).update("petcare:google-account-link:password-proof:").update(flowHash).digest("hex");
+  await store.createGoogleAccountRecoveryChallenge({
+    flowHash, userId: account.id, providerSubject: "password-link-google-subject", providerEmail: account.email,
+    providerName: account.name, codeHash, expiresAt: new Date(Date.now() + 5 * 60_000),
+  });
+  const app = await launch(store);
+  try {
+    const bad = await fetch(`${app.baseUrl}/auth/google/link/complete`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ linkCode, currentPassword: "wrong password" }),
+    });
+    assert.equal(bad.status, 401);
+    const completed = await fetch(`${app.baseUrl}/auth/google/link/complete`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ linkCode, currentPassword }),
+    });
+    assert.equal(completed.status, 200);
+    const tokens = await completed.json() as { accessToken: string; refreshToken: string; user: { id: string } };
+    assert.equal(tokens.user.id, account.id);
+    assert.ok(tokens.accessToken && tokens.refreshToken);
+    assert.equal(store.googleIdentities.get("password-link-google-subject"), account.id);
+    assert.equal(await store.isSessionActive({ userId: account.id, sessionId: previousSessionId }), true);
+    const replay = await fetch(`${app.baseUrl}/auth/google/link/complete`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ linkCode, currentPassword }),
+    });
+    assert.equal(replay.status, 401);
+    const logs = JSON.stringify(app.entries);
+    for (const secret of [linkCode, currentPassword, tokens.accessToken, tokens.refreshToken]) assert.equal(logs.includes(secret), false);
+  } finally {
+    await app.close();
+  }
+});
+
+test("auth rate limits work with Render's forwarded client IP header", async () => {
+  const app = await launch(new MemoryAuthStore());
+  try {
+    const statuses: number[] = [];
+    for (let attempt = 0; attempt < 11; attempt += 1) {
+      const response = await fetch(`${app.baseUrl}/auth/google`, { headers: { "X-Forwarded-For": "198.51.100.42" } });
+      statuses.push(response.status);
+    }
+    assert.deepEqual(statuses.slice(0, 10), Array(10).fill(503));
+    assert.equal(statuses[10], 429);
+    assert.equal(app.entries.some((entry) => entry.event === "request_failed"), false);
   } finally {
     await app.close();
   }

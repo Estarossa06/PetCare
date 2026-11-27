@@ -2,7 +2,7 @@ import { Router } from "express";
 import type { RequestHandler } from "express";
 import type { Logger } from "../../observability/logger.js";
 import { createAuthenticateMiddleware } from "./middleware/authenticate.js";
-import { GoogleIdentityConflictError, InvalidCredentialsError, InvalidRequestError } from "./errors.js";
+import { GoogleAccountPasswordUnavailableError, GoogleIdentityConflictError, InvalidCredentialsError, InvalidRequestError } from "./errors.js";
 import { GoogleOAuthFlow, type GoogleOAuthConfig } from "./googleOAuth.js";
 import type { AuthService } from "./service.js";
 import type { AuthStore } from "./types.js";
@@ -104,6 +104,27 @@ export function createGoogleOAuthRouter(
         response.status(401).json({ error: { code: "INVALID_GOOGLE_ACCOUNT_RECOVERY", message: "El código no es válido, caducó o ya fue utilizado. Inicia Google de nuevo para solicitar otro." } });
       } else if (error instanceof GoogleIdentityConflictError) {
         response.status(409).json({ error: { code: "GOOGLE_IDENTITY_CONFLICT", message: "Esta identidad de Google ya está vinculada a otra cuenta." } });
+      } else if (error instanceof InvalidRequestError) {
+        response.status(400).json({ error: { code: error.code, message: error.message } });
+      } else next(error);
+    }
+  });
+
+  router.post("/google/link/complete", limit, async (request, response, next) => {
+    try {
+      const tokens = await service.completeGoogleAccountLink({
+        linkCode: request.body?.linkCode,
+        currentPassword: request.body?.currentPassword,
+      });
+      response.setHeader("Cache-Control", "no-store");
+      response.status(200).json(tokens);
+    } catch (error) {
+      if (error instanceof InvalidCredentialsError) {
+        response.status(401).json({ error: { code: "INVALID_GOOGLE_ACCOUNT_LINK", message: "La contraseña es incorrecta o el enlace caducó. Inicia Google de nuevo e inténtalo otra vez." } });
+      } else if (error instanceof GoogleIdentityConflictError) {
+        response.status(409).json({ error: { code: "GOOGLE_IDENTITY_CONFLICT", message: "Esta identidad de Google ya está vinculada a otra cuenta." } });
+      } else if (error instanceof GoogleAccountPasswordUnavailableError) {
+        response.status(409).json({ error: { code: "GOOGLE_ACCOUNT_PASSWORD_UNAVAILABLE", message: "Esta cuenta no puede verificarse con contraseña. Inicia sesión con el método que ya utilizas o usa la recuperación por correo si está habilitada." } });
       } else if (error instanceof InvalidRequestError) {
         response.status(400).json({ error: { code: error.code, message: error.message } });
       } else next(error);

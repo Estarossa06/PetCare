@@ -99,6 +99,18 @@ test("configuration accepts staging as a deployment environment", () => {
   assert.equal(config.port, 10000);
 });
 
+test("application trusts exactly one reverse-proxy hop", () => {
+  const { logger } = createTestLogger();
+  const store = new MemoryAuthStore();
+  const app = createApp({
+    config: { corsOrigins: [], accessTokenSecret: Buffer.from(defaultEnvironment.AUTH_ACCESS_TOKEN_SECRET) },
+    database: { query: async () => ({ rows: [] }) },
+    authStore: store,
+    logger,
+  });
+  assert.equal(app.get("trust proxy"), 1);
+});
+
 test("Google OAuth config is all-or-nothing and requires HTTPS outside local development", () => {
   const google = {
     GOOGLE_OAUTH_CLIENT_ID: "client-id.apps.googleusercontent.com",

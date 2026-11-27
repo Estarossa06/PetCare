@@ -6,6 +6,8 @@ import {
   type AuthUser,
   type GoogleAccountRecoveryChallenge,
   type GoogleAccountRecoverySessionInput,
+  type GoogleAccountLinkChallenge,
+  type GoogleAccountLinkSessionInput,
   type RefreshResult,
   type OAuthTransaction,
 } from "../src/modules/auth/types.js";
@@ -168,6 +170,39 @@ export class MemoryAuthStore implements AuthStore {
     this.googleIdentities.set(challenge.providerSubject, user.id);
     user.passwordHash = input.newPasswordHash;
     this.revokeEverySession(user.id);
+    this.sessions.set(input.sessionId, {
+      id: input.sessionId, userId: user.id, expiresAt: input.sessionExpiresAt, revoked: false, authenticatedAt: input.authenticatedAt,
+    });
+    this.tokens.set(input.refreshTokenHash, { sessionId: input.sessionId, consumed: false, revoked: false });
+    return { kind: "completed", userId: user.id };
+  }
+
+  async getGoogleAccountLinkChallenge(input: GoogleAccountLinkChallenge): Promise<(AuthUser & { passwordHash: string | null }) | undefined> {
+    const challenge = this.googleRecoveryChallenges.get(input.flowHash);
+    const user = challenge ? this.users.get(challenge.userId) : undefined;
+    if (!challenge || challenge.consumed || challenge.expiresAt <= new Date() || challenge.attempts >= 5 ||
+      challenge.codeHash !== input.codeHash || !user || user.deleted || user.email !== challenge.providerEmail) return undefined;
+    return { ...publicUser(user), passwordHash: user.passwordHash };
+  }
+
+  async recordGoogleAccountLinkFailure(input: GoogleAccountLinkChallenge): Promise<void> {
+    const challenge = this.googleRecoveryChallenges.get(input.flowHash);
+    if (!challenge || challenge.consumed || challenge.expiresAt <= new Date() || challenge.attempts >= 5 || challenge.codeHash !== input.codeHash) return;
+    challenge.attempts += 1;
+    if (challenge.attempts >= 5) challenge.consumed = true;
+  }
+
+  async completeGoogleAccountLink(input: GoogleAccountLinkSessionInput): Promise<{ kind: "completed"; userId: string } | { kind: "invalid" }> {
+    const challenge = this.googleRecoveryChallenges.get(input.flowHash);
+    const user = challenge ? this.users.get(challenge.userId) : undefined;
+    if (!challenge || challenge.consumed || challenge.expiresAt <= new Date() || challenge.attempts >= 5 ||
+      challenge.codeHash !== input.codeHash || !user || user.deleted || user.email !== challenge.providerEmail ||
+      !user.passwordHash || user.passwordHash !== input.expectedPasswordHash) return { kind: "invalid" };
+    if (this.googleIdentities.has(challenge.providerSubject) || [...this.googleIdentities.values()].includes(user.id)) {
+      throw new GoogleIdentityConflictError();
+    }
+    challenge.consumed = true;
+    this.googleIdentities.set(challenge.providerSubject, user.id);
     this.sessions.set(input.sessionId, {
       id: input.sessionId, userId: user.id, expiresAt: input.sessionExpiresAt, revoked: false, authenticatedAt: input.authenticatedAt,
     });
