@@ -89,10 +89,12 @@ export default function AuthScreen() {
   };
 
   const googleErrorMessage = googleError === "account_link_required"
-    ? "Esta cuenta de Google usa un correo ya registrado. Inicia sesión con tu cuenta PetCare y vincula Google desde tu perfil."
+    ? "El enlace de Google caducó. Vuelve a iniciar sesión con Google para verificar la cuenta PetCare existente."
     : googleError === "identity_conflict"
       ? "Esta cuenta de Google ya está vinculada a otra cuenta PetCare."
-      : googleError ? "No pudimos completar el inicio con Google. Inténtalo de nuevo." : null;
+      : googleError === "account_recovery_required"
+        ? "Esta cuenta no tiene una contraseña PetCare verificable. Inicia sesión con su proveedor vinculado o recupera el acceso a la cuenta antes de vincular Google."
+        : googleError ? "No pudimos completar el inicio con Google. Inténtalo de nuevo." : null;
 
   const inputStyle = [
     styles.input,

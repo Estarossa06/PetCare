@@ -4,6 +4,7 @@ import {
   type AuthSession,
   type AuthStore,
   type AuthUser,
+  type GoogleAccountLinkChallenge,
   type RefreshResult,
   type OAuthTransaction,
 } from "../src/modules/auth/types.js";
@@ -36,6 +37,7 @@ export class MemoryAuthStore implements AuthStore {
   readonly oauthTransactions = new Map<string, OAuthTransaction & { expiresAt: Date }>();
   readonly oauthLinkIntents = new Map<string, { userId: string; sessionId: string; expiresAt: Date }>();
   readonly oauthHandoffs = new Map<string, { userId: string; expiresAt: Date }>();
+  readonly googleLinkChallenges = new Map<string, GoogleAccountLinkChallenge & { consumed: boolean }>();
 
   async createUserAndSession(input: {
     email: string;
@@ -130,6 +132,32 @@ export class MemoryAuthStore implements AuthStore {
     const handoff = this.oauthHandoffs.get(codeHash);
     this.oauthHandoffs.delete(codeHash);
     return handoff && handoff.expiresAt > new Date() ? this.findUserById(handoff.userId) : undefined;
+  }
+
+  async createGoogleAccountLinkChallenge(input: GoogleAccountLinkChallenge & { challengeHash: string }): Promise<void> {
+    this.googleLinkChallenges.set(input.challengeHash, { ...input, consumed: false });
+  }
+
+  async findGoogleAccountLinkChallenge(challengeHash: string): Promise<GoogleAccountLinkChallenge | undefined> {
+    const challenge = this.googleLinkChallenges.get(challengeHash);
+    const user = challenge ? this.users.get(challenge.userId) : undefined;
+    if (!challenge || challenge.consumed || challenge.expiresAt <= new Date() || !user || user.deleted ||
+      user.email !== challenge.providerEmail || !user.passwordHash) return undefined;
+    const { consumed: _consumed, ...result } = challenge;
+    return result;
+  }
+
+  async consumeGoogleAccountLinkChallenge(input: { challengeHash: string; expectedPasswordHash: string }): Promise<AuthUser | undefined> {
+    const challenge = this.googleLinkChallenges.get(input.challengeHash);
+    const user = challenge ? this.users.get(challenge.userId) : undefined;
+    if (!challenge || challenge.consumed || challenge.expiresAt <= new Date() || !user || user.deleted ||
+      user.email !== challenge.providerEmail || user.passwordHash !== input.expectedPasswordHash) return undefined;
+    if (this.googleIdentities.has(challenge.providerSubject) || [...this.googleIdentities.values()].includes(user.id)) {
+      throw new GoogleIdentityConflictError();
+    }
+    challenge.consumed = true;
+    this.googleIdentities.set(challenge.providerSubject, user.id);
+    return publicUser(user);
   }
 
   async findUserById(id: string): Promise<AuthUser | undefined> {

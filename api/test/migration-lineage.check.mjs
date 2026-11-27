@@ -1,14 +1,13 @@
 import assert from "node:assert/strict";
-import {
-  legacyLocalMigrations,
-  migrations as remoteMigrations,
-} from "../dist/db/migrations/index.js";
-import {
-  getMigrationStatuses,
-  migrationChecksum,
-  resolveMigrationLineage,
-} from "../dist/db/migration-lineage.js";
-import { runMigrations } from "../dist/db/migration-runner.js";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
+
+const compiledRoot = resolve(dirname(fileURLToPath(import.meta.url)), process.env.PETCARE_COMPILED_API_DIR ?? "../dist");
+const [{ legacyLocalMigrations, migrations: remoteMigrations }, { getMigrationStatuses, migrationChecksum, resolveMigrationLineage }, { runMigrations }] = await Promise.all([
+  import(pathToFileURL(resolve(compiledRoot, "db/migrations/index.js")).href),
+  import(pathToFileURL(resolve(compiledRoot, "db/migration-lineage.js")).href),
+  import(pathToFileURL(resolve(compiledRoot, "db/migration-runner.js")).href),
+]);
 
 function rowsFor(migrations) {
   return migrations.map((migration) => ({
@@ -27,7 +26,7 @@ const localPlan = resolveMigrationLineage(localRows);
 assert.equal(localPlan.id, "legacy-local");
 assert.deepEqual(
   getMigrationStatuses(localRows).migrations.filter((item) => item.status === "Pending").map((item) => item.version),
-  [12, 13, 14],
+  [12, 13, 14, 15],
 );
 assert.equal(localPlan.migrations[11].name, "pet_tracking");
 passed("existing local ledger selects legacy lineage and leaves tracking v12 pending");
@@ -37,12 +36,12 @@ const remotePlan = resolveMigrationLineage(remoteRows);
 assert.equal(remotePlan.id, "remote");
 assert.deepEqual(
   getMigrationStatuses(remoteRows).migrations.filter((item) => item.status === "Pending").map((item) => item.version),
-  [6, 7, 8, 9, 10, 11, 12, 13, 14],
+  [6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
 );
-passed("existing remote ledger selects merged lineage and reports migrations 6-14 pending");
+passed("existing remote ledger selects merged lineage and reports migrations 6-15 pending");
 
 assert.equal(resolveMigrationLineage([]).id, "remote");
-assert.equal(getMigrationStatuses([]).migrations.length, 14);
+assert.equal(getMigrationStatuses([]).migrations.length, 15);
 assert.equal(getMigrationStatuses([]).migrations.every((item) => item.status === "Pending"), true);
 passed("new database defaults to remote lineage with every migration pending");
 
@@ -51,7 +50,7 @@ assert.throws(() => resolveMigrationLineage(mixedRows), /does not match|not a co
 const badChecksum = [...localRows.slice(0, 5)];
 badChecksum[4] = { ...badChecksum[4], checksum: "0".repeat(64) };
 assert.throws(() => resolveMigrationLineage(badChecksum), /name and checksum/);
-assert.throws(() => resolveMigrationLineage([...localRows, { version: 15, name: "unknown", checksum: "x" }]), /unknown version/);
+assert.throws(() => resolveMigrationLineage([...localRows, { version: 16, name: "unknown", checksum: "x" }]), /unknown version/);
 passed("mixed, corrupt-checksum, and unknown histories are rejected");
 
 class FakeLedgerClient {
@@ -104,7 +103,7 @@ const existingLocalDb = new FakeLedgerClient();
 existingLocalDb.ledgerExists = true;
 existingLocalDb.rows = localRows.map((row) => ({ ...row }));
 await runMigrations(existingLocalDb, () => {});
-assert.deepEqual(existingLocalDb.rows.map((row) => row.version), [...Array(14)].map((_, index) => index + 1));
+assert.deepEqual(existingLocalDb.rows.map((row) => row.version), [...Array(15)].map((_, index) => index + 1));
 assert.equal(existingLocalDb.lockDepth, 0);
 assert.equal(existingLocalDb.lockCalls, 1);
 const writesAfterFirstRun = [...existingLocalDb.writes];
@@ -114,7 +113,7 @@ passed("legacy tracking migration applies once; a second run creates no duplicat
 
 const newDb = new FakeLedgerClient();
 await runMigrations(newDb, () => {});
-assert.equal(newDb.rows.length, 14);
+assert.equal(newDb.rows.length, 15);
 const newDbWrites = [...newDb.writes];
 await runMigrations(newDb, () => {});
 assert.deepEqual(newDb.writes, newDbWrites);

@@ -8,9 +8,9 @@ import {
 } from "./tokens.js";
 import {
   DuplicateEmailError,
+  GoogleIdentityConflictError,
   InvalidCredentialsError,
   InvalidRequestError,
-  GoogleAccountLinkRequiredError,
 } from "./errors.js";
 import {
   type AuthStore,
@@ -148,15 +148,54 @@ export class AuthService {
     return this.store.requestPermanentDeletion(principal.userId);
   }
 
-  async resolveGoogleLogin(identity: { email: string; name: string; subject: string }): Promise<AuthUser> {
+  async resolveGoogleLogin(identity: { email: string; name: string; subject: string }): Promise<
+    | { kind: "authenticated"; user: AuthUser }
+    | { kind: "link_required"; userId: string }
+    | { kind: "account_recovery_required" }
+  > {
     const linked = await this.store.findUserByGoogleSubject(identity.subject);
-    if (linked) return linked;
-    if (await this.store.findUserByEmail(identity.email)) throw new GoogleAccountLinkRequiredError();
-    try { return await this.store.createGoogleUserAndIdentity(identity); }
+    if (linked) return { kind: "authenticated", user: linked };
+    const existing = await this.store.findUserByEmail(identity.email);
+    if (existing) return existing.passwordHash
+      ? { kind: "link_required", userId: existing.id }
+      : { kind: "account_recovery_required" };
+    try {
+      return { kind: "authenticated", user: await this.store.createGoogleUserAndIdentity(identity) };
+    }
     catch (error) {
-      if (error instanceof DuplicateEmailError) throw new GoogleAccountLinkRequiredError();
+      if (error instanceof DuplicateEmailError) {
+        const racedUser = await this.store.findUserByEmail(identity.email);
+        if (racedUser) return racedUser.passwordHash
+          ? { kind: "link_required", userId: racedUser.id }
+          : { kind: "account_recovery_required" };
+      }
+      if (error instanceof GoogleIdentityConflictError) {
+        const racedIdentity = await this.store.findUserByGoogleSubject(identity.subject);
+        if (racedIdentity) return { kind: "authenticated", user: racedIdentity };
+      }
       throw error;
     }
+  }
+
+  async completeGoogleAccountLink(rawCode: unknown, rawPassword: unknown): Promise<TokenPair> {
+    if (typeof rawCode !== "string" || rawCode.length < 32 || rawCode.length > 128 ||
+      typeof rawPassword !== "string" || rawPassword.length < 1 || rawPassword.length > 128) {
+      throw new InvalidCredentialsError();
+    }
+    const challengeHash = hashRefreshToken(rawCode);
+    const challenge = await this.store.findGoogleAccountLinkChallenge(challengeHash);
+    if (!challenge) throw new InvalidCredentialsError();
+    const account = await this.store.findUserCredentialsById(challenge.userId);
+    if (!account || !account.passwordHash || account.email !== challenge.providerEmail ||
+      !(await verifyPassword(rawPassword, account.passwordHash))) {
+      throw new InvalidCredentialsError();
+    }
+    const linked = await this.store.consumeGoogleAccountLinkChallenge({
+      challengeHash,
+      expectedPasswordHash: account.passwordHash,
+    });
+    if (!linked) throw new InvalidCredentialsError();
+    return this.createSession(linked);
   }
 
   async verifyGoogleLinkStart(principal: Principal, currentPassword: string | undefined): Promise<void> {

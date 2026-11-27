@@ -12,6 +12,7 @@ import kiraiConversations from "./0010_kirai_conversations.js";
 import mediaStorage from "./0011_media_storage.js";
 import accountDeletionWorker from "./0013_account_deletion_worker.js";
 import googleOAuth from "./0014_google_oauth.js";
+import googleAccountLinkChallenges from "./0015_google_account_link_challenges.js";
 import type { Migration } from "./types.js";
 
 const commonMigrations = [
@@ -38,6 +39,7 @@ export const migrations: Migration[] = [
   atVersion(mediaStorage, 12),
   atVersion(accountDeletionWorker, 13),
   googleOAuth,
+  googleAccountLinkChallenges,
 ];
 
 /**
@@ -57,4 +59,5 @@ export const legacyLocalMigrations: Migration[] = [
   atVersion(tracking, 12),
   accountDeletionWorker,
   googleOAuth,
+  googleAccountLinkChallenges,
 ];

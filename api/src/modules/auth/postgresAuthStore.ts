@@ -4,6 +4,7 @@ import {
   type AuthSession,
   type AuthStore,
   type AuthUser,
+  type GoogleAccountLinkChallenge,
   type RefreshResult,
 } from "./types.js";
 
@@ -249,6 +250,67 @@ export class PostgresAuthStore implements AuthStore {
       [codeHash],
     );
     return result.rows[0] ? toAuthUser(result.rows[0]) : undefined;
+  }
+
+  async createGoogleAccountLinkChallenge(input: GoogleAccountLinkChallenge & { challengeHash: string }): Promise<void> {
+    await this.pool.query("DELETE FROM auth_oauth_account_link_challenges WHERE expires_at <= now() OR consumed_at IS NOT NULL");
+    await this.pool.query(
+      `INSERT INTO auth_oauth_account_link_challenges
+         (challenge_hash, user_id, provider_subject, provider_email, provider_name, expires_at)
+       VALUES ($1, $2, $3, $4, $5, $6)`,
+      [input.challengeHash, input.userId, input.providerSubject, input.providerEmail, input.providerName, input.expiresAt],
+    );
+  }
+
+  async findGoogleAccountLinkChallenge(challengeHash: string): Promise<GoogleAccountLinkChallenge | undefined> {
+    const result = await this.pool.query<{
+      user_id: string; provider_subject: string; provider_email: string; provider_name: string; expires_at: Date;
+    }>(
+      `SELECT challenge.user_id, challenge.provider_subject, challenge.provider_email,
+              challenge.provider_name, challenge.expires_at
+       FROM auth_oauth_account_link_challenges challenge
+       JOIN users ON users.id = challenge.user_id
+       WHERE challenge.challenge_hash = $1 AND challenge.consumed_at IS NULL
+         AND challenge.expires_at > now() AND users.deleted_at IS NULL
+         AND users.email = challenge.provider_email`,
+      [challengeHash],
+    );
+    const row = result.rows[0];
+    return row ? {
+      userId: row.user_id,
+      providerSubject: row.provider_subject,
+      providerEmail: row.provider_email,
+      providerName: row.provider_name,
+      expiresAt: row.expires_at,
+    } : undefined;
+  }
+
+  async consumeGoogleAccountLinkChallenge(input: { challengeHash: string; expectedPasswordHash: string }): Promise<AuthUser | undefined> {
+    try {
+      return await transaction(this.pool, async (client) => {
+        const result = await client.query<DatabaseUser & { provider_subject: string; provider_email: string }>(
+          `UPDATE auth_oauth_account_link_challenges challenge SET consumed_at = now()
+           FROM users
+           WHERE challenge.challenge_hash = $1 AND challenge.consumed_at IS NULL
+             AND challenge.expires_at > now() AND users.id = challenge.user_id
+             AND users.deleted_at IS NULL AND users.email = challenge.provider_email
+             AND users.password_hash = $2
+           RETURNING users.id, users.email, users.name, challenge.provider_subject, challenge.provider_email`,
+          [input.challengeHash, input.expectedPasswordHash],
+        );
+        const row = result.rows[0];
+        if (!row) return undefined;
+        await client.query(
+          `INSERT INTO auth_identities (user_id, provider, provider_subject, provider_email, email_verified)
+           VALUES ($1, 'google', $2, $3, true)`,
+          [row.id, row.provider_subject, row.provider_email],
+        );
+        return toAuthUser(row);
+      });
+    } catch (error) {
+      if (isIdentityUniqueViolation(error)) throw new GoogleIdentityConflictError();
+      throw error;
+    }
   }
 
   async findUserById(id: string): Promise<AuthUser | undefined> {

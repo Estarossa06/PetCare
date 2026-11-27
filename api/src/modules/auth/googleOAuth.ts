@@ -1,7 +1,7 @@
 import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
 import { CodeChallengeMethod, OAuth2Client } from "google-auth-library";
 import type { Logger } from "../../observability/logger.js";
-import { GoogleAccountLinkRequiredError, GoogleIdentityConflictError, InvalidCredentialsError } from "./errors.js";
+import { GoogleIdentityConflictError, InvalidCredentialsError } from "./errors.js";
 import type { AuthService } from "./service.js";
 import type { AuthStore, OAuthTransaction, Principal } from "./types.js";
 
@@ -74,6 +74,7 @@ export class GoogleOAuthProvider implements GoogleCodeProvider {
 const OAUTH_TTL_MS = 5 * 60_000;
 const LINK_INTENT_TTL_MS = 60_000;
 const HANDOFF_TTL_MS = 60_000;
+const ACCOUNT_LINK_CHALLENGE_TTL_MS = 5 * 60_000;
 
 function digest(value: string): string {
   return createHash("sha256").update(value, "utf8").digest("hex");
@@ -143,14 +144,27 @@ export class GoogleOAuthFlow {
         return this.returnUrl({ linked: "1" });
       }
 
-      const user = await this.auth.resolveGoogleLogin({ email: identity.email, name: identity.name, subject: identity.subject });
+      const resolution = await this.auth.resolveGoogleLogin({ email: identity.email, name: identity.name, subject: identity.subject });
+      if (resolution.kind === "account_recovery_required") {
+        return this.returnUrl({ error: "account_recovery_required" });
+      }
+      if (resolution.kind === "link_required") {
+        const linkCode = randomBytes(32).toString("base64url");
+        await this.store.createGoogleAccountLinkChallenge({
+          challengeHash: digest(linkCode),
+          userId: resolution.userId,
+          providerSubject: identity.subject,
+          providerEmail: identity.email,
+          providerName: identity.name,
+          expiresAt: new Date(Date.now() + ACCOUNT_LINK_CHALLENGE_TTL_MS),
+        });
+        return this.returnUrl({ linkCode });
+      }
       const code = randomBytes(32).toString("base64url");
-      await this.store.createOAuthHandoff({ codeHash: digest(code), userId: user.id, expiresAt: new Date(Date.now() + HANDOFF_TTL_MS) });
+      await this.store.createOAuthHandoff({ codeHash: digest(code), userId: resolution.user.id, expiresAt: new Date(Date.now() + HANDOFF_TTL_MS) });
       return this.returnUrl({ code });
     } catch (error) {
-      const publicError = error instanceof GoogleAccountLinkRequiredError
-        ? "account_link_required"
-        : error instanceof GoogleIdentityConflictError ? "identity_conflict" : "google_sign_in_failed";
+      const publicError = error instanceof GoogleIdentityConflictError ? "identity_conflict" : "google_sign_in_failed";
       this.logger.info({ event: "google_oauth_callback_rejected", requestId: input.requestId, code: publicError });
       return this.returnUrl({ error: publicError });
     }
@@ -171,7 +185,9 @@ export class GoogleOAuthFlow {
 
   private returnUrl(parameters: Record<string, string>): string {
     const target = new URL(this.config.webReturnUrl);
-    for (const [key, value] of Object.entries(parameters)) target.searchParams.set(key, value);
+    const { linkCode, ...queryParameters } = parameters;
+    for (const [key, value] of Object.entries(queryParameters)) target.searchParams.set(key, value);
+    if (linkCode) target.hash = new URLSearchParams({ linkCode }).toString();
     return target.toString();
   }
 }

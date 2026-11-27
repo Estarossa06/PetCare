@@ -12,13 +12,6 @@ export class GoogleIdentityConflictError extends Error {
   }
 }
 
-export class GoogleAccountLinkRequiredError extends Error {
-  constructor() {
-    super("Sign in to the existing PetCare account before linking Google.");
-    this.name = "GoogleAccountLinkRequiredError";
-  }
-}
-
 export class InvalidCredentialsError extends Error {
   constructor() {
     super("Email or password is incorrect.");

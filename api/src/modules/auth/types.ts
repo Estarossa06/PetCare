@@ -18,6 +18,14 @@ export interface OAuthTransaction {
   sessionId?: string;
 }
 
+export interface GoogleAccountLinkChallenge {
+  userId: string;
+  providerSubject: string;
+  providerEmail: string;
+  providerName: string;
+  expiresAt: Date;
+}
+
 export interface AuthSession {
   id: string;
   user: AuthUser;
@@ -58,6 +66,9 @@ export interface AuthStore {
   consumeOAuthLinkIntent(intentHash: string): Promise<{ userId: string; sessionId: string } | undefined>;
   createOAuthHandoff(input: { codeHash: string; userId: string; expiresAt: Date }): Promise<void>;
   consumeOAuthHandoff(codeHash: string): Promise<AuthUser | undefined>;
+  createGoogleAccountLinkChallenge(input: GoogleAccountLinkChallenge & { challengeHash: string }): Promise<void>;
+  findGoogleAccountLinkChallenge(challengeHash: string): Promise<GoogleAccountLinkChallenge | undefined>;
+  consumeGoogleAccountLinkChallenge(input: { challengeHash: string; expectedPasswordHash: string }): Promise<AuthUser | undefined>;
   createSession(input: {
     id: string;
     userId: string;

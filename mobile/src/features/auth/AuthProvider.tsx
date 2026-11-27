@@ -20,6 +20,7 @@ interface AuthContextValue {
   clearError(): void;
   login(email: string, password: string): Promise<void>;
   loginWithGoogleHandoff(code: string): Promise<void>;
+  completeGoogleAccountLink(linkCode: string, currentPassword: string): Promise<void>;
   register(email: string, password: string, name: string): Promise<void>;
   logout(): Promise<void>;
   finishDeactivatedAccount(): Promise<void>;
@@ -89,6 +90,14 @@ export function AuthProvider({ children }: PropsWithChildren) {
     setUser(authenticatedUser);
   }, []);
 
+  const completeGoogleAccountLink = useCallback(async (linkCode: string, currentPassword: string) => {
+    setError(null);
+    await waitForPetSync();
+    const authenticatedUser = await apiClient.completeGoogleAccountLink(linkCode, currentPassword);
+    setActiveLocalAuthUserId(authenticatedUser.id);
+    setUser(authenticatedUser);
+  }, []);
+
   const logout = useCallback(async () => {
     setError(null);
     await waitForPetSync();
@@ -147,6 +156,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       clearError: () => setError(null),
       login,
       loginWithGoogleHandoff,
+      completeGoogleAccountLink,
       register,
       logout,
       finishDeactivatedAccount,
@@ -154,7 +164,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       updateLocalUser,
       restore,
     }),
-    [user, loading, error, login, loginWithGoogleHandoff, register, logout, finishDeactivatedAccount, finishPermanentlyDeletedAccount, updateLocalUser, restore],
+    [user, loading, error, login, loginWithGoogleHandoff, completeGoogleAccountLink, register, logout, finishDeactivatedAccount, finishPermanentlyDeletedAccount, updateLocalUser, restore],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

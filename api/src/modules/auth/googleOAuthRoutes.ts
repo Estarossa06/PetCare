@@ -2,7 +2,7 @@ import { Router } from "express";
 import type { RequestHandler } from "express";
 import type { Logger } from "../../observability/logger.js";
 import { createAuthenticateMiddleware } from "./middleware/authenticate.js";
-import { InvalidCredentialsError, InvalidRequestError } from "./errors.js";
+import { GoogleIdentityConflictError, InvalidCredentialsError, InvalidRequestError } from "./errors.js";
 import { GoogleOAuthFlow, type GoogleOAuthConfig } from "./googleOAuth.js";
 import type { AuthService } from "./service.js";
 import type { AuthStore } from "./types.js";
@@ -83,6 +83,22 @@ export function createGoogleOAuthRouter(
     } catch (error) {
       if (error instanceof InvalidCredentialsError) {
         response.status(401).json({ error: { code: "INVALID_GOOGLE_HANDOFF", message: "Google sign-in could not be completed." } });
+      } else next(error);
+    }
+  });
+
+  router.post("/google/link/complete", limit, async (request, response, next) => {
+    try {
+      const tokens = await service.completeGoogleAccountLink(request.body?.linkCode, request.body?.currentPassword);
+      response.setHeader("Cache-Control", "no-store");
+      response.status(200).json(tokens);
+    } catch (error) {
+      if (error instanceof InvalidCredentialsError) {
+        response.status(401).json({ error: { code: "INVALID_GOOGLE_LINK_CHALLENGE", message: "The PetCare password or Google link challenge is invalid or expired." } });
+      } else if (error instanceof GoogleIdentityConflictError) {
+        response.status(409).json({ error: { code: "GOOGLE_IDENTITY_CONFLICT", message: "This Google account is already linked to another PetCare account." } });
+      } else if (error instanceof InvalidRequestError) {
+        response.status(400).json({ error: { code: error.code, message: error.message } });
       } else next(error);
     }
   });

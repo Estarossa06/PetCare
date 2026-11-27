@@ -1,7 +1,12 @@
 import assert from "node:assert/strict";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { legacyLocalMigrations as sourceLegacy, migrations as sourceMigrations } from "../src/db/migrations/index.ts";
 import { canonicalMigrationSource, migrationChecksum, migrationChecksumCandidates, resolveMigrationLineage } from "../src/db/migration-lineage.ts";
-import { legacyLocalMigrations as compiledLegacy, migrations as compiledMigrations } from "../dist/db/migrations/index.js";
+const compiledRoot = resolve(dirname(fileURLToPath(import.meta.url)), process.env.PETCARE_COMPILED_API_DIR ?? "../dist");
+const { legacyLocalMigrations: compiledLegacy, migrations: compiledMigrations } = await import(
+  pathToFileURL(resolve(compiledRoot, "db/migrations/index.js")).href
+);
 
 for (let index = 0; index < sourceMigrations.length; index += 1) {
   const source = canonicalMigrationSource(sourceMigrations[index].up.toString());
@@ -18,9 +23,9 @@ for (let index = 0; index < sourceMigrations.length; index += 1) {
   // Historical migrations retain their known runtime digests; a newly added
   // migration has no legacy raw digest and only its canonical checksum must
   // be stable across tsx and compiled execution.
-  if (index < 13) assert.deepEqual(new Set(sourceCandidates), new Set(compiledCandidates));
+  if (index < 14) assert.deepEqual(new Set(sourceCandidates), new Set(compiledCandidates));
 }
-const persistedChecksum = (migration, index) => migrationChecksumCandidates(migration)[index < 13 ? 1 : 0];
+const persistedChecksum = (migration, index) => migrationChecksumCandidates(migration)[index < 14 ? 1 : 0];
 const sourceRemoteLedger = sourceMigrations.map((migration, index) => ({
   version: migration.version, name: migration.name, checksum: persistedChecksum(migration, index),
 }));

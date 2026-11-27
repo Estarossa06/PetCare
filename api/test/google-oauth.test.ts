@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import test from "node:test";
 import { AuthService } from "../src/modules/auth/service.js";
-import { GoogleAccountLinkRequiredError, InvalidCredentialsError } from "../src/modules/auth/errors.js";
+import { InvalidCredentialsError } from "../src/modules/auth/errors.js";
 import { GoogleOAuthFlow, type GoogleCodeProvider, type VerifiedGoogleIdentity } from "../src/modules/auth/googleOAuth.js";
 import { verifyAccessToken } from "../src/modules/auth/tokens.js";
 import type { Logger, LogFields } from "../src/observability/logger.js";
@@ -76,6 +76,15 @@ test("Google OAuth flow exchanges a one-use handoff into a PetCare session witho
   const principal = await verifyAccessToken(tokens.accessToken, SECRET);
   assert.ok(principal.authTime);
   await assert.rejects(h.auth.exchangeGoogleHandoff(handoff), InvalidCredentialsError);
+
+  await h.flow.startLogin();
+  h.provider.identity = verifiedIdentity(h.provider);
+  const returning = await h.flow.callback({ code: "google-return-code", state: h.provider.lastState, stateCookie: h.provider.lastState, requestId: randomUUID() });
+  const returningCode = new URL(returning).searchParams.get("code");
+  assert.ok(returningCode);
+  const returningTokens = await h.auth.exchangeGoogleHandoff(returningCode);
+  assert.equal(returningTokens.user.id, storedUser.id);
+  assert.equal(h.store.users.size, 1);
 });
 
 test("Google OAuth rejects wrong nonce and replayed state without creating an account", async () => {
@@ -93,16 +102,55 @@ test("Google OAuth rejects wrong nonce and replayed state without creating an ac
   assert.equal(h.entries.every((entry) => !JSON.stringify(entry).includes("authorization-code")), true);
 });
 
-test("existing email is never silently linked; an authenticated, reauthenticated session can link explicitly", async () => {
+test("existing password account requires its password, then links and authenticates without duplication", async () => {
   const h = createHarness();
   const existing = await h.auth.register({ email: "person@example.test", password: PASSWORD, name: "Existing PetCare" });
   await h.flow.startLogin();
   h.provider.identity = verifiedIdentity(h.provider);
-  const conflict = await h.flow.callback({ code: "login-code", state: h.provider.lastState, stateCookie: h.provider.lastState, requestId: randomUUID() });
-  assert.equal(new URL(conflict).searchParams.get("error"), "account_link_required");
+  const callback = await h.flow.callback({ code: "login-code", state: h.provider.lastState, stateCookie: h.provider.lastState, requestId: randomUUID() });
+  const callbackUrl = new URL(callback);
+  const linkCode = new URLSearchParams(callbackUrl.hash.slice(1)).get("linkCode");
+  assert.ok(linkCode);
+  assert.equal(callbackUrl.searchParams.has("linkCode"), false, "link code must not be sent in the frontend HTTP request");
   assert.equal(h.store.users.size, 1);
   assert.equal(h.store.googleIdentities.size, 0);
 
+  await assert.rejects(h.auth.completeGoogleAccountLink(linkCode, "wrong password"), InvalidCredentialsError);
+  assert.equal(h.store.googleIdentities.size, 0, "a bad password must not link the Google identity");
+  const linkedTokens = await h.auth.completeGoogleAccountLink(linkCode, PASSWORD);
+  assert.equal(linkedTokens.user.id, existing.user.id);
+  assert.equal(h.store.googleIdentities.get("google-subject-123"), existing.user.id);
+  await assert.rejects(h.auth.completeGoogleAccountLink(linkCode, PASSWORD), InvalidCredentialsError);
+
+  await h.flow.startLogin();
+  h.provider.identity = verifiedIdentity(h.provider);
+  const returning = await h.flow.callback({ code: "google-login-after-link", state: h.provider.lastState, stateCookie: h.provider.lastState, requestId: randomUUID() });
+  const handoff = new URL(returning).searchParams.get("code");
+  assert.ok(handoff);
+  assert.equal((await h.auth.exchangeGoogleHandoff(handoff)).user.id, existing.user.id);
+  assert.equal(h.store.users.size, 1);
+});
+
+test("Google identity is not attached to a passwordless account by email match alone", async () => {
+  const h = createHarness();
+  const first = await h.flow.startLogin();
+  h.provider.identity = verifiedIdentity(h.provider);
+  const firstCallback = await h.flow.callback({ code: "first-google-code", state: first.state, stateCookie: first.state, requestId: randomUUID() });
+  const handoff = new URL(firstCallback).searchParams.get("code");
+  assert.ok(handoff);
+  await h.auth.exchangeGoogleHandoff(handoff);
+
+  const second = await h.flow.startLogin();
+  h.provider.identity = verifiedIdentity(h.provider, { subject: "different-google-subject" });
+  const callback = await h.flow.callback({ code: "second-google-code", state: second.state, stateCookie: second.state, requestId: randomUUID() });
+  assert.equal(new URL(callback).searchParams.get("error"), "account_recovery_required");
+  assert.equal(h.store.users.size, 1);
+  assert.equal(h.store.googleIdentities.size, 1);
+});
+
+test("profile-initiated Google linking remains available and protected by account proof", async () => {
+  const h = createHarness();
+  const existing = await h.auth.register({ email: "person@example.test", password: PASSWORD, name: "Existing PetCare" });
   const principal = await verifyAccessToken(existing.accessToken, SECRET);
   await assert.rejects(h.flow.startLink(principal, "wrong password"), InvalidCredentialsError);
   const continuation = await h.flow.startLink(principal, PASSWORD);
