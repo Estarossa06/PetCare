@@ -204,7 +204,7 @@ export default function SectionPreviewScreen({ kind }: { kind: PreviewKind }) {
               <Text style={styles.heroTitle}>{content.highlight}</Text>
               <Text style={styles.heroDescription}>{content.description}</Text>
               <View style={styles.demoNote}>
-                <Sparkles size={14} color="#A16207" />
+                <Sparkles size={14} color={colors.orange} />
                 <Text style={styles.demoNoteText}>Estamos preparando este espacio para ti.</Text>
               </View>
             </View>
@@ -230,7 +230,7 @@ export default function SectionPreviewScreen({ kind }: { kind: PreviewKind }) {
             {content.points.map((point, index) => (
               <SurfaceCard key={point} style={styles.pointCard}>
                 <View style={[styles.pointIcon, index === 1 && styles.pointIconYellow]}>
-                  {index === 0 ? <PawPrint size={17} color={colors.blue} /> : index === 1 ? <Heart size={17} color="#A16207" /> : <ShieldCheck size={17} color={colors.blue} />}
+                  {index === 0 ? <PawPrint size={17} color={colors.blue} /> : index === 1 ? <Heart size={17} color={colors.orange} /> : <ShieldCheck size={17} color={colors.blue} />}
                 </View>
                 <Text style={styles.pointText}>{point}</Text>
               </SurfaceCard>

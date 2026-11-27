@@ -1,6 +1,8 @@
 import * as Crypto from "expo-crypto";
 import { medicalFileStorage } from "./medicalFileStorage";
 import { medicalRepository } from "./medicalRepository";
+import { sha256Hex } from "../sync/mediaQueue";
+import { synchronizePets } from "../sync/petSync";
 import type {
   MedicalCategory,
   MedicalRecordInput,
@@ -44,14 +46,17 @@ export const medicalService = {
       for (const file of selectedFiles) {
         const attachmentId = Crypto.randomUUID().toLowerCase();
         const storageKey = `medical-files/${attachmentId}`;
-        const item: PreparedMedicalFile = { ...file, id: attachmentId, storageKey };
+        const item: PreparedMedicalFile = { ...file, id: attachmentId, storageKey, sha256: "" };
         prepared.push(item);
         await medicalFileStorage.save(file.uri, storageKey);
         const uri = await medicalFileStorage.getUri(storageKey);
         if (!uri) throw new Error(`No se pudo verificar el archivo ${file.name}.`);
         item.uri = uri;
+        item.sha256 = await sha256Hex(await (await medicalFileStorage.read(storageKey)).arrayBuffer());
       }
-      return await medicalRepository.save(petId, input, id, prepared);
+      const saved = await medicalRepository.save(petId, input, id, prepared);
+      void synchronizePets().catch(() => undefined);
+      return saved;
     } catch (error) {
       const cleanupErrors: string[] = [];
       for (const file of prepared) {

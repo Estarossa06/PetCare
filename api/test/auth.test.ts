@@ -109,6 +109,26 @@ test("registration normalizes email, hashes password, returns a session, and rej
     assert.match(duplicateBody, /REGISTRATION_FAILED/);
     assert.equal(duplicateBody.includes("pet.owner@example.com"), false);
     assert.equal(harness.store.users.size, 1);
+
+    const secondAccount = await postJson(harness.baseUrl, "/auth/register", {
+      email: "another.owner@example.com",
+      password: PASSWORD,
+      name: "Another Owner",
+    });
+    assert.equal(secondAccount.status, 201);
+    const secondUser = (await secondAccount.json()).user;
+    assert.notEqual(secondUser.id, result.user.id);
+    assert.equal(harness.store.users.size, 2);
+    const firstLogin = await postJson(harness.baseUrl, "/auth/login", {
+      email: "pet.owner@example.com",
+      password: PASSWORD,
+    });
+    const secondLogin = await postJson(harness.baseUrl, "/auth/login", {
+      email: "another.owner@example.com",
+      password: PASSWORD,
+    });
+    assert.equal((await firstLogin.json()).user.id, result.user.id);
+    assert.equal((await secondLogin.json()).user.id, secondUser.id);
   } finally {
     await close(harness.server);
   }
@@ -307,6 +327,104 @@ test("logout revokes refresh and access tokens", async () => {
   } finally {
     await close(harness.server);
   }
+});
+
+test("profile updates require the current password and keep email ownership unique", async () => {
+  const harness = await createHarness();
+  try {
+    const first = await postJson(harness.baseUrl, "/auth/register", {
+      email: "profile-one@example.com", password: PASSWORD, name: "First Owner",
+    });
+    const firstTokens = await first.json();
+    const second = await postJson(harness.baseUrl, "/auth/register", {
+      email: "profile-two@example.com", password: PASSWORD, name: "Second Owner",
+    });
+    const secondTokens = await second.json();
+
+    const wrongPassword = await fetch(`${harness.baseUrl}/auth/me`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${firstTokens.accessToken}` },
+      body: JSON.stringify({ name: "Changed", email: "changed@example.com", currentPassword: "wrong password" }),
+    });
+    assert.equal(wrongPassword.status, 401);
+
+    const duplicateEmail = await fetch(`${harness.baseUrl}/auth/me`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${firstTokens.accessToken}` },
+      body: JSON.stringify({ name: "Changed", email: secondTokens.user.email, currentPassword: PASSWORD }),
+    });
+    assert.equal(duplicateEmail.status, 409);
+
+    const updated = await fetch(`${harness.baseUrl}/auth/me`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${firstTokens.accessToken}` },
+      body: JSON.stringify({ name: "Updated Owner", email: "updated@example.com", currentPassword: PASSWORD }),
+    });
+    assert.equal(updated.status, 200);
+    assert.deepEqual((await updated.json()).user, {
+      id: firstTokens.user.id, name: "Updated Owner", email: "updated@example.com",
+    });
+  } finally { await close(harness.server); }
+});
+
+test("password change invalidates other sessions while preserving the current session", async () => {
+  const harness = await createHarness();
+  try {
+    const registered = await postJson(harness.baseUrl, "/auth/register", {
+      email: "password-change@example.com", password: PASSWORD, name: "Password Owner",
+    });
+    const primary = await registered.json();
+    const secondLogin = await postJson(harness.baseUrl, "/auth/login", {
+      email: "password-change@example.com", password: PASSWORD,
+    });
+    const secondSession = await secondLogin.json();
+    const changed = await postJson(harness.baseUrl, "/auth/password", {
+      currentPassword: PASSWORD, newPassword: "new secure password 2026",
+    }, primary.accessToken);
+    assert.equal(changed.status, 204);
+
+    const primaryStillActive = await fetch(`${harness.baseUrl}/auth/me`, {
+      headers: { Authorization: `Bearer ${primary.accessToken}` },
+    });
+    assert.equal(primaryStillActive.status, 200);
+    const secondRevoked = await fetch(`${harness.baseUrl}/auth/me`, {
+      headers: { Authorization: `Bearer ${secondSession.accessToken}` },
+    });
+    assert.equal(secondRevoked.status, 401);
+    assert.equal((await postJson(harness.baseUrl, "/auth/login", {
+      email: "password-change@example.com", password: PASSWORD,
+    })).status, 401);
+    assert.equal((await postJson(harness.baseUrl, "/auth/login", {
+      email: "password-change@example.com", password: "new secure password 2026",
+    })).status, 200);
+  } finally { await close(harness.server); }
+});
+
+test("deactivation and permanent-deletion requests require proof and revoke account access", async () => {
+  const harness = await createHarness();
+  try {
+    const registered = await postJson(harness.baseUrl, "/auth/register", {
+      email: "deactivate@example.com", password: PASSWORD, name: "Account Owner",
+    });
+    const tokens = await registered.json();
+    const denied = await postJson(harness.baseUrl, "/auth/deactivate", { currentPassword: "wrong password" }, tokens.accessToken);
+    assert.equal(denied.status, 401);
+    const deactivated = await postJson(harness.baseUrl, "/auth/deactivate", { currentPassword: PASSWORD }, tokens.accessToken);
+    assert.equal(deactivated.status, 204);
+    assert.equal((await fetch(`${harness.baseUrl}/auth/me`, { headers: { Authorization: `Bearer ${tokens.accessToken}` } })).status, 401);
+    assert.equal((await postJson(harness.baseUrl, "/auth/login", { email: tokens.user.email, password: PASSWORD })).status, 401);
+
+    const deletionAccount = await postJson(harness.baseUrl, "/auth/register", {
+      email: "delete-request@example.com", password: PASSWORD, name: "Deletion Owner",
+    });
+    const deletionTokens = await deletionAccount.json();
+    const requested = await postJson(harness.baseUrl, "/auth/deletion-request", { currentPassword: PASSWORD }, deletionTokens.accessToken);
+    assert.equal(requested.status, 202);
+    assert.deepEqual(await requested.json(), { status: "pending_permanent_deletion" });
+    assert.equal(harness.store.deletionRequests.has(deletionTokens.user.id), true);
+    assert.equal(await harness.store.findUserById(deletionTokens.user.id), undefined);
+    assert.equal((await postJson(harness.baseUrl, "/auth/refresh", { refreshToken: deletionTokens.refreshToken })).status, 401);
+  } finally { await close(harness.server); }
 });
 
 test("owner-scoped pet lookup prevents cross-owner access and ignores client owner IDs", async () => {

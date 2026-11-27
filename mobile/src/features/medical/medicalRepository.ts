@@ -1,7 +1,9 @@
 import * as Crypto from "expo-crypto";
+import { enqueueMediaUpload } from "../sync/mediaQueue";
 import { getPetCareDatabase } from "../../db/database";
 import { getLocalAccountId, withLocalWriteTransaction } from "../../db/localAccount";
 import { refreshTarget } from "../calendar/calendarService";
+import { advanceDomainQueueRevision } from "../sync/domainQueueState";
 import type {
   MedicalAttachment,
   MedicalCategory,
@@ -69,7 +71,7 @@ async function addDependency(
 async function queueOperation(
   tx: Awaited<ReturnType<typeof getPetCareDatabase>>,
   ownerId: string,
-  entityType: "health_record" | "health_attachment",
+  entityType: "health_record",
   entityId: string,
   action: "create" | "update" | "delete",
   payload: string,
@@ -77,20 +79,22 @@ async function queueOperation(
   changedFields: string[],
   dependsOn: string[],
 ): Promise<string> {
+  const syncState = await advanceDomainQueueRevision(tx, ownerId, entityType, entityId, action);
   const operationId = Crypto.randomUUID().toLowerCase();
   const timestamp = new Date().toISOString();
   await tx.runAsync(
     `INSERT INTO sync_queue
       (operation_id, account_id, entity_type, entity_id, action, payload,
-       base_version, changed_fields, status, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)`,
+       base_version, local_revision, changed_fields, status, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)`,
     operationId,
     ownerId,
     entityType,
     entityId,
     action,
     payload,
-    baseVersion,
+    syncState.baseVersion,
+    syncState.localRevision,
     JSON.stringify(changedFields),
     timestamp,
     timestamp,
@@ -279,7 +283,7 @@ export const medicalRepository = {
       }
 
       const previousOperation = await latestOperation(tx, ownerId, "health_record", record.id);
-      const operationId = await queueOperation(
+      await queueOperation(
         tx,
         ownerId,
         "health_record",
@@ -307,23 +311,14 @@ export const medicalRepository = {
           timestamp,
           timestamp,
         );
+        await tx.runAsync("UPDATE health_attachments SET sha256 = ?, upload_status = 'pending' WHERE owner_id = ? AND id = ?", file.sha256, ownerId, file.id);
+        await enqueueMediaUpload(tx, { accountId: ownerId, assetId: file.id, resourceType: "health_attachment", resourceId: record.id, petId, healthRecordId: record.id, localStorageKey: file.storageKey, filename: file.name, mimeType: file.mimeType, size: file.size, sha256: file.sha256 });
         const attachment = await tx.getFirstAsync<MedicalAttachment>(
           "SELECT * FROM health_attachments WHERE owner_id = ? AND id = ?",
           ownerId,
           file.id,
         );
         if (!attachment) throw new Error("No se pudo registrar el archivo adjunto.");
-        await queueOperation(
-          tx,
-          ownerId,
-          "health_attachment",
-          file.id,
-          "create",
-          JSON.stringify(attachment),
-          0,
-          ["health_record_id", "storage_key", "original_filename", "mime_type", "size_bytes"],
-          [operationId],
-        );
       }
       return record;
     });
@@ -345,7 +340,7 @@ export const medicalRepository = {
       );
       const deleted = { ...record, deleted_at: timestamp, updated_at: timestamp };
       const previousOperation = await latestOperation(tx, ownerId, "health_record", id);
-      const deleteOperation = await queueOperation(
+      await queueOperation(
         tx,
         ownerId,
         "health_record",
@@ -365,26 +360,14 @@ export const medicalRepository = {
       );
       for (const attachment of attachments) {
         await tx.runAsync(
-          "UPDATE health_attachments SET deleted_at = ?, updated_at = ? WHERE owner_id = ? AND id = ?",
+          "UPDATE health_attachments SET deleted_at = ?, updated_at = ?, upload_status='deleted' WHERE owner_id = ? AND id = ?",
           timestamp,
           timestamp,
           ownerId,
           attachment.id,
-        );
-        const previousAttachmentOperation = await latestOperation(tx, ownerId, "health_attachment", attachment.id);
-        const deletedAttachment = { ...attachment, deleted_at: timestamp, updated_at: timestamp };
-        await queueOperation(
-          tx,
-          ownerId,
-          "health_attachment",
-          attachment.id,
-          "delete",
-          JSON.stringify(deletedAttachment),
-          deletedAttachment.version,
-          ["deleted_at"],
-          [deleteOperation, ...(previousAttachmentOperation ? [previousAttachmentOperation] : [])],
         );
       }
+      await tx.runAsync("DELETE FROM media_upload_queue WHERE account_id=? AND resource_type='health_attachment' AND resource_id=?", ownerId, id);
       return deleted;
     });
     await refreshTarget({ kind: "health_record", id });

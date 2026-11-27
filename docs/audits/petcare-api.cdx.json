@@ -1,0 +1,5671 @@
+{
+  "$schema": "http://cyclonedx.org/schema/bom-1.5.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "version": 1,
+  "metadata": {
+    "component": {
+      "type": "application",
+      "name": "petcare-api",
+      "version": "unversioned"
+    }
+  },
+  "components": [
+    {
+      "type": "library",
+      "name": "@emnapi/runtime",
+      "version": "1.11.3",
+      "purl": "pkg:npm/@emnapi/runtime@1.11.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "5f3e13a72922ed7caba5b50ad6347502174075a5f2861638959de778ba1d9a1a6e59fcb63c040de41e3ab00894e2588e5c62e41f2a67fea53e8ef7d64826182c"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/toyobayashi/emnapi"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@emnapi/runtime"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/toyobayashi/emnapi/blob/main/LICENSE"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/aix-ppc64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/@esbuild/aix-ppc64@0.28.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "5c4c5c3be76f2cabd5b4d4e26d24c17a3d4d0806da1a15a7f56c3564fc7cd2ab1a8613c57bff238163f421c84d7b41771f0914ee7f1e8e11fc6e3a27aa1b7c99"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/evanw/esbuild"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@esbuild/aix-ppc64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/evanw/esbuild/blob/main/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/android-arm",
+      "version": "0.28.2",
+      "purl": "pkg:npm/@esbuild/android-arm@0.28.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "9175e888f55519072721818e79aa2fc0e511a678830694aae00d37aa443e04c42ab461ba1d86a9df19def42d4ed72a384d1deac65097e48aaa997e9f168d8baa"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/evanw/esbuild"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@esbuild/android-arm"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/evanw/esbuild/blob/main/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/android-arm64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/@esbuild/android-arm64@0.28.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "e587ca79e23ca967c16485febb6c590b76656f73acfe02d2dac6c428cf88e1939cb169874b658bcac09c4190c0151b250d45393a2ab8e207fa3d8375bc6c06e4"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/evanw/esbuild"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@esbuild/android-arm64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/evanw/esbuild/blob/main/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/android-x64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/@esbuild/android-x64@0.28.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "3b7f3b8ad7bb4b353209ccb72505f83f86cbb4403b6cb2e4c7e7acbdee491e7c987cd4f1715a57668f6385d07495328de38833b442d3754ee74bc36bd7a16cd5"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/evanw/esbuild"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@esbuild/android-x64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/evanw/esbuild/blob/main/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/darwin-arm64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/@esbuild/darwin-arm64@0.28.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "9f82aa90e42badac4725c82333546fc1b8a07d028828956933bc69f8ab318b2512ad17485e7b7bdd586b3c0c747d5e388607e62152a3c4c37d275b798f249593"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/evanw/esbuild"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@esbuild/darwin-arm64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/evanw/esbuild/blob/main/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/darwin-x64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/@esbuild/darwin-x64@0.28.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "baaeacb885983f7eeacc675d04a3f0e501103e2e8788b1ac3bb5269297f2698350dc3fab37ac3a59fc07fa7baa7065d6bdac06c31384ae83b86069c587de5acf"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/evanw/esbuild"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@esbuild/darwin-x64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/evanw/esbuild/blob/main/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/freebsd-arm64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/@esbuild/freebsd-arm64@0.28.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "9fe234053491228cbe77a44f2a7115c2a979530049a25cadbd8e2600e204268aca96a80f208f22c7ab25555adf6794e78fb825219be5a3295b07f1093cc5845f"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/evanw/esbuild"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@esbuild/freebsd-arm64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/evanw/esbuild/blob/main/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/freebsd-x64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/@esbuild/freebsd-x64@0.28.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "efc5c94c992f3ecd24cf6c3ad77d353c98d797883bab726a898319fccff2548ef710706b0914e0921bbda2a1bbbcfaaaf9aff269d116f1a0fe6a02a5939c6b9a"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/evanw/esbuild"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@esbuild/freebsd-x64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/evanw/esbuild/blob/main/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/linux-arm",
+      "version": "0.28.2",
+      "purl": "pkg:npm/@esbuild/linux-arm@0.28.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "5e50e7bb6ab9ca8a9e9acfb16b2eb0480720f430c3ecaf512ca64404e3199b7724369241bce5f6d2d49f6f2f0a7ebae120d0f2bfd57661564a63f4a9a06248f3"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/evanw/esbuild"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@esbuild/linux-arm"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/evanw/esbuild/blob/main/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/linux-arm64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/@esbuild/linux-arm64@0.28.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "a56e000b43f78adf1cedda3d315338a79d45cc7cdd33f4d9adeaeeae045c1c9d964dad55435088ab5f319dc7e9049c38a23922659aca5b6c8805604ff768fa52"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/evanw/esbuild"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@esbuild/linux-arm64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/evanw/esbuild/blob/main/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/linux-ia32",
+      "version": "0.28.2",
+      "purl": "pkg:npm/@esbuild/linux-ia32@0.28.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "0986e78fbf07b08780f8386050a80509fbcdb131c584c32b8a752b319a435c95ca37c4f75d589367ffb0b47795c44598f1ec12cd314dfa74664b03b6b5968b51"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/evanw/esbuild"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@esbuild/linux-ia32"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/evanw/esbuild/blob/main/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/linux-loong64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/@esbuild/linux-loong64@0.28.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "6eec2477c9eca61e11f9a8d1bf0d2a3391e36bf4d7428c37a6dcd63b611b1bf72a70890796846b76506d425b21c98193345bdf91f279b693cb5646380edb0f7d"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/evanw/esbuild"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@esbuild/linux-loong64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/evanw/esbuild/blob/main/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/linux-mips64el",
+      "version": "0.28.2",
+      "purl": "pkg:npm/@esbuild/linux-mips64el@0.28.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "655ca46c3ca4ef9d7d57088d6fd2dc8fd9bc5cceafe55f6e28fbeb10c92411e7557b07fed22b6485a869e070e98044578702d1a56172a6c19b1bf27cb3442324"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/evanw/esbuild"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@esbuild/linux-mips64el"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/evanw/esbuild/blob/main/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/linux-ppc64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/@esbuild/linux-ppc64@0.28.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "0805e5f83b5df5452e25df2928a77087a30b9b7314322a8c3e6859ded4d25cfa9fc90def0e5e91e6165d67f918a232b8a1f5ed75f4afd6d16af17cd6c7785e35"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/evanw/esbuild"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@esbuild/linux-ppc64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/evanw/esbuild/blob/main/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/linux-riscv64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/@esbuild/linux-riscv64@0.28.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "19e5c27a3e0842d53507e4250d5f16fd146f6f32373bf4adb2cfbf6c25efe25665b3958646dbb66bedc9900de2e2a21494c5e970779b5a917c024261013a30b8"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/evanw/esbuild"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@esbuild/linux-riscv64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/evanw/esbuild/blob/main/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/linux-s390x",
+      "version": "0.28.2",
+      "purl": "pkg:npm/@esbuild/linux-s390x@0.28.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "dc7d707936193f1b7f58e841caccd06726d2f70e652b3527d450ccb2010285b1d64301d841045f071802719bcf8631df2b22632227afbcc98451ac09add63d0e"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/evanw/esbuild"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@esbuild/linux-s390x"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/evanw/esbuild/blob/main/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/linux-x64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/@esbuild/linux-x64@0.28.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "e314d9af5154992a105b85c85a68addedcd0ad44d933e3773f45d5f3144e298179d177c8ef178ef74fb56d9bcdc3122e7d0f610d0551247e588603d517c03f1d"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/evanw/esbuild"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@esbuild/linux-x64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/evanw/esbuild/blob/main/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/netbsd-arm64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/@esbuild/netbsd-arm64@0.28.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "b120134633de0c1837a5d807a107e8601a1bd752a4d4519af65ba2e51207642a029096bd40a96f977fef2b3daeb02998623b3bca6251ff6367b2a7be1e3b799f"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/evanw/esbuild"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@esbuild/netbsd-arm64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/evanw/esbuild/blob/main/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/netbsd-x64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/@esbuild/netbsd-x64@0.28.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "96a9f3095fa633480800368a8a188283a89f81f5362f7879137deb35004dd58e0c6951a7cebcb39afbdfed41f1a6ba50744f21a6a2e8949f5197e4a42110e9cb"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/evanw/esbuild"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@esbuild/netbsd-x64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/evanw/esbuild/blob/main/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/openbsd-arm64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/@esbuild/openbsd-arm64@0.28.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "00bdaa2482c7ee5363ac3982403bddc4c7c0508bfc28c3593afaf0010f22f3ffe7b4bf457e584ec8c27c39948c05bf3f0165dedffe6fe52db4cb7cc2a1958aa1"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/evanw/esbuild"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@esbuild/openbsd-arm64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/evanw/esbuild/blob/main/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/openbsd-x64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/@esbuild/openbsd-x64@0.28.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "42d8ae3f2b5c851c82e2bc142a17b125d40abc3b99ea15a5a22de282a3d03542424b5feff4488edd44ce5d1e80dc5a0ca387e700a6d625da9a23084ece1f2a13"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/evanw/esbuild"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@esbuild/openbsd-x64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/evanw/esbuild/blob/main/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/openharmony-arm64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/@esbuild/openharmony-arm64@0.28.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "5a48580e6a538cbbc6952700d6bc234549a197893ca174777086eda969842e053f7457871e51259710ef75670d255f6b6f309ec41e6fcfc82d35ec162e0093ed"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/evanw/esbuild"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@esbuild/openharmony-arm64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/evanw/esbuild/blob/main/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/sunos-x64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/@esbuild/sunos-x64@0.28.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "18f3129133ad327bf653617c8317b8228eaa995b3e60aca9f37d84b6aab1af48459e0997437af3c32b5e966dc6227ed3e15be245495fdec3a004e89376f69fee"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/evanw/esbuild"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@esbuild/sunos-x64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/evanw/esbuild/blob/main/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/win32-arm64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/@esbuild/win32-arm64@0.28.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "3c886112413db8f06579106b404269527ecc06789b6736c6cd858f998df1f98a1583ff79cdb8c1e02c4f3ce43c979b5860ce2631a0ad845f3fd4321f05043259"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/evanw/esbuild"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@esbuild/win32-arm64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/evanw/esbuild/blob/main/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/win32-ia32",
+      "version": "0.28.2",
+      "purl": "pkg:npm/@esbuild/win32-ia32@0.28.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "62625b7d396f53b49d9fd041fb83d1112e2807aa71812dfb30038d8fe841aff7295d2d5a04f297c4d9c36eef900963e3d28f5d832c5eabbf60e9ce4ff0a7ae60"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/evanw/esbuild"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@esbuild/win32-ia32"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/evanw/esbuild/blob/main/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/win32-x64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/@esbuild/win32-x64@0.28.2",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "e5e6e9c6bde758cceb2ffae7508ef9e4992e79ed1b1cbfc6ab459317d96f729bfbdf0029e5ebbc31f0548162bd6e15af6638fbc97f1eb5fffcb48f0d7b2ebde6"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@esbuild/win32-x64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@img/colour",
+      "version": "1.1.0",
+      "purl": "pkg:npm/@img/colour@1.1.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "4ddefaabb8f9ee8fed2d57604bbe3a7180117d2cb193c8847d1c5ec0bf61e0e3336216d6e1301ca69974993e1ecaa5dd761e8bfe3c2833be66a3b8b16bfa4279"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@img/colour"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@img/sharp-darwin-arm64",
+      "version": "0.35.5",
+      "purl": "pkg:npm/@img/sharp-darwin-arm64@0.35.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "411525150d16c6f756caaa86fd6b48de2ba97c3e6b0739821d749d3ec63dd6c02d56d4e8ed0e1c6facce71c67782a12a92bd1fd40b357a12ea984a43b117fe96"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/lovell/sharp"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@img/sharp-darwin-arm64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/lovell/sharp/tree/main/npm"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@img/sharp-darwin-x64",
+      "version": "0.35.5",
+      "purl": "pkg:npm/@img/sharp-darwin-x64@0.35.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "f81476e794610e5a72814a4e73f25db759d3e834375c6fc4468e706dc74e7f9437db474ab4f08a3cb4752c9b3d5465d168c6bc975b946b4b6408d397880c5953"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/lovell/sharp"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@img/sharp-darwin-x64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/lovell/sharp/tree/main/npm"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@img/sharp-freebsd-wasm32",
+      "version": "0.35.5",
+      "purl": "pkg:npm/@img/sharp-freebsd-wasm32@0.35.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "63fcfdd67119e2e2015f95f79df4e8be353d94734a1586cbda5a4708b54d99740ad3754866f5c106dd0ac5b3c6a7649d19217eda6414e1efa141a58eb7cea203"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/lovell/sharp"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@img/sharp-freebsd-wasm32"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/lovell/sharp/tree/main/npm"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@img/sharp-libvips-darwin-arm64",
+      "version": "1.3.4",
+      "purl": "pkg:npm/@img/sharp-libvips-darwin-arm64@1.3.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "LGPL-3.0-or-later"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "e51f3d9c162245d5254962713e13be195b5a5f35d2c4a9d1bbfc6a327dca4c0dcbf4407d3b2fcff8d9f67f6be584fb94772fd9bac6f60daadbc93a4609f103bb"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/lovell/sharp-libvips"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@img/sharp-libvips-darwin-arm64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/lovell/sharp-libvips/blob/main/LICENSE"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@img/sharp-libvips-darwin-x64",
+      "version": "1.3.4",
+      "purl": "pkg:npm/@img/sharp-libvips-darwin-x64@1.3.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "LGPL-3.0-or-later"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "891d8e287f34ca2d14f9d529972877ff176916fa6ce98902c2c5de9c8271ab1475bfda3ec6d29319b4bd1fb729b3ed95c6373c0758fdea9ef93664c68c886da5"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/lovell/sharp-libvips"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@img/sharp-libvips-darwin-x64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/lovell/sharp-libvips/blob/main/LICENSE"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@img/sharp-libvips-linux-arm",
+      "version": "1.3.4",
+      "purl": "pkg:npm/@img/sharp-libvips-linux-arm@1.3.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "LGPL-3.0-or-later"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "2e646d4ec387baf336fb094ed836f7eddc7932266107416f4ae9dc8b0e3c62374e919cfd2808916e6f2e8de30e03520daa67a2e4d6a91716042b50f565289d9b"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/lovell/sharp-libvips"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@img/sharp-libvips-linux-arm"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/lovell/sharp-libvips/blob/main/LICENSE"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@img/sharp-libvips-linux-arm64",
+      "version": "1.3.4",
+      "purl": "pkg:npm/@img/sharp-libvips-linux-arm64@1.3.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "LGPL-3.0-or-later"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "6377605ffea513642141bf86c72d166717e0f4c126fc90636a66694b622494fef1210a0a378873026eca70c546b5a543b779de13d38a042eef01fa2703f2ebd4"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/lovell/sharp-libvips"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@img/sharp-libvips-linux-arm64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/lovell/sharp-libvips/blob/main/LICENSE"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@img/sharp-libvips-linux-ppc64",
+      "version": "1.3.4",
+      "purl": "pkg:npm/@img/sharp-libvips-linux-ppc64@1.3.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "LGPL-3.0-or-later"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "2dee9ba01f136a2d0d8acfa02312292b1ebc50355522a751f138a7e587f5cf62c92502c326f08346a46efa30b6a82a03f9e2289a89e63b0078b26051c5f56961"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/lovell/sharp-libvips"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@img/sharp-libvips-linux-ppc64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/lovell/sharp-libvips/blob/main/LICENSE"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@img/sharp-libvips-linux-riscv64",
+      "version": "1.3.4",
+      "purl": "pkg:npm/@img/sharp-libvips-linux-riscv64@1.3.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "LGPL-3.0-or-later"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "6879242041cf45d4047a024ddb430b986b71603f51db042bdc2c2975d9eee7e60a32de94cdac7b4bd879829653a3cc32ac6b994a57d0eb739ebcbe664f2382ed"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/lovell/sharp-libvips"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@img/sharp-libvips-linux-riscv64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/lovell/sharp-libvips/blob/main/LICENSE"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@img/sharp-libvips-linux-s390x",
+      "version": "1.3.4",
+      "purl": "pkg:npm/@img/sharp-libvips-linux-s390x@1.3.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "LGPL-3.0-or-later"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "adafe607a32290448350eed883e322f796c505bf46b0e6d446e8673afdceaa49e319ef6c66b1bcb427bdab4c52206aed2e0be0c3480a9c559c2b86e54a040eb9"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/lovell/sharp-libvips"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@img/sharp-libvips-linux-s390x"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/lovell/sharp-libvips/blob/main/LICENSE"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@img/sharp-libvips-linux-x64",
+      "version": "1.3.4",
+      "purl": "pkg:npm/@img/sharp-libvips-linux-x64@1.3.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "LGPL-3.0-or-later"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "189fff4925db9f04837acd36ba60779c324b15c433c3c6b5f15f1fca1aabead579d79b4e10c7489a38f18f502869f311cf9e85dcf1e07ed9e3d5010a494d7393"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/lovell/sharp-libvips"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@img/sharp-libvips-linux-x64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/lovell/sharp-libvips/blob/main/LICENSE"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@img/sharp-libvips-linuxmusl-arm64",
+      "version": "1.3.4",
+      "purl": "pkg:npm/@img/sharp-libvips-linuxmusl-arm64@1.3.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "LGPL-3.0-or-later"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "86fba5170b6351c6a0b22b3a041c47c061705a83598e062650b195ad97327cd6e303c84a20b6d1c46835e7fef0e470f25c75d4a2cfe3e9b6805aa9c2c90d8358"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/lovell/sharp-libvips"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@img/sharp-libvips-linuxmusl-arm64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/lovell/sharp-libvips/blob/main/LICENSE"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@img/sharp-libvips-linuxmusl-x64",
+      "version": "1.3.4",
+      "purl": "pkg:npm/@img/sharp-libvips-linuxmusl-x64@1.3.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "LGPL-3.0-or-later"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "eb35ca784fe9dfd2350260377091b7e5ec8118da8d75d2e75178e1c019ec1a314f5aa7f954a903044a9a1243c3a1312d931c22dafbfc4dcaf6983c8fe12a3b16"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/lovell/sharp-libvips"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@img/sharp-libvips-linuxmusl-x64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/lovell/sharp-libvips/blob/main/LICENSE"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@img/sharp-linux-arm",
+      "version": "0.35.5",
+      "purl": "pkg:npm/@img/sharp-linux-arm@0.35.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "2c46972b659d5d52b9ca4730d1bb96c8f32c98b2cbdafa472c3eb2acd496f891842f70593c0e2da4a37a89a31ce00c534c0a1a5ffb14d6b38be7595c233e3c65"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/lovell/sharp"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@img/sharp-linux-arm"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/lovell/sharp/tree/main/npm"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@img/sharp-linux-arm64",
+      "version": "0.35.5",
+      "purl": "pkg:npm/@img/sharp-linux-arm64@0.35.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "2d8571e494ec38cd820739b1ade87e9e5eb8ff71fa5dbd3d8922e49ea1f8ef3d93d83145c437852cfe72e1d2707ba1fbb864251cfc8412d22aca8dc362c47075"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/lovell/sharp"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@img/sharp-linux-arm64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/lovell/sharp/tree/main/npm"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@img/sharp-linux-ppc64",
+      "version": "0.35.5",
+      "purl": "pkg:npm/@img/sharp-linux-ppc64@0.35.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "415c4002af1ebd5448f626b6bea830ae65ae727e437eff89756ce3ef9a43f289872cf48fedff29db43bc8f1ce309cb8211010eb583995265f5864899d2475ebc"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/lovell/sharp"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@img/sharp-linux-ppc64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/lovell/sharp/tree/main/npm"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@img/sharp-linux-riscv64",
+      "version": "0.35.5",
+      "purl": "pkg:npm/@img/sharp-linux-riscv64@0.35.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "2ed76b79782e69abca3833c87f327891f7f1ed436dd689b0b4ad2b721e0405b6d24d73e7c5699849ac9774b270d1f27343dee41edd602ffca1e2dbd4fa70b245"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/lovell/sharp"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@img/sharp-linux-riscv64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/lovell/sharp/tree/main/npm"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@img/sharp-linux-s390x",
+      "version": "0.35.5",
+      "purl": "pkg:npm/@img/sharp-linux-s390x@0.35.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "5196ac4ce162633a2d4ec18e0aee3605f5333fa4eee83a3ff78ee2466d51b0b2af965971c06727e11376ecb89b19671e8b1e18f8f9b0de3b274dc0902205a3a8"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/lovell/sharp"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@img/sharp-linux-s390x"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/lovell/sharp/tree/main/npm"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@img/sharp-linux-x64",
+      "version": "0.35.5",
+      "purl": "pkg:npm/@img/sharp-linux-x64@0.35.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "4b116d2d378922784003d43cdfa92ec76bd935e381404c7ae7caaf6dba1949caf4c08011ca6dc8706996ecaa550f9b1b560d0e8f2fae74541d6b2608672a0da2"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/lovell/sharp"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@img/sharp-linux-x64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/lovell/sharp/tree/main/npm"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@img/sharp-linuxmusl-arm64",
+      "version": "0.35.5",
+      "purl": "pkg:npm/@img/sharp-linuxmusl-arm64@0.35.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "f476cc725988d7394d90546cdf3f7f781b438df0f4b0696b5f5cfa6f5ab09a2158e449432e1e010b42cf05d569ef3d435c588a9487339dff9996cb99ccbc50aa"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/lovell/sharp"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@img/sharp-linuxmusl-arm64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/lovell/sharp/tree/main/npm"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@img/sharp-linuxmusl-x64",
+      "version": "0.35.5",
+      "purl": "pkg:npm/@img/sharp-linuxmusl-x64@0.35.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "e0a3a986a074df91eb55da8b65f0a0333cc446b4249333b04619783809113b560295d6da163c925cc68ae77e0ca3457e2e776794993eb1b5322de53450bc83d4"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/lovell/sharp"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@img/sharp-linuxmusl-x64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/lovell/sharp/tree/main/npm"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@img/sharp-wasm32",
+      "version": "0.35.5",
+      "purl": "pkg:npm/@img/sharp-wasm32@0.35.5",
+      "licenses": [
+        {
+          "license": {
+            "expression": "Apache-2.0 AND LGPL-3.0-or-later AND MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "3edb206b5b2ee2d431f8b2c5d44092f54ea7cf9926ad72a8e9755bb51e3c29edd9471c6069606eec80ed11ed6aba8f218aea709ba585ab15655da49fec820d19"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/lovell/sharp"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@img/sharp-wasm32"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/lovell/sharp/blob/main/npm/wasm32/package.json"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@img/sharp-webcontainers-wasm32",
+      "version": "0.35.5",
+      "purl": "pkg:npm/@img/sharp-webcontainers-wasm32@0.35.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "85f845fc59a84324d4900d1b20a14eb70e77e8141278131ee8117a4325a5acfc53ef9e3e4c52da67bb0a2937efbccd322602a06984f09c508867f1ae0f0e5250"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/lovell/sharp"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@img/sharp-webcontainers-wasm32"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/lovell/sharp/tree/main/npm"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@img/sharp-win32-arm64",
+      "version": "0.35.5",
+      "purl": "pkg:npm/@img/sharp-win32-arm64@0.35.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "5f8b7b83eed90390ca6e50811171a352aa9e9a3e2f73320d1bfe6f885c002fc878377a987b28f0742bd12c78b811d39423ed99ed4165a7554cfa9fc0b84b66e9"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/lovell/sharp"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@img/sharp-win32-arm64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/lovell/sharp/tree/main/npm"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@img/sharp-win32-ia32",
+      "version": "0.35.5",
+      "purl": "pkg:npm/@img/sharp-win32-ia32@0.35.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "e599bcd8ba01738de78703726d9946ed8d4a3bffd986c9f7d3a7d0976f593ae4ad1cb193a370562fcdeaddcce75f4a68c5200cb982f53a7fc11c1c6405e2abe8"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/lovell/sharp"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@img/sharp-win32-ia32"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/lovell/sharp/tree/main/npm"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@img/sharp-win32-x64",
+      "version": "0.35.5",
+      "purl": "pkg:npm/@img/sharp-win32-x64@0.35.5",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0 AND LGPL-3.0-or-later"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "c7be9e1f4bc488795c310bbc63c21e9e7b5a002b5d7694fa5b4c265ed5ab9ca727288ecc1390dd82a8400fa48458e125d6fdb30ef9190e1140f4a9d4470a5faa"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@img/sharp-win32-x64"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@types/body-parser",
+      "version": "1.19.6",
+      "purl": "pkg:npm/@types/body-parser@1.19.6",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "1cb15e098833f3dba4db6379420dddbc6becbf8e81f062ef28aa35cca1b83726c0f14d838843b7c3d96a1a0dbdb7fb5f2d126927a890c67570e0e9c1ecca0cf6"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@types/body-parser"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@types/connect",
+      "version": "3.4.38",
+      "purl": "pkg:npm/@types/connect@3.4.38",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "2bab9139fd4b0fcf2e0d0a890a4b40e32ccbd586002ba3607ec234bff9938323ca5ac5f50a72745cf48385589e8ebbb519c4642d66fc465cc560946a1946daba"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@types/connect"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@types/express",
+      "version": "5.0.6",
+      "purl": "pkg:npm/@types/express@5.0.6",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "b0a615b95ed2bfd7db3c8b7fe38da4a02efe208c0ae6894fd4a59e0fcf1efe2760a09a839b7255fd85223f092828af76ca57dfd8c1b14b3d424a3b177a5c7460"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@types/express"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@types/express-serve-static-core",
+      "version": "5.1.3",
+      "purl": "pkg:npm/@types/express-serve-static-core@5.1.3",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "74f7d6f0d162385e3038773bf8dfd04b1958f5c7d2b1e9dec066c0cfc0bc53f3142cf77f619dbb2ef254225cda5e27bb7ba3af7bd62e9c91a00bdb5b1c3d9c2b"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@types/express-serve-static-core"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@types/http-errors",
+      "version": "2.0.5",
+      "purl": "pkg:npm/@types/http-errors@2.0.5",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "afc4daca4f072675f4173b5b64dee856a19c716830f7c4ffd27789a613bdd4a9263b3ba0d4a9287d95110f851a0f9b87f00a9c14b7dd3c4ae7068774bbbd7faa"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@types/http-errors"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@types/node",
+      "version": "22.20.5",
+      "purl": "pkg:npm/@types/node@22.20.5",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "536f8336bfb04a3a6c4d2ff0646607abb19cc1fb9298a88abe83ef2b6db3c13951854f75c8e9e2378a914792a1223be27fbcacc3f773fe12a67c31f4462b3868"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@types/node"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@types/pg",
+      "version": "8.23.1",
+      "purl": "pkg:npm/@types/pg@8.23.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "7ca547a6290f760e062a4b3726e2c486fc12cafc33176de19da6cfcba0c3f258d56c2efee89e5d43376fe1aad5ea3aaae7b7639cc82cd47281c57e0ff1a048dc"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@types/pg"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@types/qs",
+      "version": "6.15.1",
+      "purl": "pkg:npm/@types/qs@6.15.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "1991d405947d85c912521af19a9d671ba37076933d7c2ba7270c9384b5b55f70321e077d2251dbe9500da5042a0ebda8fea429e8c719df2fc8036ad5ccacd26f"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@types/qs"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@types/range-parser",
+      "version": "1.2.7",
+      "purl": "pkg:npm/@types/range-parser@1.2.7",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "84aa2b9896e426acd01a1ce26b1e4f22d0d44cc00cf6e1365d7426337eddc9de2154cfb969597ba15c4c554895427da809014dfcb28265dbd2334a4546a6d299"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@types/range-parser"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@types/send",
+      "version": "1.2.1",
+      "purl": "pkg:npm/@types/send@1.2.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "6abb028a40ef954f7dce5d60ebd4dc001de6cd93e9c60c345109da1de0b53706f4d79c69f1b92766fe6b21fae2f714ce70cb9a560bda6df21103b3d2655b9921"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@types/send"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@types/serve-static",
+      "version": "2.2.0",
+      "purl": "pkg:npm/@types/serve-static@2.2.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "f266a6e07d4d1cbb6eee79ad6a517b7b2047d784323804a67311e149f128472af49cffd87687ac12d53eb9246f31ef7a4d6fc73d3b64a0aa902e5e7737b51731"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/@types/serve-static"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "accepts",
+      "version": "2.0.0",
+      "purl": "pkg:npm/accepts@2.0.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "e5cbe0e82b4ac1f81d995a98d562225ca7374356e446a18b8bed96ffa6a8fba63b82efd10b046e021184ce1e41e0a96ccd2b932e0658baa16aa396c89a334a9e"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/accepts"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "body-parser",
+      "version": "2.4.0",
+      "purl": "pkg:npm/body-parser@2.4.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "21f93529c2ebc5a1add6871c41a81034534d3aa46dd4b16e7a11271c7cc1f19e9c460231454d5305a888b14882740fa0cb93cbed8d485f7d4334a9119b1b578d"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/body-parser"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "bytes",
+      "version": "3.1.2",
+      "purl": "pkg:npm/bytes@3.1.2",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "fcd7fb4f2cd3c7a4b7c9124e6ce015efde7aafc72bdbe3a3f000b976df3048fdc1400a1e5f9f0da07c8253c3fccc690d5d2b634d28ba7f33ba174a4175c61b12"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/bytes"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "call-bind-apply-helpers",
+      "version": "1.0.2",
+      "purl": "pkg:npm/call-bind-apply-helpers@1.0.2",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "4a9d5a6e52748af0e44b38dc68977112e9cde7f5ef92c149dac30115fabac74af285057fd9bfcac057b6d5c329987b4f3928a3f0af7dff049fa04b9339b9ae31"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/call-bind-apply-helpers"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "call-bound",
+      "version": "1.0.4",
+      "purl": "pkg:npm/call-bound@1.0.4",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "fb2b3df7b53dea9a382b1fc0069042aa103d12ec49690583420ef6f791f8841a61bf72198346e804abb0629b78617a7a319e4099942753fb72313951a5a49e8e"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/call-bound"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "content-disposition",
+      "version": "2.0.1",
+      "purl": "pkg:npm/content-disposition@2.0.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "7be1f46571d2598ac4361433c352cfb8fe2817933354a98353a77787196f68f1182cb83ad8cc6d40d3d1c784984ae6094815209d0206e0720ddad12d36fec3a2"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/content-disposition"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "content-type",
+      "version": "2.1.0",
+      "purl": "pkg:npm/content-type@2.1.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "9a3ed43d71348daa9a3acba435945411f122d8070bec2fefc26c1c1d5d0ef7b78ed44d69c4166eca3959af1e6c79368d060d54ebea37e70a5adf941f71cfbb6a"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/content-type"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "cookie",
+      "version": "0.7.2",
+      "purl": "pkg:npm/cookie@0.7.2",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "ca48b95e72ae7fbe74979d2e193965b7a90a20b6389d0d5e34841ab685c40726797568272aa6e7aa64eb044e41e0dee5acc24a436cad58c8933b6a34bfa130ff"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/cookie"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "cookie-signature",
+      "version": "1.2.2",
+      "purl": "pkg:npm/cookie-signature@1.2.2",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "0fbeae53bdee9525eb0f5517178284d93331555c21b270a07c0c9383d93c3fa2866639572ab38b7b874940a2370718b9c237ac6681572561253560633d931b86"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/cookie-signature"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "debug",
+      "version": "4.4.3",
+      "purl": "pkg:npm/debug@4.4.3",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "446c305a7c10be455f6af295b76d8518bc3ec5849dcc04709b4aeee83853540dee994e6165cdbc57790ee2cb6062bcab4e52e9baf808f468a28e5b408cd6dca8"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/debug"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "depd",
+      "version": "2.0.0",
+      "purl": "pkg:npm/depd@2.0.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "83b9c7e8fe9dc838a8268800006a6b1a90ad5489898693e4feba02cdd6f77c887ad7fb3f9cfb1f47aa27c8cc2408047f3a50b7c810b49444af52840402cb08af"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/depd"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "detect-libc",
+      "version": "2.1.2",
+      "purl": "pkg:npm/detect-libc@2.1.2",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "06d8f604e38ef37a375b21f9f5ef0c817b3111055c6ab9143a9118aee6c1d2eaf09cdd74c90dfae2bb22072535d67665a966199b4e62fe87fb8a8e26ce2841b5"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/detect-libc"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "dotenv",
+      "version": "16.6.1",
+      "purl": "pkg:npm/dotenv@16.6.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "BSD-2-Clause"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "b81ab87a05874dc4eddf76bbdafa521b4cf71e73ee225e8da98713aca120d9ace81329768695b4cea971cacab6a4af47943207c87c9a91e61a627480c1df1ba3"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/dotenv"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "dunder-proto",
+      "version": "1.0.1",
+      "purl": "pkg:npm/dunder-proto@1.0.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "28837f9c3241411717c3430b561644f62407986ebca80548060f42aa65188e64088608a3f54e4c16faea9142f915bb72cb366e39e3add3375e45ee1463b72df8"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/dunder-proto"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "ee-first",
+      "version": "1.1.1",
+      "purl": "pkg:npm/ee-first@1.1.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "58cc26f4b851528f9651a44dfaf46e113a86f3d22066985548d91d16079beac4bf1383ab0c837bb78f0201ec121d773a0bc95e7c3f0a29faf9bd8eb56eb425a3"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/ee-first"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "encodeurl",
+      "version": "2.0.1",
+      "purl": "pkg:npm/encodeurl@2.0.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "12ffe123278f2d9b692fdf31e7ada5bcfb5e9eb51f1abd257da7f8e07159fa10c4c2ca3b71c57d40066b1152e0d21c4d033ca0680171cb675868028a3341b4e8"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/encodeurl"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "es-define-property",
+      "version": "1.0.1",
+      "purl": "pkg:npm/es-define-property@1.0.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "7b79d17e07d4678acd18bdb7da05205f4e90372c9ecf4e0a76316b17e2d34683979ab3a014a0e0e0109db235bc1274faf5ea9d606991a49c223d560dac2696de"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/es-define-property"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "es-errors",
+      "version": "1.3.0",
+      "purl": "pkg:npm/es-errors@1.3.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "65fe47d8ac6ddb18d3bdb26f3f66562c4202c40ea3fa1026333225ca9cb8c5c060d6f2959f1f3d5b2d066d2fa47f9730095145cdd0858765d20853542d2e9cb3"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/es-errors"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "es-object-atoms",
+      "version": "1.1.2",
+      "purl": "pkg:npm/es-object-atoms@1.1.2",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "1d6701a0de8d8a57aab52c9d2b616a1db4bf2e80ddda9aab9d01cbc89cc18f890ea7f932d8c58c37af78c4e7e42bcfd29d4b16d831fb11fc9597274a0ac9b567"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/es-object-atoms"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "esbuild",
+      "version": "0.28.2",
+      "purl": "pkg:npm/esbuild@0.28.2",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "1ca54b4bc76f208fb1a0a5bd926ab16d12ab9d61177c926bfc56618499a2a880747b4e7740d605a8e068b9330efe4e6c203e0cbc28940afbfc6fd338877db020"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/esbuild"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "escape-html",
+      "version": "1.0.3",
+      "purl": "pkg:npm/escape-html@1.0.3",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "3624aea59e0e7ae1b0afaf251887b29bf92c219309a1d506392099fc54a74f172b7a46efaab81d53194938ca628da299563009ad6ac6b3fe89cbc38cbb28fda3"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/escape-html"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "etag",
+      "version": "1.8.1",
+      "purl": "pkg:npm/etag@1.8.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "6882f9171ee66b055adf4d1a976067104e2236fa35a844f12eb3c8fe8d392fbcfa828edf0b0d49e844266cae05989d804bb920545fca1195ae7c17dd0a531c3e"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/etag"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "express",
+      "version": "5.3.0",
+      "purl": "pkg:npm/express@5.3.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "a82ab2d714a86ae831383e085476f5656764bc21765b7684da890aa2e5a3f15c09fb3b6c912897a019c2489a9f293f9c54f261b89a9ef582db638db9f99874d2"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/express"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "express-rate-limit",
+      "version": "8.7.3",
+      "purl": "pkg:npm/express-rate-limit@8.7.3",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "ccf2ea0c8d9fd205765a61a769c2dff57492aa7e1595d4723f92c2ccec31d01287e3498eebed8f0859284ac44eda378fc7ceff29fe8d505e8fd903932971db40"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/express-rate-limit"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "finalhandler",
+      "version": "2.1.1",
+      "purl": "pkg:npm/finalhandler@2.1.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "4bc2a866045937e6b9acdc2a4f195965e3e34ffe1c9e6d11395ef42de7511d9d29f2ef5f4480f484951942990a2f3ae8f0b7e60bcb31db76d8ead54dc6ff2940"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/finalhandler"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "forwarded",
+      "version": "0.2.0",
+      "purl": "pkg:npm/forwarded@0.2.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "6ee446d1fa41b511d24c238049eea10f6e7cb44b9b16844b6f864d03a3713151cdc3680e7301e8f70c9a6e5ccccce039cfdc40f4bd4a36393f36de8c4fd698a3"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/forwarded"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "fresh",
+      "version": "2.0.0",
+      "purl": "pkg:npm/fresh@2.0.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "471fd6c9c67ad0739aa8b2808ba70744a288ef3c566c9df53219ed9adc0ca1a4de17b5c51fd861069f2f21368c89d7e58d143a7985822a46932beca45491cfd8"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/fresh"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "fsevents",
+      "version": "2.3.3",
+      "purl": "pkg:npm/fsevents@2.3.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "e71a037d7f9f2fb7da0139da82658fa5b16dc21fd1efb5a630caaa1c64bae42defbc1d181eb805f81d58999df8e35b4c8f99fade4d36d765cda09c339617df43"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/fsevents/fsevents"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/fsevents"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/fsevents/fsevents/blob/master/LICENSE"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "function-bind",
+      "version": "1.1.2",
+      "purl": "pkg:npm/function-bind@1.1.2",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "ed71cdc47eea5fdc46e66230c6486e993a31fcc21135c3a00ebc56b0cb76a40af6dd61e9e8cad194dec50521690a9afea153b417be38894811f369c931f1b648"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/function-bind"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "get-intrinsic",
+      "version": "1.3.0",
+      "purl": "pkg:npm/get-intrinsic@1.3.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "f5f4a349aa2cfdf448548a7ec5226513a95fc21112ecb36d29a08121a987b23af69dad418800493e8d263a38f3f062435116ab9823c6a9a89583999f8dbf7c09"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/get-intrinsic"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "get-proto",
+      "version": "1.0.1",
+      "purl": "pkg:npm/get-proto@1.0.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "b1349f063a17069f3d26f20a21e7eac3b53608279bb1cef892263a6b0886a202ada1219b823604fc6ffe97db05dcc5853cd73d21ca0e0b83837ca1dfc459a9d2"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/get-proto"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "gopd",
+      "version": "1.2.0",
+      "purl": "pkg:npm/gopd@1.2.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "65429187afe4505a0089302d4d83d9277870f70371c7e04804e8a39e51bd3e7ac9b027128ecd70cb20fabc9a5a62d827cc3aca6114aa7f738ee917daf77c6c46"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/gopd"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "has-symbols",
+      "version": "1.1.0",
+      "purl": "pkg:npm/has-symbols@1.1.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "d5c0cd77027625aa2199bdec8383a629a301c2e0b8f2c6278b91d4c360efb02f0b8c64cb2bd87e79bd57e91cae3877b8853d142c25baf22a26863528294aa53d"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/has-symbols"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "hasown",
+      "version": "2.0.4",
+      "purl": "pkg:npm/hasown@2.0.4",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "4f651b7db044177db089ea5722c3254d6f7e743602eb0321fedfef600e2db8e30aa96cff9f7bebd4d152c508b23fece4da65eca0c03f8bfeea57a2cabadd6dd4"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/hasown"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "http-errors",
+      "version": "2.0.1",
+      "purl": "pkg:npm/http-errors@2.0.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "e056d17405fe6d2766a3801416e4b458d88fcfc36016dfabf138603569a5ae3423b7543b651f7ecd395c7b6f39f71e0a497af022c69e4ea0e82909ad3fca4b99"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/http-errors"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "iconv-lite",
+      "version": "0.7.3",
+      "purl": "pkg:npm/iconv-lite@0.7.3",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "20a5e9bc8ce39c2f574c051b54170c7c64b410f6885ed5babfecebf91469fa1a942c4a68d28c196b1eb0c91c0f3896d66f38d8b29430bac4ec7d5af489f878b9"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/iconv-lite"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "inherits",
+      "version": "2.0.4",
+      "purl": "pkg:npm/inherits@2.0.4",
+      "licenses": [
+        {
+          "license": {
+            "name": "ISC"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "93fbc6697e3f6256b75b3c8c0af4d039761e207bea38ab67a8176ecd31e9ce9419cc0b2428c859d8af849c189233dcc64a820578ca572b16b8758799210a9ec1"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/inherits"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "ip-address",
+      "version": "10.7.6",
+      "purl": "pkg:npm/ip-address@10.7.6",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "d342d890ce9bc882daf5e408c7aaa869708ce34c532dde7a019e2fc9a3d6dd84f26f8f556583e8e71b2202ae2db90e78187e11ee055d612709d41ec1efb3ee4e"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/ip-address"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "ipaddr.js",
+      "version": "1.9.1",
+      "purl": "pkg:npm/ipaddr.js@1.9.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "d0a23feb4ef1a31493a07ec68cdd457d26cba14d3e6ed4e2723b1049642587f859ca437c2a998c7fbb98c0f5b747e6a467a47fc35f199574870585e26143cede"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/ipaddr.js"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "is-promise",
+      "version": "4.0.0",
+      "purl": "pkg:npm/is-promise@4.0.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "86fa6823a928ae124c9de8f6f3975283a9eed7e7babb1b3bcc6dc16009b96f2a83b2024d5b0c7333acfa8998808104784c9df42660533b0a99530dd69721f701"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/is-promise"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "jose",
+      "version": "6.2.16",
+      "purl": "pkg:npm/jose@6.2.16",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "e0b489a5bb81b8f746ace342759532d319f1b4b7fc784cfe118d12317747404054edb8141c355b954fc9023af2bf7c080fdfcb2bbfd8bb0170abe01035f32c71"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/jose"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "math-intrinsics",
+      "version": "1.1.0",
+      "purl": "pkg:npm/math-intrinsics@1.1.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "fc85ed6f0124e474cfc84c32297ea11a4617c4cf676e3eb807e8a55499c2fd1e81d291f91b85776f4a556cbec3063e2d921040a696d05257fa17a5e5f4b1eed6"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/math-intrinsics"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "media-typer",
+      "version": "1.1.1",
+      "purl": "pkg:npm/media-typer@1.1.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "cb3df145a1b6d1cebf04ecef6280da1ad3e61ac72ced88af22d64412a7ba19bc0d7c7bb1bbd60d9af9c490ccca95d006638ffcd2945c41165212786aba4f57b9"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/media-typer"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "merge-descriptors",
+      "version": "2.0.0",
+      "purl": "pkg:npm/merge-descriptors@2.0.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "4a7937d785796b214b869ddf914444b9be96b6305f3dd08f6352e7f3ff26ba7b8bba2621b000600555aca33006f8c58c6d512f71d7296e2f51ef0c36da5f50de"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/merge-descriptors"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "mime-db",
+      "version": "1.54.0",
+      "purl": "pkg:npm/mime-db@1.54.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "694e4426e20dd960de982700a76bc505fa7f9b810085626750d492c348b1b3bfe45db77a3e0eb8126c0990d745841f1a5add6c1f60935eb2f1a3f880195de83d"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/mime-db"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "mime-types",
+      "version": "3.0.2",
+      "purl": "pkg:npm/mime-types@3.0.2",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "2db833764d21e23ba843d7c22975b86f2d1426a8fe9ce3ab23d309d6c4a3e2723c688d9ea35aa6bd01227b8543d6096c4b6e749f5e4bb16b18b42ba0892b52e4"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/mime-types"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "ms",
+      "version": "2.1.3",
+      "purl": "pkg:npm/ms@2.1.3",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "e85973b9b4cb646dc9d9afcd542025784863ceae68c601f268253dc985ef70bb2fa1568726afece715c8ebf5d73fab73ed1f7100eb479d23bfb57b45dd645394"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/ms"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "negotiator",
+      "version": "1.1.0",
+      "purl": "pkg:npm/negotiator@1.1.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "34c3c144c2608901e36ddf29846dd579b771e246751f5db5adb97922432a78eb1a869b41f412a8fddee8277cd35ea4e06a09f66d694d497921d10506337d5162"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/negotiator"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "object-inspect",
+      "version": "1.13.4",
+      "purl": "pkg:npm/object-inspect@1.13.4",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "5baee22e5e09d845c41936df78709f7eb8c37e2b6f2c0360d14957df01545124f1f762974457a0307515812a84fb0be101b8b85aa8c683d733cac4d5d84a5b7b"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/object-inspect"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "on-finished",
+      "version": "2.4.2",
+      "purl": "pkg:npm/on-finished@2.4.2",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "013594bf7f3b8be9cb0f8f44883a0e7ede6c71fdf656c773de4b6b4091bd6e2ee344599a5d3b2cbf2be3d4499e295560bdeb1ba94b6f410bda4b64e94ee90065"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/on-finished"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "once",
+      "version": "1.4.0",
+      "purl": "pkg:npm/once@1.4.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "ISC"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "94d689808fb643951140191c7042874d038f697754c67659125413658d0c15402e684a9ed44f8dcaf81dcff688c8d8ba67d3333b976fd47f27e7cfc610ba77fb"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/once"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "parseurl",
+      "version": "1.3.3",
+      "purl": "pkg:npm/parseurl@1.3.3",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "0a2c9e3b1153fc96723799b4cfd3df5f0e1208127a4b2833d43a65d30aa39610c418604fd469ec51510bd29eb78681b57dc8f77c7ca75e2f4d60ee2758e2fea9"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/parseurl"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "path-to-regexp",
+      "version": "8.4.2",
+      "purl": "pkg:npm/path-to-regexp@8.4.2",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "a9172e21d3faf4d3e6e2a6c008af9a0e8808e42043322d6329ed2bcb9ad2409cfc2552ec0bb8d5f17a622631912cba25dcdf91e6284661cacf2d39e8ea901d04"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/path-to-regexp"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "pg",
+      "version": "8.23.1",
+      "purl": "pkg:npm/pg@8.23.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "68bf7a00700db568cf2c338baa7871fa7829f7e50aec44c453c549ac3086bec4928bf9862dc598b12e877ab83b96668125ee2ec2b7eab1aee04c415a4a2cc3a1"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/pg"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "pg-cloudflare",
+      "version": "1.4.1",
+      "purl": "pkg:npm/pg-cloudflare@1.4.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "e8f41bb05599729f44989130cb97064362daf80316a4fe3a9606dbf17f94fd7b07214c1e603342a5eb8a724e51c4bd8c755162ee4adb6c48b99d7e1987b261ad"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/pg-cloudflare"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "pg-connection-string",
+      "version": "2.14.1",
+      "purl": "pkg:npm/pg-connection-string@2.14.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "a91de418d3c12e908db73d1ebdb280d18fcc4455f0492753fa94c9bd8a7f6d74dc45e65bbd7d64cc5d08c93735427c6a17b0196ce78184d2fc47999841957f30"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/pg-connection-string"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "pg-int8",
+      "version": "1.0.1",
+      "purl": "pkg:npm/pg-int8@1.0.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "ISC"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "582b5a6d2eadddcf129290c15256f59233acee5ebac6c19d2a920f66c838c11f81dfebbd500ba6da8752b05f6d9efc60f348786712d6332e294633ac148a90a7"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/pg-int8"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "pg-pool",
+      "version": "3.14.0",
+      "purl": "pkg:npm/pg-pool@3.14.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "80ab4f9057503d4dc392ca2854b8bd2ec8d9c6bb015192296beeda571f8b579a4d8742b33f86657ae776a68f82a27af16ee5c6049e877deafa85d829201a416b"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/pg-pool"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "pg-protocol",
+      "version": "1.16.1",
+      "purl": "pkg:npm/pg-protocol@1.16.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "a7d54e14c88707f65b2404deb5b83ef7d3f1b2c4d5490467cae3d243aee6375fb52813a365a67cdd943396d9f13e12704ac0b79f0563275d0354995eadb1732e"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/pg-protocol"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "pg-types",
+      "version": "2.2.0",
+      "purl": "pkg:npm/pg-types@2.2.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "a9300096b12c97cb383a211063af700ef70c21d40deb0773e688d088ecba61132eca7c5e9ce3743b9a02a4923a96c85ceac720018f2abc9d8e9ffa7e09763418"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/pg-types"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "pgpass",
+      "version": "1.0.5",
+      "purl": "pkg:npm/pgpass@1.0.5",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "15d5bdaff8d066149ea21b35677b08d72c4540d16f31c9e67ee8f85813144f13ab0322cc693704d5a00c0624e56cc35a5ef04242e562d11ee177cb9d0d23fbba"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/pgpass"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "postgres-array",
+      "version": "2.0.0",
+      "purl": "pkg:npm/postgres-array@2.0.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "56966b52a53903af5e4325b6739080d63b4b79c0ac37653f6c3e958a5ac50d6ab9fb95081153bb9dacd2dd311c1dfd73b8f60efeca86bd4bd6eb683ce915d9b8"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/postgres-array"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "postgres-bytea",
+      "version": "1.0.1",
+      "purl": "pkg:npm/postgres-bytea@1.0.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "e7ee47a979ec64f13ae4825948c919b544404597a57a5da85d410ef2b1fcdd54bf8711f9befd6e1eab8f839c19b3cc8c01f76ff7bd4853e91c3d47338bb35505"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/postgres-bytea"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "postgres-date",
+      "version": "1.0.7",
+      "purl": "pkg:npm/postgres-date@1.0.7",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "b2e0e68cb55083bf2730ad94678e788401be3805be1d03d9ea7fbe4cd0d45fe2f4fae5252f2c27a3124a0e8bb9d599becd30a3ac297436ae89f42e613fdbcafd"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/postgres-date"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "postgres-interval",
+      "version": "1.2.0",
+      "purl": "pkg:npm/postgres-interval@1.2.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "f5985728cfebc37e74375a2fb961db1b19c687f48d278727c4788cd2bc44e15378d70b20f0ff335a7f61bff6ee2b4d113f85af94ecabfd10438a9b72c556e465"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/postgres-interval"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "proxy-addr",
+      "version": "2.0.8",
+      "purl": "pkg:npm/proxy-addr@2.0.8",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "e679f1d321b2554718eadf519d6700456b704fd1750fc3bdaedd3c86d3ef9dde3d5b522066d98b921bbd59f333423d5c1718c720ee9ca279d43555b993b015c9"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/proxy-addr"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "qs",
+      "version": "6.17.1",
+      "purl": "pkg:npm/qs@6.17.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "BSD-3-Clause"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "8dddc23a468a5601945be647c841c21bd6c7ed1a1a6a25ae320cec2018d43158cb01a5865a9a14015c258d5bc11f146eff6a841e769d2c666b92eb585013d024"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/qs"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "range-parser",
+      "version": "1.3.0",
+      "purl": "pkg:npm/range-parser@1.3.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "85e9369854293ee2381350412ab4ada3e054ddedf1e31b9aaec6e2c2bdfe95fee9e388eebc5315d171564003f7c54caa5c0e11ad72c8a1a49419b4add39e9933"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/range-parser"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "raw-body",
+      "version": "3.0.2",
+      "purl": "pkg:npm/raw-body@3.0.2",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "2b9cd08c3965c5691fed9e7125d574fc1d164cdab1eafc46ef4cc9138374901b382e8be6118589cd01b10bd6d2f5100abb76e0338d25adde73a0b275d8c43904"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/raw-body"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "router",
+      "version": "2.2.0",
+      "purl": "pkg:npm/router@2.2.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "9cb4eb50a9b653288beeb9616a9bbf665e3917036091919a0a965b2076a30d883094908eccb4a4f9c20f027b04a95f79e468c82c99ca6dd402d6754fcfe80061"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/router"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "safer-buffer",
+      "version": "2.1.2",
+      "purl": "pkg:npm/safer-buffer@2.1.2",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "619a372bcd920fb462ca2d04d4440fa232f3ee4a5ea6749023d2323db1c78355d75debdbe5d248eeda72376003c467106c71bbbdcc911e4d1c6f0a9c42b894b6"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/safer-buffer"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "semver",
+      "version": "7.8.6",
+      "purl": "pkg:npm/semver@7.8.6",
+      "licenses": [
+        {
+          "license": {
+            "name": "ISC"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "f65a52494e0c972de6aedaeec0bb3578b2bafa0cdbcea78117044d8c88c4fbd2ee0e959d61cb6b4254377a3d489608bb8249e9b134673e82cff03a421ea1c827"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/semver"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "send",
+      "version": "1.2.1",
+      "purl": "pkg:npm/send@1.2.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "d609d97fb0c572821c6a34e34f08f0b838f3bb3e0f3dc6364ad28f96c180435f981f6d08455ac169749699d8e8c1327abbc45cd353e860e1875df3f599871935"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/send"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "serve-static",
+      "version": "2.2.1",
+      "purl": "pkg:npm/serve-static@2.2.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "c515c19f4a4fa904d54220bcc3242b2acd8c3a55f6e334343ce19a8f492e96dbe8382b2d050339caf3a1015494c0e32342d4efb0f5a83421df3c6c1a6902614f"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/serve-static"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "setprototypeof",
+      "version": "1.2.0",
+      "purl": "pkg:npm/setprototypeof@1.2.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "ISC"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "1392c35fb5aba7ce4a8a5e5b859bf8ea3f2339e6e82aae4932660cde05467461fcc45a4f59750cb0dae53830ab928c4c11e362fd7648c2e46f6385cdc18309a7"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/setprototypeof"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "sharp",
+      "version": "0.35.5",
+      "purl": "pkg:npm/sharp@0.35.5",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "6309f83a7cc6ba4a7b08332ba74f11439d182a6bb01b8edbad980854f4ef05a6807d095197282b46a4abc5d0a22fd33e2e5ccb06227af0847542abf31f28c2ee"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/sharp"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "side-channel",
+      "version": "1.1.1",
+      "purl": "pkg:npm/side-channel@1.1.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "eb1e9d2bacc97694f3178b1078d631c2dbc1cdfe848381ad95eb12f781cebd3b9d51ec8ad965c06887e60e0b32b2562b441785225b22e78018b05194ba19afad"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/side-channel"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "side-channel-list",
+      "version": "1.0.1",
+      "purl": "pkg:npm/side-channel-list@1.0.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "9a39ffd1b8bfa145118dce5797b21a5a2fce24926e9aea0915025f0c3c8ee3afa1056b1f69533ae53047ab67a864187397d11c8713a28e991b442f12541414d3"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/side-channel-list"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "side-channel-map",
+      "version": "1.0.1",
+      "purl": "pkg:npm/side-channel-map@1.0.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "5428c235f80cb1bcb7b53768d369db8ed33f7b0adaea33c79a94e17a7913621f291bdb9c67fd4ff12a38bb814605e93f063a4e56c0c23282c0fe2b8128815744"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/side-channel-map"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "side-channel-weakmap",
+      "version": "1.0.2",
+      "purl": "pkg:npm/side-channel-weakmap@1.0.2",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "58f4bf1ef1d04d89c78ac2e8f4c72a0473899361641cefed969be5772ae77a6e1a790a7885a8b7832b61b3083aa74d684a84e5e7cadca621408c5d9baf6024d8"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/side-channel-weakmap"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "split2",
+      "version": "4.2.0",
+      "purl": "pkg:npm/split2@4.2.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "ISC"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "51c8dc24e5a49eb36417a3cb5fcdea70733a28781528d915eb663c6b9b980d5bfdc9d19057000730aa877498ded554d6a658c6d1662908386b09d00e607e135a"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/split2"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "statuses",
+      "version": "2.0.2",
+      "purl": "pkg:npm/statuses@2.0.2",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "0ef132e795770c1eee927468fb888e193e5f3f5b2547cc10a2155d9278a064f32932cb5a289416870898040089137525da94e70138a18416274616501c606247"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/statuses"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "toidentifier",
+      "version": "1.0.1",
+      "purl": "pkg:npm/toidentifier@1.0.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "a39b123ca12483f0c840d987e37574fee7ab2eba7355e764521f2d18dbda797a5fa6ec2329e9e54a8c7fd8efc14e5654b447be246eece58844cfad3c3e500744"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/toidentifier"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "tslib",
+      "version": "2.9.1",
+      "purl": "pkg:npm/tslib@2.9.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "0BSD"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "6b8531f552ae20c1ec392ec435b12aea12b66466084f6ed1b65d04e1e0fd2aac3184a89078c644ffdc5bdc8758c166923b220140b1318508170d3628882c6758"
+        }
+      ],
+      "scope": "required",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/microsoft/tslib"
+        }
+      ],
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/tslib"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "https://github.com/microsoft/tslib/blob/main/LICENSE.txt"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "tsx",
+      "version": "4.23.15",
+      "purl": "pkg:npm/tsx@4.23.15",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "6227b1d4ebe7f33db13e9396724222cac575492c91318f4190b17efaad322a20f10aa461a2c29f320de36a72a488b07067973f62bca5a0ac0665cac49adc312b"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/tsx"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "type-is",
+      "version": "2.1.0",
+      "purl": "pkg:npm/type-is@2.1.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "7da607c346a705b73f916177cc54c49f14853801945fd1856ce06d86f0dd2ec22512858e14eb52d3380289063022c90bf6219764bde40170fc3a86781a63004c"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/type-is"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "typescript",
+      "version": "5.9.3",
+      "purl": "pkg:npm/typescript@5.9.3",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "8e5d6f6733c38a72ebf5e52ddc9feded5e8580d130f508ef04f772b33f4a7d00c3e357d0ac2d98e2f290762694a454f86d795bd511e12e9a7cc2d9ba3394e04b"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/typescript"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "undici-types",
+      "version": "6.21.0",
+      "purl": "pkg:npm/undici-types@6.21.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "8b00d9aa0d10006ae0f516afe47e27d0ceb87379a4479f5c27ac10a7eec2e2723482c984c5a79d6982cd3b8e1e4f802d041c236d38863cc96dd8c7744fd1fd25"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/undici-types"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "true"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "unpipe",
+      "version": "1.0.0",
+      "purl": "pkg:npm/unpipe@1.0.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "a63cb66d8852b2e7f05a52b03dcfa5ddc37bfb0b8994aeaecf461d2443a54036e5ea3a3f6253e2e266fc6a0524542f0117b57c36ecdec8f36a464b00de1ced29"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/unpipe"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "vary",
+      "version": "1.1.2",
+      "purl": "pkg:npm/vary@1.1.2",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "04d19b58b7ddd1e50f69b8645d4566d23f2ebaf444c93879a2f45afddca8c3f06a01b649c82fb97d4f88cd03b39802b362a6110084a8461750af778867f3d7aa"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/vary"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "wrappy",
+      "version": "1.0.2",
+      "purl": "pkg:npm/wrappy@1.0.2",
+      "licenses": [
+        {
+          "license": {
+            "name": "ISC"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "9784a9fc346c7a8afdc0be84bd5dbe4ee427eb774c90f8d9feca7d5e48214c46d5f4a94f4b5c54b19deeeff2103b8c31b5c141e1b82940f45c477402bdeccf71"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/wrappy"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "xtend",
+      "version": "4.0.2",
+      "purl": "pkg:npm/xtend@4.0.2",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "2ca614d620172575200179fd5118e2bbe3168725171ecbdfa7b99cb989bd75250a2b4fc28edad4c050310fcdbf98259bb4bb068c521a774c08b28778ceb4c011"
+        }
+      ],
+      "scope": "required",
+      "properties": [
+        {
+          "name": "petcare:lockfile-path",
+          "value": "node_modules/xtend"
+        },
+        {
+          "name": "petcare:package-lock-dev",
+          "value": "false"
+        },
+        {
+          "name": "petcare:license-evidence",
+          "value": "installed package.json license field"
+        }
+      ]
+    }
+  ]
+}

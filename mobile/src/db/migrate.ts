@@ -39,12 +39,3 @@ export async function migrateLocalDatabase(db: SqliteExecutor): Promise<void> {
     }
   }
 }
-
-export async function recoverInterruptedSync(db: SqliteExecutor): Promise<void> {
-  await db.runAsync(
-    `UPDATE sync_queue
-     SET status = 'pending', updated_at = ?
-     WHERE status = 'in_flight'`,
-    new Date().toISOString(),
-  );
-}

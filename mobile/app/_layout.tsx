@@ -1,15 +1,22 @@
 import { useEffect } from "react";
 import { Stack } from "expo-router";
-import { AppState, Platform, StatusBar } from "react-native";
+import { ActivityIndicator, AppState, Platform, StatusBar, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { colors } from "../src/theme/tokens";
 import { reconcileCalendarNotifications } from "../src/features/calendar/calendarNotifications";
 import { useNotificationNavigation } from "../src/features/calendar/notifications/useNotificationNavigation";
-import { AuthProvider } from "../src/features/auth/AuthProvider";
+import { AuthProvider, useAuth } from "../src/features/auth/AuthProvider";
+import { getAuthRouteGuards } from "../src/features/auth/routeAccess";
+import { PersistentAppTabBar } from "../src/navigation/AppTabBar";
+import { ThemeProvider, useTheme } from "../src/theme/ThemeProvider";
 
-export default function RootLayout() {
+function AuthenticatedNavigation() {
   useNotificationNavigation();
+  const { user, loading } = useAuth();
+  const guards = getAuthRouteGuards(loading, Boolean(user));
 
   useEffect(() => {
+    if (loading || !user) return;
     const reconcile = () => {
       void reconcileCalendarNotifications().catch((error: unknown) => {
         console.error("Calendar notification reconciliation failed.", error);
@@ -22,15 +29,24 @@ export default function RootLayout() {
       if (state === "active") reconcile();
     });
     return () => subscription.remove();
-  }, []);
+  }, [loading, user?.id]);
 
+  if (guards.loading) {
+    return (
+      <SafeAreaView style={styles.loadingScreen}>
+        <ActivityIndicator color={colors.blue} />
+        <Text style={styles.loadingText}>Comprobando tu sesión…</Text>
+      </SafeAreaView>
+    );
+  }
   return (
-    <AuthProvider>
-      <>
-        <StatusBar barStyle="dark-content" />
-        <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }}>
-          <Stack.Screen name="(tabs)" />
+    <View style={styles.appShell}>
+      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }}>
+        <Stack.Protected guard={guards.authentication}>
           <Stack.Screen name="auth" options={{ presentation: "modal" }} />
+        </Stack.Protected>
+        <Stack.Protected guard={guards.application}>
+          <Stack.Screen name="(tabs)" />
           <Stack.Screen name="pet/new" />
           <Stack.Screen name="pet/[id]" />
           <Stack.Screen name="pet/[id]/edit" />
@@ -50,9 +66,38 @@ export default function RootLayout() {
           <Stack.Screen name="calendar/reminder/new" />
           <Stack.Screen name="calendar/reminder/[reminderId]" />
           <Stack.Screen name="calendar/reminder/[reminderId]/edit" />
+          <Stack.Screen name="sync-status" />
           <Stack.Screen name="database-verification" />
-        </Stack>
-      </>
+        </Stack.Protected>
+      </Stack>
+      {guards.application ? <PersistentAppTabBar /> : null}
+    </View>
+  );
+}
+
+function RootContent() {
+  const { mode } = useTheme();
+  return (
+    <View style={styles.root}>
+      <StatusBar barStyle={mode === "dark" ? "light-content" : "dark-content"} />
+      <AuthenticatedNavigation />
+    </View>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <AuthProvider>
+      <ThemeProvider>
+        <RootContent />
+      </ThemeProvider>
     </AuthProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  root: { flex: 1 },
+  appShell: { flex: 1 },
+  loadingScreen: { flex: 1, alignItems: "center", justifyContent: "center", gap: 12, backgroundColor: colors.background },
+  loadingText: { color: colors.textMuted, fontSize: 14 },
+});

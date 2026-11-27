@@ -1,3 +1,5 @@
+import { validateLocalPetContext, type KiraiLocalContext } from "./petContext.js";
+
 export const MAX_KIRAI_MESSAGE_LENGTH = 2_000;
 export const MAX_KIRAI_HISTORY_MESSAGES = 10;
 export const MAX_KIRAI_HISTORY_CHARACTERS = 8_000;
@@ -10,7 +12,12 @@ export interface KiraiHistoryMessage {
 export interface KiraiChatRequest {
   message: string;
   history: KiraiHistoryMessage[];
+  conversationId?: string;
+  requestId?: string;
+  localContext: KiraiLocalContext;
 }
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export class InvalidKiraiRequestError extends Error {
   readonly statusCode = 400;
@@ -72,8 +79,23 @@ export function validateKiraiRequest(body: unknown): KiraiChatRequest {
   if (!message || message.length > MAX_KIRAI_MESSAGE_LENGTH) {
     throw new InvalidKiraiRequestError();
   }
+  const conversationId = body.conversationId;
+  const requestId = body.requestId;
+  if ((conversationId !== undefined && (typeof conversationId !== "string" || !UUID.test(conversationId))) ||
+      (requestId !== undefined && (typeof requestId !== "string" || !UUID.test(requestId)))) {
+    throw new InvalidKiraiRequestError();
+  }
+  let localContext: KiraiLocalContext;
+  try {
+    localContext = validateLocalPetContext(body.localContext);
+  } catch {
+    throw new InvalidKiraiRequestError();
+  }
   return {
     message,
     history: validateHistory(body.history),
+    ...(typeof conversationId === "string" ? { conversationId: conversationId.toLowerCase() } : {}),
+    ...(typeof requestId === "string" ? { requestId: requestId.toLowerCase() } : {}),
+    localContext,
   };
 }

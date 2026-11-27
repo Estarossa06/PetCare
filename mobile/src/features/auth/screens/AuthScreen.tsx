@@ -22,7 +22,7 @@ export default function AuthScreen() {
   const router = useRouter();
   const { mode } = useLocalSearchParams<{ mode?: string }>();
   const { width } = useWindowDimensions();
-  const { login, register } = useAuth();
+  const { login, register, error: restoreError, clearError } = useAuth();
   const [isRegister, setIsRegister] = useState(mode === "register");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -33,6 +33,7 @@ export default function AuthScreen() {
   const submit = async () => {
     setBusy(true);
     setError(null);
+    clearError();
     try {
       if (isRegister) {
         await register(email, password, name);
@@ -116,17 +117,13 @@ export default function AuthScreen() {
                   onPress={() => {
                     setIsRegister((current) => !current);
                     setError(null);
+                    clearError();
                   }}
                 />
+                {restoreError ? <Text style={styles.error}>{restoreError}</Text> : null}
                 <Text style={styles.note}>
-                  Tus datos locales permanecen en este dispositivo; no se suben ni se vinculan con esta cuenta.
+                  Los datos locales anteriores no se vinculan automáticamente. Cada cuenta mantiene un espacio local separado en este dispositivo.
                 </Text>
-                <AppButton
-                  label="Volver al perfil"
-                  variant="secondary"
-                  disabled={busy}
-                  onPress={() => router.back()}
-                />
               </View>
             </SurfaceCard>
           </View>

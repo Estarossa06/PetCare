@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react-native";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppButton } from "../../../components/ui/AppButton";
+import { CalendarDateField } from "../../../components/ui/CalendarDateField";
 import { AppTextField } from "../../../components/ui/TextField";
 import { SurfaceCard } from "../../../components/ui/SurfaceCard";
 import { isoToLocalDateTime } from "../../care/recurrence";
@@ -173,8 +174,8 @@ export default function CalendarEventFormScreen() {
               </SurfaceCard>
               <SurfaceCard style={styles.card}>
                 <Text style={styles.section}>Fecha y hora local</Text>
-                <AppTextField label="Inicio *" value={startsLocal} onChangeText={setStartsLocal} placeholder="AAAA-MM-DDTHH:mm" />
-                <AppTextField label="Fin (opcional)" value={endsLocal} onChangeText={setEndsLocal} placeholder="AAAA-MM-DDTHH:mm" />
+                <CalendarDateField label="Inicio *" value={startsLocal} onChange={setStartsLocal} mode="datetime" />
+                <CalendarDateField label="Fin (opcional)" value={endsLocal} onChange={setEndsLocal} mode="datetime" allowClear />
                 <Text style={styles.muted}>Zona horaria: {eventTimezone}</Text>
               </SurfaceCard>
               {error ? <Text accessibilityRole="alert" style={styles.error}>{error}</Text> : null}
@@ -200,7 +201,7 @@ const styles = StyleSheet.create({
   section: { color: colors.blueDark, fontSize: 17, fontWeight: "800" },
   label: { color: colors.text, fontSize: 13, fontWeight: "800" },
   chips: { flexDirection: "row", flexWrap: "wrap", gap: 7 },
-  chip: { paddingHorizontal: 12, paddingVertical: 9, borderRadius: radius.pill, backgroundColor: "#F1F5F9" },
+  chip: { paddingHorizontal: 12, paddingVertical: 9, borderRadius: radius.pill, backgroundColor: colors.blueSoft },
   chipSelected: { backgroundColor: colors.blue },
   chipText: { color: colors.textMuted, fontSize: 12, fontWeight: "700" },
   chipTextSelected: { color: colors.surface },

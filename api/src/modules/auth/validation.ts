@@ -14,6 +14,17 @@ export interface LoginInput {
   password: string;
 }
 
+export interface ProfileUpdateInput {
+  email: string;
+  name: string;
+  currentPassword: string;
+}
+
+export interface PasswordChangeInput {
+  currentPassword: string;
+  newPassword: string;
+}
+
 export function validateRegisterInput(value: unknown): RegisterInput {
   const body = requestObject(value);
   return {
@@ -36,6 +47,28 @@ export function validateRefreshToken(value: unknown): string {
     throw new InvalidCredentialsError();
   }
   return value;
+}
+
+export function validateProfileUpdate(value: unknown): ProfileUpdateInput {
+  const body = requestObject(value);
+  return {
+    email: normalizeEmail(body.email),
+    name: normalizeName(body.name),
+    currentPassword: normalizeCurrentPassword(body.currentPassword),
+  };
+}
+
+export function validatePasswordChange(value: unknown): PasswordChangeInput {
+  const body = requestObject(value);
+  return {
+    currentPassword: normalizeCurrentPassword(body.currentPassword),
+    newPassword: normalizePassword(body.newPassword),
+  };
+}
+
+export function validateCurrentPassword(value: unknown): string {
+  const body = requestObject(value);
+  return normalizeCurrentPassword(body.currentPassword);
 }
 
 function requestObject(value: unknown): Record<string, unknown> {
@@ -64,6 +97,13 @@ function normalizePassword(value: unknown): string {
     validatePassword(value);
   } catch {
     throw new InvalidRequestError("Password must be between 12 and 128 characters.");
+  }
+  return value;
+}
+
+function normalizeCurrentPassword(value: unknown): string {
+  if (typeof value !== "string" || value.length < 1 || value.length > 128) {
+    throw new InvalidRequestError("Current password is required.");
   }
   return value;
 }

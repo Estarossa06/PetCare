@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { hashPassword, validatePassword, verifyPassword } from "./passwords.js";
+import { hashPassword, verifyPassword } from "./passwords.js";
 import {
   createRefreshToken,
   hashRefreshToken,
@@ -19,6 +19,9 @@ import {
   validateLoginInput,
   validateRefreshToken,
   validateRegisterInput,
+  validateProfileUpdate,
+  validatePasswordChange,
+  validateCurrentPassword,
 } from "./validation.js";
 const DUMMY_PASSWORD_HASH =
   "scrypt$32768$8$1$AAAAAAAAAAAAAAAAAAAAAA$AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
@@ -109,6 +112,44 @@ export class AuthService {
 
   getUser(userId: string): Promise<AuthUser | undefined> {
     return this.store.findUserById(userId);
+  }
+
+  async updateProfile(userId: string, input: unknown): Promise<AuthUser> {
+    const update = validateProfileUpdate(input);
+    await this.verifyCurrentPassword(userId, update.currentPassword);
+    return this.store.updateUserProfile({ userId, email: update.email, name: update.name });
+  }
+
+  async changePassword(principal: Principal, input: unknown): Promise<void> {
+    const change = validatePasswordChange(input);
+    await this.verifyCurrentPassword(principal.userId, change.currentPassword);
+    if (change.currentPassword === change.newPassword) {
+      throw new InvalidRequestError("Choose a new password different from the current password.");
+    }
+    await this.store.updatePassword({
+      userId: principal.userId,
+      currentSessionId: principal.sessionId,
+      passwordHash: await hashPassword(change.newPassword),
+    });
+  }
+
+  async deactivateAccount(principal: Principal, input: unknown): Promise<void> {
+    const currentPassword = validateCurrentPassword(input);
+    await this.verifyCurrentPassword(principal.userId, currentPassword);
+    await this.store.deactivateUser(principal.userId);
+  }
+
+  async requestPermanentDeletion(principal: Principal, input: unknown): Promise<void> {
+    const currentPassword = validateCurrentPassword(input);
+    await this.verifyCurrentPassword(principal.userId, currentPassword);
+    await this.store.requestPermanentDeletion(principal.userId);
+  }
+
+  private async verifyCurrentPassword(userId: string, password: string): Promise<void> {
+    const user = await this.store.findUserCredentialsById(userId);
+    if (!user || !(await verifyPassword(password, user.passwordHash))) {
+      throw new InvalidCredentialsError();
+    }
   }
 
   private async createSession(user: AuthUser): Promise<TokenPair> {

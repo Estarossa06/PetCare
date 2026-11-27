@@ -9,6 +9,8 @@ import {
 } from "react";
 import { apiClient, type AuthUser } from "./apiClient";
 import { authErrorMessage } from "./authErrorMessage";
+import { setActiveLocalAuthUserId } from "../../db/localAccount";
+import { subscribeToAppForegroundSync, synchronizePets, waitForPetSync } from "../sync/petSync";
 
 interface AuthContextValue {
   user: AuthUser | null;
@@ -18,6 +20,8 @@ interface AuthContextValue {
   login(email: string, password: string): Promise<void>;
   register(email: string, password: string, name: string): Promise<void>;
   logout(): Promise<void>;
+  finishDeactivatedAccount(): Promise<void>;
+  updateLocalUser(user: AuthUser): void;
   restore(): Promise<void>;
 }
 
@@ -32,8 +36,11 @@ export function AuthProvider({ children }: PropsWithChildren) {
     setLoading(true);
     setError(null);
     try {
-      setUser(await apiClient.restoreSession());
+      const restoredUser = await apiClient.restoreSession();
+      setActiveLocalAuthUserId(restoredUser?.id ?? null);
+      setUser(restoredUser);
     } catch (restoreError) {
+      setActiveLocalAuthUserId(null);
       setError(authErrorMessage(restoreError));
       setUser(null);
     } finally {
@@ -45,26 +52,61 @@ export function AuthProvider({ children }: PropsWithChildren) {
     void restore();
   }, [restore]);
 
+  useEffect(() => {
+    if (!user) return;
+    void synchronizePets().catch(() => undefined);
+    const subscription = subscribeToAppForegroundSync();
+    return () => subscription.remove();
+  }, [user]);
+
   const login = useCallback(async (email: string, password: string) => {
     setError(null);
-    setUser(await apiClient.login({ email, password }));
+    await waitForPetSync();
+    const authenticatedUser = await apiClient.login({ email, password });
+    setActiveLocalAuthUserId(authenticatedUser.id);
+    setUser(authenticatedUser);
   }, []);
 
   const register = useCallback(
     async (email: string, password: string, name: string) => {
       setError(null);
-      setUser(await apiClient.register({ email, password, name }));
+      await waitForPetSync();
+      const authenticatedUser = await apiClient.register({ email, password, name });
+      setActiveLocalAuthUserId(authenticatedUser.id);
+      setUser(authenticatedUser);
     },
     [],
   );
 
   const logout = useCallback(async () => {
     setError(null);
+    await waitForPetSync();
     try {
       await apiClient.logout();
+    } catch (logoutError) {
+      setError(
+        `La sesión se cerró en este dispositivo, pero no pudimos completar el cierre de sesión. ${authErrorMessage(logoutError)}`,
+      );
+      throw logoutError;
     } finally {
+      setActiveLocalAuthUserId(null);
       setUser(null);
     }
+  }, []);
+
+  const finishDeactivatedAccount = useCallback(async () => {
+    try {
+      await apiClient.clearLocalSession();
+    } catch {
+      // The server already revoked the account sessions; still leave the in-memory account.
+    }
+    setActiveLocalAuthUserId(null);
+    setError(null);
+    setUser(null);
+  }, []);
+
+  const updateLocalUser = useCallback((updatedUser: AuthUser) => {
+    setUser(updatedUser);
   }, []);
 
   const value = useMemo<AuthContextValue>(
@@ -76,9 +118,11 @@ export function AuthProvider({ children }: PropsWithChildren) {
       login,
       register,
       logout,
+      finishDeactivatedAccount,
+      updateLocalUser,
       restore,
     }),
-    [user, loading, error, login, register, logout, restore],
+    [user, loading, error, login, register, logout, finishDeactivatedAccount, updateLocalUser, restore],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

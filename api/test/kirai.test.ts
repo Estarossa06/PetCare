@@ -22,6 +22,7 @@ import {
 } from "../src/modules/kirai/providers/ollamaProvider.js";
 import type { Logger, LogFields } from "../src/observability/logger.js";
 import { MemoryAuthStore } from "./memoryAuthStore.js";
+import { MemoryKiraiStore } from "./memoryKiraiStore.js";
 
 const config = {
   baseUrl: DEFAULT_KIRAI_OLLAMA_BASE_URL,
@@ -226,24 +227,27 @@ async function createKiraiHarness(provider: ModelProvider) {
     info: (fields) => entries.push(fields),
     error: (fields) => entries.push(fields),
   };
+  const kiraiStore = new MemoryKiraiStore();
   const app = createApp({
     config: { corsOrigins: [], accessTokenSecret: routeSecret },
     database: { query: async () => ({ rows: [] }) },
     authStore: new MemoryAuthStore(),
     logger,
     kiraiProvider: provider,
+    kiraiStore,
   });
   const running = await listen(app);
 
   return {
     ...running,
     entries,
-    async register(): Promise<string> {
+    kiraiStore,
+    async register(email = "kirai-test@example.com"): Promise<string> {
       const response = await fetch(`${running.baseUrl}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: "kirai-test@example.com",
+          email,
           password: "correct horse battery staple",
           name: "KIRAI Test",
         }),
@@ -266,6 +270,12 @@ async function createKiraiHarness(provider: ModelProvider) {
       return fetch(`${running.baseUrl}/kirai/availability`, {
         headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
       });
+    },
+    async conversations(accessToken: string): Promise<Response> {
+      return fetch(`${running.baseUrl}/kirai/conversations`, { headers: { Authorization: `Bearer ${accessToken}` } });
+    },
+    async messages(conversationId: string, accessToken: string): Promise<Response> {
+      return fetch(`${running.baseUrl}/kirai/conversations/${conversationId}/messages`, { headers: { Authorization: `Bearer ${accessToken}` } });
     },
   };
 }
@@ -346,8 +356,8 @@ test("KIRAI chat requires an active authenticated session", async () => {
   }
 });
 
-test("KIRAI chat sends recent context and the current question with the safety prompt", async () => {
-  let received: ModelRequest | undefined;
+test("KIRAI chat persists turns, uses account context, and rebuilds history from storage", async () => {
+  const received: ModelRequest[] = [];
   const question = "¿Cómo ayudo a mi perro a adaptarse a una rutina?";
   const history: ModelMessage[] = [
     { role: "user", content: "Mi perro se altera con los cambios." },
@@ -356,37 +366,87 @@ test("KIRAI chat sends recent context and the current question with the safety p
   const harness = await createKiraiHarness({
     async checkAvailability() {},
     async generate(request) {
-      received = request;
+      received.push(request);
+      const call = received.length;
       return {
-        message: { role: "assistant", content: "  Mantén horarios consistentes.  " },
-        finishReason: "length",
+        message: { role: "assistant", content: `  Respuesta guardada ${call}.  ` },
+        ...(call === 1 ? { finishReason: "length" as const } : {}),
       };
     },
   });
   try {
     const accessToken = await harness.register();
+    const conversationId = crypto.randomUUID();
+    const requestId = crypto.randomUUID();
     const response = await harness.chat(
       {
         message: `  ${question}  `,
         history,
+        conversationId,
+        requestId,
+        localContext: { pets: [{ id: crypto.randomUUID(), name: "Juan", species: "cat", breed: "Siamés", notes: "must not be forwarded" }] },
         petRecords: "must not be forwarded",
       },
       accessToken,
     );
     assert.equal(response.status, 200);
-    assert.deepEqual(await response.json(), {
-      answer: "Mantén horarios consistentes.",
-      truncated: true,
-    });
-    assert.equal(received?.messages.length, 4);
-    assert.equal(received?.messages[0].role, "system");
-    assert.match(received?.messages[0].content ?? "", /No prescribas medicamentos/);
-    assert.deepEqual(received?.messages.slice(1), [
-      ...history,
+    const firstResult = await response.json();
+    assert.equal(firstResult.answer, "Respuesta guardada 1.");
+    assert.equal(firstResult.truncated, true);
+    assert.equal(firstResult.conversationId, conversationId);
+    assert.equal(firstResult.userMessage.content, question);
+    assert.equal(received[0].messages[0].role, "system");
+    assert.match(received[0].messages[0].content, /No prescribas medicamentos/);
+    assert.equal(received[0].messages[1].role, "system");
+    assert.match(received[0].messages[1].content, /Juan: especie cat; raza Siamés/);
+    assert.equal(received[0].messages[1].content.includes("must not be forwarded"), false);
+    assert.deepEqual(received[0].messages.slice(-1), [{ role: "user", content: question }]);
+
+    const secondRequest = await harness.chat({ message: "¿Qué sabes de Juan?", conversationId, requestId: crypto.randomUUID() }, accessToken);
+    assert.equal(secondRequest.status, 200);
+    assert.deepEqual(received[1].messages.slice(-3), [
       { role: "user", content: question },
+      { role: "assistant", content: "Respuesta guardada 1." },
+      { role: "user", content: "¿Qué sabes de Juan?" },
     ]);
+    const repeated = await harness.chat({ message: question, conversationId, requestId }, accessToken);
+    assert.equal(repeated.status, 200);
+    assert.equal((await repeated.json()).answer, "Respuesta guardada 1.");
+    assert.equal(received.length, 2);
+    const listed = await harness.conversations(accessToken);
+    assert.equal((await listed.json()).conversations.length, 1);
+    const transcript = await harness.messages(conversationId, accessToken);
+    assert.equal((await transcript.json()).messages.length, 4);
     assert.equal(JSON.stringify(harness.entries).includes(question), false);
     assert.equal(JSON.stringify(received).includes("must not be forwarded"), false);
+  } finally {
+    const closed = once(harness.server, "close");
+    harness.server.close();
+    await closed;
+  }
+});
+
+test("KIRAI conversations and messages are isolated by the authenticated owner", async () => {
+  const harness = await createKiraiHarness({
+    async checkAvailability() {},
+    async generate() { return { message: { role: "assistant", content: "Respuesta privada." } }; },
+  });
+  try {
+    const ownerA = await harness.register("kirai-owner-a@example.test");
+    const ownerB = await harness.register("kirai-owner-b@example.test");
+    const conversationId = crypto.randomUUID();
+    const requestId = crypto.randomUUID();
+    const created = await harness.chat({ message: "Mi registro privado", conversationId, requestId }, ownerA);
+    assert.equal(created.status, 200);
+
+    const ownerBList = await harness.conversations(ownerB);
+    assert.deepEqual((await ownerBList.json()).conversations, []);
+    const ownerBRead = await harness.messages(conversationId, ownerB);
+    assert.equal(ownerBRead.status, 404);
+    const ownerBAppend = await harness.chat({ message: "Leer conversación ajena", conversationId, requestId: crypto.randomUUID() }, ownerB);
+    assert.equal(ownerBAppend.status, 404);
+    const ownerAConflict = await harness.chat({ message: "Pregunta distinta", conversationId, requestId }, ownerA);
+    assert.equal(ownerAConflict.status, 409);
   } finally {
     const closed = once(harness.server, "close");
     harness.server.close();

@@ -17,7 +17,7 @@ import {
   TriangleAlert,
 } from "lucide-react-native";
 import type { LucideIcon } from "lucide-react-native";
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions, type ColorValue } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppButton } from "../../../components/ui/AppButton";
 import { AppTextField } from "../../../components/ui/TextField";
@@ -43,17 +43,17 @@ const categories: { id: MedicalCategory | ""; label: string }[] = [
   { id: "observation", label: "Observaciones" },
 ];
 
-const categoryVisuals: Record<MedicalCategory, { icon: LucideIcon; color: string; background: string }> = {
+const categoryVisuals: Record<MedicalCategory, { icon: LucideIcon; color: ColorValue; background: ColorValue }> = {
   consultation: { icon: ClipboardList, color: colors.blue, background: colors.blueSoft },
-  vaccination: { icon: Syringe, color: "#15803D", background: "#DCFCE7" },
-  deworming: { icon: ShieldPlus, color: "#0F766E", background: "#CCFBF1" },
-  medication: { icon: Pill, color: "#7C3AED", background: "#EDE9FE" },
-  treatment: { icon: Activity, color: "#0369A1", background: "#E0F2FE" },
-  surgery: { icon: Scissors, color: "#BE123C", background: "#FFE4E6" },
+  vaccination: { icon: Syringe, color: "#15803D", background: colors.greenSoft },
+  deworming: { icon: ShieldPlus, color: "#0F766E", background: colors.greenSoft },
+  medication: { icon: Pill, color: "#7C3AED", background: colors.lavenderSoft },
+  treatment: { icon: Activity, color: "#0369A1", background: colors.blueSoft },
+  surgery: { icon: Scissors, color: "#BE123C", background: colors.dangerSoft },
   allergy: { icon: TriangleAlert, color: "#C2410C", background: colors.orangeSoft },
-  diagnosis: { icon: FileHeart, color: "#1D4ED8", background: "#DBEAFE" },
-  examination: { icon: FlaskConical, color: "#6D28D9", background: "#F3E8FF" },
-  observation: { icon: Tablets, color: "#475569", background: "#F1F5F9" },
+  diagnosis: { icon: FileHeart, color: "#1D4ED8", background: colors.blueMuted },
+  examination: { icon: FlaskConical, color: "#6D28D9", background: colors.lavenderSoft },
+  observation: { icon: Tablets, color: "#475569", background: colors.blueSoft },
 };
 
 function dateLabel(value: string): string {

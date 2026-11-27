@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
-import { ArrowLeft, CalendarDays, Edit3, HeartPulse, Info, Scale, Trash2, type LucideIcon } from "lucide-react-native";
+import { ArrowLeft, CalendarDays, Edit3, HeartPulse, Info, MapPin, Trash2, VenusAndMars, Weight, Palette, PawPrint, type LucideIcon } from "lucide-react-native";
 import {
   ActivityIndicator,
+  Platform,
   Image,
   Pressable,
   ScrollView,
@@ -13,17 +14,31 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppButton } from "../../../components/ui/AppButton";
+import { ConfirmActionModal } from "../../../components/ui/ConfirmActionModal";
 import { PetAvatar } from "../../../components/ui/PetAvatar";
 import { SurfaceCard } from "../../../components/ui/SurfaceCard";
 import { petPhotoStorage, petService } from "../petService";
+import { openTracker } from "../openTracker";
 import type { Pet } from "../types";
 import { colors, radius, spacing } from "../../../theme/tokens";
 
 type PetProfile = Pet & { photoUri: string | null };
 
 function speciesLabel(species: string): string {
-  const known: Record<string, string> = { dog: "Perro", cat: "Gato", bird: "Ave", other: "Otra especie" };
+  const known: Record<string, string> = { dog: "Perro", perro: "Perro", cat: "Gato", gato: "Gato", bird: "Ave", ave: "Ave", other: "Otra especie", undetermined: "No determinada", unknown: "No determinada" };
   return known[species] ?? species;
+}
+
+function breedLabel(breed: string | null): string {
+  if (!breed) return "Sin registrar";
+  const known: Record<string, string> = {
+    undetermined: "No determinada",
+    unknown: "No determinada",
+    "breed not visually distinguishable": "No determinada visualmente",
+    "mixed-breed dog": "Mestizo",
+    "domestic shorthair cat": "Gato doméstico de pelo corto",
+  };
+  return known[breed.trim().toLowerCase()] ?? breed;
 }
 
 function ageLabel(pet: Pet): string | null {
@@ -65,6 +80,11 @@ function DetailRow({
       </View>
     </View>
   );
+}
+
+function friendly(value: string | null | undefined): string {
+  if (!value || ["undetermined", "unknown", "not determined"].includes(value.trim().toLowerCase())) return "Sin registrar";
+  return value;
 }
 
 export default function PetDetailScreen({ petId }: { petId: string }) {
@@ -118,6 +138,17 @@ export default function PetDetailScreen({ petId }: { petId: string }) {
     }
   };
 
+  const [trackerBusy, setTrackerBusy] = useState(false);
+  const [trackerError, setTrackerError] = useState<string | null>(null);
+  const launchTracker = async () => {
+    if (trackerBusy) return;
+    setTrackerBusy(true);
+    setTrackerError(null);
+    try { await openTracker(); }
+    catch (e) { setTrackerError(e instanceof Error ? e.message : "No se pudo abrir el localizador."); }
+    finally { setTrackerBusy(false); }
+  };
+
   const age = pet ? ageLabel(pet) : null;
 
   return (
@@ -138,12 +169,17 @@ export default function PetDetailScreen({ petId }: { petId: string }) {
           {loading ? (
             <View style={styles.loading}>
               <ActivityIndicator color={colors.blue} />
-              <Text style={styles.loadingText}>Cargando desde este dispositivo…</Text>
+              <Text style={styles.loadingText}>Cargando carnet…</Text>
             </View>
           ) : pet ? (
             <>
-              <SurfaceCard style={styles.heroCard}>
-                <View style={styles.heroContent}>
+              <SurfaceCard style={styles.carnet}>
+                <View style={styles.carnetHeader}>
+                  <View style={styles.carnetMark}><PawPrint size={19} color={colors.blue} /></View>
+                  <View style={styles.carnetBrand}><Text style={styles.carnetBrandName}>PetCare</Text><Text style={styles.carnetEyebrow}>CARNET VETERINARIO</Text></View>
+                  <Pressable accessibilityRole="button" accessibilityLabel="Editar perfil de mascota" onPress={() => router.push({ pathname: "/pet/[id]/edit", params: { id: pet.id } })} style={styles.editButton}><Edit3 size={17} color={colors.blue} /></Pressable>
+                </View>
+                <View style={styles.petSummary}>
                   <View style={styles.photoFrame}>
                     {pet.photoUri ? (
                       <Image source={{ uri: pet.photoUri }} style={styles.heroPhoto} />
@@ -159,74 +195,49 @@ export default function PetDetailScreen({ petId }: { petId: string }) {
                   <View style={styles.heroText}>
                     <Text style={styles.petName}>{pet.name}</Text>
                     <Text style={styles.petSubtitle}>
-                      {[speciesLabel(pet.species), pet.breed].filter(Boolean).join(" · ")}
+                      {[speciesLabel(pet.species), breedLabel(pet.breed)].filter((value) => value !== "Sin registrar").join(" · ") || speciesLabel(pet.species)}
                     </Text>
                     {age ? <Text style={styles.ageText}>{age}</Text> : null}
-                    <View style={styles.localStatus}>
-                      <View style={styles.statusDot} />
-                      <Text style={styles.localStatusText}>Guardado en este dispositivo</Text>
-                    </View>
                   </View>
                 </View>
-                <View style={styles.heroActions}>
-                  <AppButton
-                    label="Editar perfil"
-                    icon={Edit3}
-                    onPress={() => router.push({ pathname: "/pet/[id]/edit", params: { id: pet.id } })}
-                  />
-                  <AppButton
-                    label="Historial médico"
-                    icon={CalendarDays}
-                    variant="secondary"
-                    onPress={() => router.push(`/pet/${pet.id}/medical`)}
-                  />
-                  <AppButton label="Rastreo GPS" icon={Info} variant="secondary" onPress={() => router.push(`/pet/${pet.id}/tracking`)} />
-                  <AppButton
-                    label="Cuidados"
-                    icon={HeartPulse}
-                    variant="secondary"
-                    onPress={() => router.push(`/pet/${pet.id}/care`)}
-                  />
-                </View>
-              </SurfaceCard>
-
-              <SurfaceCard style={styles.detailsCard}>
-                  <Text style={styles.sectionTitle}>Datos del perfil</Text>
-                  <View style={styles.detailsList}>
-                    {pet.species ? <DetailRow icon={Info} label="Especie" value={speciesLabel(pet.species)} /> : null}
-                    {pet.breed ? <DetailRow icon={Info} label="Raza" value={pet.breed} /> : null}
-                    {pet.sex ? (
-                      <DetailRow icon={Info} label="Sexo" value={pet.sex === "female" ? "Hembra" : pet.sex === "male" ? "Macho" : "Prefiero no indicar"} />
-                    ) : null}
-                    {pet.birth_date ? (
-                      <DetailRow
-                        icon={CalendarDays}
-                        label="Fecha de nacimiento"
-                        value={new Date(`${pet.birth_date}T00:00:00`).toLocaleDateString("es-ES", {
-                          day: "numeric",
-                          month: "long",
-                          year: "numeric",
-                        })}
-                      />
-                    ) : age ? <DetailRow icon={CalendarDays} label="Edad aproximada" value={age} /> : null}
-                    {pet.weight_kg !== null ? <DetailRow icon={Scale} label="Peso" value={`${pet.weight_kg} kg`} /> : null}
-                    {pet.color ? <DetailRow icon={Info} label="Color" value={pet.color} /> : null}
+                <View style={styles.identitySection}>
+                  <Text style={styles.sectionTitle}>Identificación</Text>
+                  <View style={styles.detailsGrid}>
+                    <View style={styles.detailCell}><DetailRow icon={PawPrint} label="Especie" value={speciesLabel(pet.species)} /></View>
+                    <View style={styles.detailCell}><DetailRow icon={Info} label="Raza" value={breedLabel(pet.breed)} /></View>
+                    <View style={styles.detailCell}><DetailRow icon={VenusAndMars} label="Sexo" value={pet.sex === "female" ? "Hembra" : pet.sex === "male" ? "Macho" : pet.sex === "unknown" ? "Prefiero no indicar" : "Sin registrar"} /></View>
+                    <View style={styles.detailCell}><DetailRow icon={CalendarDays} label="Nacimiento" value={pet.birth_date ? new Date(`${pet.birth_date}T00:00:00`).toLocaleDateString("es-CO", { day: "numeric", month: "short", year: "numeric" }) : "Sin registrar"} /></View>
+                    <View style={styles.detailCell}><DetailRow icon={CalendarDays} label="Edad" value={age ?? "Sin registrar"} /></View>
+                    <View style={styles.detailCell}><DetailRow icon={Weight} label="Peso" value={pet.weight_kg !== null ? `${pet.weight_kg} kg` : "Sin registrar"} /></View>
+                    <View style={styles.detailCell}><DetailRow icon={Palette} label="Color" value={friendly(pet.color)} /></View>
                   </View>
-                  {!pet.breed && !pet.sex && !age && pet.weight_kg === null && !pet.color ? (
-                    <Text style={styles.noDetails}>Sin más datos registrados.</Text>
-                  ) : null}
-
+                </View>
+                <View style={styles.carnetActions}>
+                  <Pressable accessibilityRole="button" onPress={() => router.push(`/pet/${pet.id}/medical`)} style={styles.actionTile}><CalendarDays size={19} color={colors.blue} /><Text style={styles.actionLabel}>Historial médico</Text></Pressable>
+                  <Pressable accessibilityRole="button" onPress={() => router.push(`/pet/${pet.id}/care`)} style={styles.actionTile}><HeartPulse size={19} color={colors.blue} /><Text style={styles.actionLabel}>Cuidados</Text></Pressable>
+                  <Pressable accessibilityRole="button" onPress={() => router.push(`/pet/${pet.id}/tracking`)} style={styles.actionTile}><MapPin size={19} color={colors.blue} /><Text style={styles.actionLabel}>Rastreo GPS</Text></Pressable>
+                </View>
+              <View style={styles.notesSection}>
+                <Text style={styles.sectionTitle}>Localizador de {pet.name}</Text>
+                <Text style={styles.notesText}>
+                  {Platform.OS === "ios" ? "Apple Buscar (Find My)" : Platform.OS === "android" ? "Google Find Hub" : "Disponible en iOS y Android"}.
+                  {" Vincula el rastreador manualmente en la aplicación oficial y selecciona allí el dispositivo de esta mascota."}
+                </Text>
+                <AppButton label="Rastrear mascota" icon={MapPin} loading={trackerBusy} onPress={() => void launchTracker()} />
+                <Text style={styles.notesEmpty}>PetCare no recibe coordenadas ni vincula automáticamente el rastreador.</Text>
+                {trackerError ? <Text accessibilityRole="alert" style={styles.errorText}>{trackerError}</Text> : null}
+              </View>
                 <View style={styles.notesSection}>
                   <Text style={styles.sectionTitle}>Notas</Text>
-                  <Text style={pet.notes ? styles.notesText : styles.notesEmpty}>
-                    {pet.notes || "Sin notas"}
+                  <Text style={pet.notes?.trim() ? styles.notesText : styles.notesEmpty}>
+                    {pet.notes?.trim() || "No hay notas registradas para esta mascota."}
                   </Text>
-                  <View style={styles.recordMeta}>
-                    <CalendarDays size={14} color={colors.textMuted} />
-                    <Text style={styles.recordMetaText}>
-                      Creada el {new Date(pet.created_at).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" })}
-                    </Text>
-                  </View>
+                </View>
+                <View style={styles.recordMeta}>
+                  <CalendarDays size={13} color={colors.textMuted} />
+                  <Text style={styles.recordMetaText}>
+                    Perfil creado {new Date(pet.created_at).toLocaleDateString("es-CO", { day: "numeric", month: "short", year: "numeric" })}
+                  </Text>
                 </View>
               </SurfaceCard>
 
@@ -239,27 +250,14 @@ export default function PetDetailScreen({ petId }: { petId: string }) {
                 <Trash2 size={16} color={colors.orange} />
                 <Text style={styles.deleteText}>Eliminar perfil</Text>
               </Pressable>
-              <Text style={styles.deleteHint}>Se ocultará de la lista; el registro se conservará como eliminado.</Text>
-              {confirmDelete ? (
-                <SurfaceCard style={styles.confirmCard}>
-                  <View style={styles.confirmIcon}><Trash2 size={21} color={colors.orange} /></View>
-                  <Text style={styles.confirmTitle}>¿Eliminar el perfil de {pet.name}?</Text>
-                  <Text style={styles.confirmBody}>
-                    Dejará de aparecer en la lista. Su registro se conservará como eliminado.
-                  </Text>
-                  <View style={styles.confirmActions}>
-                    <AppButton label="Cancelar" variant="secondary" onPress={() => setConfirmDelete(false)} disabled={deleting} />
-                    <Pressable
-                      accessibilityRole="button"
-                      disabled={deleting}
-                      onPress={() => void deletePet()}
-                      style={[styles.confirmDelete, deleting && styles.pressed]}
-                    >
-                      {deleting ? <ActivityIndicator color={colors.surface} /> : <Text style={styles.confirmDeleteText}>Eliminar</Text>}
-                    </Pressable>
-                  </View>
-                </SurfaceCard>
-              ) : null}
+              <ConfirmActionModal
+                visible={confirmDelete}
+                title={`¿Eliminar el perfil de ${pet.name}?`}
+                message="Dejará de aparecer en la lista. Su registro se conservará como eliminado."
+                busy={deleting}
+                onCancel={() => setConfirmDelete(false)}
+                onConfirm={() => void deletePet()}
+              />
             </>
           ) : (
             <SurfaceCard style={styles.missingCard}>
@@ -322,6 +320,20 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     gap: spacing.md,
   },
+  carnet: { padding: spacing.md, gap: spacing.md, borderWidth: 1, borderColor: colors.border },
+  carnetHeader: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingBottom: spacing.sm, borderBottomWidth: 1, borderBottomColor: colors.border },
+  carnetMark: { width: 36, height: 36, borderRadius: 12, backgroundColor: colors.blueSoft, alignItems: "center", justifyContent: "center" },
+  carnetBrand: { flex: 1, gap: 2 },
+  carnetBrandName: { color: colors.blueDark, fontSize: 14, fontWeight: "800" },
+  carnetEyebrow: { color: colors.textMuted, fontSize: 9, fontWeight: "800", letterSpacing: 1 },
+  editButton: { width: 38, height: 38, borderRadius: radius.pill, backgroundColor: colors.blueSoft, alignItems: "center", justifyContent: "center" },
+  petSummary: { flexDirection: "row", alignItems: "center", gap: spacing.md, paddingVertical: spacing.xs },
+  identitySection: { gap: spacing.md, paddingTop: spacing.md, borderTopWidth: 1, borderTopColor: colors.border },
+  detailsGrid: { flexDirection: "row", flexWrap: "wrap", rowGap: spacing.md },
+  detailCell: { width: "50%", paddingRight: spacing.sm },
+  carnetActions: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, paddingTop: spacing.md, borderTopWidth: 1, borderTopColor: colors.border },
+  actionTile: { flexBasis: "48%", flexGrow: 1, minHeight: 58, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.sm, paddingHorizontal: spacing.sm, borderRadius: radius.sm, backgroundColor: colors.blueSoft },
+  actionLabel: { color: colors.blueDark, fontSize: 12, fontWeight: "800" },
   heroContent: {
     flexDirection: "row",
     alignItems: "center",
@@ -474,14 +486,14 @@ const styles = StyleSheet.create({
   },
   errorBanner: {
     borderWidth: 1,
-    borderColor: "#FECACA",
+    borderColor: colors.dangerBorder,
     borderRadius: radius.sm,
-    backgroundColor: "#FEF2F2",
+    backgroundColor: colors.dangerSoft,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
   },
   errorText: {
-    color: "#B91C1C",
+    color: colors.orange,
     fontSize: 12,
     lineHeight: 18,
   },
@@ -548,7 +560,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: radius.sm,
-    backgroundColor: "#DC2626",
+    backgroundColor: colors.orange,
   },
   confirmDeleteText: {
     color: colors.surface,

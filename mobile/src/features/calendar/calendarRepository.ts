@@ -3,6 +3,7 @@ import { getLocalAccountId, withLocalWriteTransaction } from "../../db/localAcco
 import { getPetCareDatabase } from "../../db/database";
 import { isoToLocalDateTime, localDateTimeToIso } from "../care/recurrence";
 import { isTerminalReminderTarget } from "./notifications/targetLifecycle";
+import { advanceDomainQueueRevision } from "../sync/domainQueueState";
 import type {
   CalendarEvent,
   CalendarEventInput,
@@ -59,14 +60,15 @@ async function queueOperation(
   fields: string[],
   dependencies: (string | null)[],
 ): Promise<string> {
+  const syncState = await advanceDomainQueueRevision(tx, ownerId, entityType, entityId, action);
   const operationId = Crypto.randomUUID().toLowerCase();
   const now = new Date().toISOString();
   await tx.runAsync(
     `INSERT INTO sync_queue
       (operation_id, account_id, entity_type, entity_id, action, payload,
-       base_version, changed_fields, status, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)`,
-    operationId, ownerId, entityType, entityId, action, payload, baseVersion,
+       base_version, local_revision, changed_fields, status, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)`,
+    operationId, ownerId, entityType, entityId, action, payload, syncState.baseVersion, syncState.localRevision,
     JSON.stringify(fields), now, now,
   );
   for (const dependency of new Set(dependencies.filter((value): value is string => Boolean(value)))) {

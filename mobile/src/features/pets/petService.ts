@@ -2,6 +2,12 @@ import * as Crypto from "expo-crypto";
 import { petPhotoStorage } from "./petPhotoStorage";
 import { petRepository } from "./petRepository";
 import type { PetFilters, PetInput } from "./types";
+import { synchronizePets } from "../sync/petSync";
+import { sha256Hex } from "../sync/mediaQueue";
+
+function triggerSync(): void {
+  void synchronizePets().catch(() => undefined);
+}
 
 function getPhotoExtension(mimeType?: string): string {
   switch (mimeType) {
@@ -43,6 +49,12 @@ function validateProfile(input: PetInput): void {
   }
 }
 
+async function photoMetadata(key: string, mimeType?: string) {
+  const blob = await petPhotoStorage.readPhoto(key);
+  if (blob.size < 1 || blob.size > 10 * 1024 * 1024) throw new Error("La foto debe pesar entre 1 byte y 10 MB.");
+  return { assetId: Crypto.randomUUID().toLowerCase(), mimeType: mimeType ?? (key.endsWith(".png") ? "image/png" : key.endsWith(".webp") ? "image/webp" : "image/jpeg"), size: blob.size, sha256: await sha256Hex(await blob.arrayBuffer()) };
+}
+
 export const petService = {
   list(filters?: PetFilters) {
     return petRepository.list(filters);
@@ -61,7 +73,9 @@ export const petService = {
       await petPhotoStorage.savePickedPhoto(selectedPhoto.uri, key);
     }
     try {
-      return await petRepository.save({ ...input, photoStorageKey: key });
+      const saved = await petRepository.save({ ...input, photoStorageKey: key }, undefined, key ? await photoMetadata(key, selectedPhoto?.mimeType) : undefined);
+      triggerSync();
+      return saved;
     } catch (error) {
       if (key) await petPhotoStorage.deletePhoto(key);
       throw error;
@@ -81,7 +95,10 @@ export const petService = {
       await petPhotoStorage.savePickedPhoto(selectedPhoto.uri, key);
     }
     try {
-      return await petRepository.save({ ...input, photoStorageKey: key }, id);
+      const changedPhoto = Boolean(selectedPhoto);
+      const saved = await petRepository.save({ ...input, photoStorageKey: key }, id, changedPhoto && key ? await photoMetadata(key, selectedPhoto?.mimeType) : undefined);
+      triggerSync();
+      return saved;
     } catch (error) {
       if (selectedPhoto && key) await petPhotoStorage.deletePhoto(key);
       throw error;
@@ -89,7 +106,9 @@ export const petService = {
   },
 
   async delete(id: string) {
-    return petRepository.softDelete(id);
+    const deleted = await petRepository.softDelete(id);
+    triggerSync();
+    return deleted;
   },
 };
 

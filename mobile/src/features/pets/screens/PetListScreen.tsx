@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
   },
   filterChipSelected: {
     backgroundColor: colors.blueSoft,
-    borderColor: "#BFDBFE",
+    borderColor: colors.blueMuted,
   },
   filterText: {
     color: colors.textMuted,
@@ -396,7 +396,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   petMeta: {
-    color: "#64748B",
+    color: colors.textMuted,
     fontSize: 11,
     fontWeight: "500",
   },
@@ -425,8 +425,8 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     gap: spacing.md,
     padding: spacing.md,
-    backgroundColor: "#FFF7ED",
-    borderColor: "#FED7AA",
+    backgroundColor: colors.orangeSoft,
+    borderColor: colors.dangerBorder,
   },
   errorCopy: {
     flex: 1,

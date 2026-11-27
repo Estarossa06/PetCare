@@ -81,6 +81,37 @@ export const medicalFileStorage = {
     return uri;
   },
 
+  async read(storageKey: string): Promise<Blob> {
+    if (Platform.OS === "web") {
+      const uri = await this.getUri(storageKey);
+      if (!uri) throw new Error("El archivo local ya no está disponible.");
+      const response = await fetch(uri);
+      if (!response.ok) throw new Error("No se pudo leer el archivo local.");
+      return response.blob();
+    }
+    const file = getStoredFile(storageKey);
+    if (!file.exists) throw new Error("El archivo local ya no está disponible.");
+    return new Blob([await file.arrayBuffer()]);
+  },
+
+  async saveRemote(storageKey: string, blob: Blob): Promise<void> {
+    if (Platform.OS === "web") {
+      const db = await openDatabase();
+      try {
+        await new Promise<void>((resolve, reject) => {
+          const transaction = db.transaction(objectStoreName, "readwrite");
+          transaction.objectStore(objectStoreName).put(blob, storageKey);
+          transaction.onerror = () => reject(transaction.error ?? new Error("Could not save the downloaded file."));
+          transaction.oncomplete = () => resolve();
+        });
+      } finally { db.close(); }
+      return;
+    }
+    const file = getStoredFile(storageKey);
+    file.parentDirectory.create({ idempotent: true, intermediates: true });
+    file.write(new Uint8Array(await blob.arrayBuffer()));
+  },
+
   async delete(storageKey: string): Promise<void> {
     if (Platform.OS !== "web") {
       const file = getStoredFile(storageKey);

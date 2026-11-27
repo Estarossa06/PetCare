@@ -48,6 +48,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.yellowSoft,
   },
   lavender: {
-    backgroundColor: "#EDE9FE",
+    backgroundColor: colors.lavenderSoft,
   },
 });

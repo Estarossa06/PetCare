@@ -23,6 +23,13 @@
           }
         }
       ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "PetCare necesita acceso a la galería para elegir una foto de tu mascota.",
+          "cameraPermission": "PetCare necesita acceso a la cámara para fotografiar a tu mascota."
+        }
+      ],
       "./plugins/withCmakeObjectPathLimit",
       "expo-secure-store"
     ]

@@ -94,6 +94,10 @@ export class ApiClient {
     }
   }
 
+  async clearLocalSession(): Promise<void> {
+    await tokenStorage.clear();
+  }
+
   private async authenticate(
     path: string,
     body: Record<string, string>,
@@ -123,6 +127,25 @@ export class ApiClient {
       return this.readResponse<T>(retried);
     }
     return this.readResponse<T>(response);
+  }
+
+  async requestRaw(path: string, options: { method: string; body?: Blob; headers?: Record<string, string> }): Promise<Response> {
+    const sendRaw = async (): Promise<Response> => {
+      const tokens = await tokenStorage.read();
+      if (!tokens) throw new ApiClientError("Authentication is required.", 401, "UNAUTHENTICATED");
+      return this.fetcher.call(globalThis, `${this.baseUrl()}${path}`, {
+        method: options.method,
+        headers: { Authorization: `Bearer ${tokens.accessToken}`, ...(options.headers ?? {}) },
+        ...(options.body ? { body: options.body } : {}),
+      });
+    };
+    let response = await sendRaw();
+    if (response.status === 401) {
+      await this.refreshTokens();
+      response = await sendRaw();
+    }
+    if (!response.ok) throw await this.createError(response);
+    return response;
   }
 
   private async send(

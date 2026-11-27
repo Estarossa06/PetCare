@@ -4,6 +4,7 @@ import { ArrowLeft, Bell, CalendarDays, Clock3, MapPin, PawPrint, Pencil, Trash2
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppButton } from "../../../components/ui/AppButton";
+import { ConfirmActionModal } from "../../../components/ui/ConfirmActionModal";
 import { SurfaceCard } from "../../../components/ui/SurfaceCard";
 import { calendarRepository } from "../calendarRepository";
 import { cancelCalendarNotification } from "../calendarNotifications";
@@ -109,16 +110,15 @@ export default function CalendarEventDetailScreen() {
                     <AppButton label="Eliminar" icon={Trash2} variant="quiet" onPress={() => setConfirmDelete(true)} disabled={busy} />
                   </View>
                 </SurfaceCard>
-                {confirmDelete ? (
-                  <SurfaceCard style={styles.confirmCard}>
-                    <Text style={styles.confirmTitle}>¿Eliminar este elemento?</Text>
-                    <Text style={styles.meta}>Se conservará como eliminación lógica y se cancelarán sus recordatorios activos.</Text>
-                    <View style={styles.actions}>
-                      <AppButton label="Conservar" variant="secondary" onPress={() => setConfirmDelete(false)} disabled={busy} />
-                      <AppButton label="Confirmar eliminación" icon={Trash2} onPress={() => void remove()} loading={busy} />
-                    </View>
-                  </SurfaceCard>
-                ) : null}
+                <ConfirmActionModal
+                  visible={confirmDelete}
+                  title={isAppointment ? "¿Eliminar esta cita?" : "¿Eliminar este evento?"}
+                  message="Se conservará como eliminado y se cancelarán sus recordatorios activos."
+                  confirmLabel="Eliminar"
+                  busy={busy}
+                  onCancel={() => setConfirmDelete(false)}
+                  onConfirm={() => void remove()}
+                />
                 <View style={styles.reminderHeader}><Text style={styles.section}>Recordatorios</Text><AppButton label="Añadir" icon={Bell} size="small" onPress={() => router.push({ pathname: "/calendar/reminder/new", params: { targetType, targetId } })} /></View>
                 {reminders.length ? reminders.map((reminder) => (
                   <Pressable key={reminder.id} onPress={() => router.push(`/calendar/reminder/${reminder.id}`)}>

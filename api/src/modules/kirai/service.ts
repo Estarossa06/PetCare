@@ -13,13 +13,13 @@ export class KiraiConversationService {
   async answer(
     message: string,
     history: readonly KiraiHistoryMessage[] = [],
+    petContext = "",
   ): Promise<KiraiAnswer> {
+    const messages = [buildSystemMessage()];
+    if (petContext) messages.push({ role: "system", content: petContext });
+    messages.push(...history, { role: "user", content: message });
     const response = await this.provider.generate({
-      messages: [
-        buildSystemMessage(),
-        ...history,
-        { role: "user", content: message },
-      ],
+      messages,
       temperature: 0.3,
       maxOutputTokens: 512,
     });

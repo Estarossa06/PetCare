@@ -8,6 +8,8 @@ import { loadConfig, type AppConfig } from "./config/env.js";
 import { createDatabasePool } from "./db/pool.js";
 import { PostgresAuthStore } from "./modules/auth/postgresAuthStore.js";
 import { logger } from "./observability/logger.js";
+import { R2ObjectStore } from "./modules/media/objectStore.js";
+import { runMediaMaintenance } from "./modules/media/maintenance.js";
 
 export interface RunningServer {
   server: Server;
@@ -23,11 +25,13 @@ export async function startServer(config: AppConfig = loadConfig()): Promise<Run
     });
   });
 
+  const mediaStore = config.r2 ? new R2ObjectStore(config.r2) : undefined;
   const app = createApp({
     config,
     database: pool,
     authStore: new PostgresAuthStore(pool),
     logger,
+    ...(mediaStore ? { mediaStore } : {}),
   });
   const server = createServer(app);
 
@@ -46,6 +50,11 @@ export async function startServer(config: AppConfig = loadConfig()): Promise<Run
     nodeEnv: config.nodeEnv,
   });
 
+  const mediaMaintenanceTimer = mediaStore ? setInterval(() => {
+    void runMediaMaintenance(pool, mediaStore, logger).catch(() => logger.error({ event: "media_maintenance_failed" }));
+  }, 60 * 60_000) : undefined;
+  mediaMaintenanceTimer?.unref();
+
   let closing: Promise<void> | undefined;
   const close = (): Promise<void> => {
     if (!closing) {
@@ -57,7 +66,10 @@ export async function startServer(config: AppConfig = loadConfig()): Promise<Run
           }
           resolveClose();
         });
-      }).then(() => pool.end());
+      }).then(() => {
+        if (mediaMaintenanceTimer) clearInterval(mediaMaintenanceTimer);
+        return pool.end();
+      });
     }
     return closing;
   };

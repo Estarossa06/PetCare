@@ -90,6 +90,54 @@ export class AuthController {
     }
   };
 
+  readonly updateProfile: RequestHandler = async (request, response, next) => {
+    try {
+      const user = await this.service.updateProfile(requirePrincipal(request).userId, request.body);
+      response.status(200).json({ user });
+    } catch (error) {
+      if (error instanceof InvalidCredentialsError) {
+        sendError(response, 401, "INVALID_CREDENTIALS", "The current password is incorrect.");
+      } else if (handleValidationError(error, response)) {
+        return;
+      } else if (error instanceof DuplicateEmailError) {
+        sendError(response, 409, "EMAIL_ALREADY_IN_USE", "This email is already in use.");
+      } else next(error);
+    }
+  };
+
+  readonly changePassword: RequestHandler = async (request, response, next) => {
+    try {
+      await this.service.changePassword(requirePrincipal(request), request.body);
+      response.sendStatus(204);
+    } catch (error) {
+      if (error instanceof InvalidCredentialsError) {
+        sendError(response, 401, "INVALID_CREDENTIALS", "The current password is incorrect.");
+      } else if (!handleValidationError(error, response)) next(error);
+    }
+  };
+
+  readonly deactivateAccount: RequestHandler = async (request, response, next) => {
+    try {
+      await this.service.deactivateAccount(requirePrincipal(request), request.body);
+      response.sendStatus(204);
+    } catch (error) {
+      if (error instanceof InvalidCredentialsError) {
+        sendError(response, 401, "INVALID_CREDENTIALS", "The current password is incorrect.");
+      } else if (!handleValidationError(error, response)) next(error);
+    }
+  };
+
+  readonly requestPermanentDeletion: RequestHandler = async (request, response, next) => {
+    try {
+      await this.service.requestPermanentDeletion(requirePrincipal(request), request.body);
+      response.status(202).json({ status: "pending_permanent_deletion" });
+    } catch (error) {
+      if (error instanceof InvalidCredentialsError) {
+        sendError(response, 401, "INVALID_CREDENTIALS", "The current password is incorrect.");
+      } else if (!handleValidationError(error, response)) next(error);
+    }
+  };
+
   readonly logout: RequestHandler = async (request, response, next) => {
     try {
       await this.service.logout(requirePrincipal(request));

@@ -1,5 +1,6 @@
 import * as SQLite from "expo-sqlite";
-import { migrateLocalDatabase, recoverInterruptedSync } from "./migrate";
+import { migrateLocalDatabase } from "./migrate";
+import { recoverInterruptedSync } from "./recoverSync";
 
 const databaseName = "petcare.db";
 let databasePromise: Promise<SQLite.SQLiteDatabase> | undefined;

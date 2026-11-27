@@ -4,6 +4,7 @@ import { ArrowLeft, CalendarDays, Check, Clock3, Pause, Play, Trash2 } from "luc
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Switch, Text, View, useWindowDimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppButton } from "../../../components/ui/AppButton";
+import { ConfirmActionModal } from "../../../components/ui/ConfirmActionModal";
 import { SurfaceCard } from "../../../components/ui/SurfaceCard";
 import { careCategoryLabels, frequencyLabels } from "../careService";
 import { careRepository } from "../careRepository";
@@ -158,17 +159,14 @@ export default function CareTaskDetailScreen({ petId, taskId }: { petId: string;
             </>
           ) : <SurfaceCard style={styles.card}><Text accessibilityRole="alert" style={styles.error}>{error}</Text><AppButton label="Volver a cuidados" onPress={() => router.replace(`/pet/${petId}/care`)} /></SurfaceCard>}
           {error && task ? <Text accessibilityRole="alert" style={styles.error}>{error}</Text> : null}
-          {confirmDelete && task ? (
-            <SurfaceCard style={styles.confirm}>
-              <View style={styles.confirmIcon}><Trash2 size={21} color={colors.orange} /></View>
-              <Text style={styles.confirmTitle}>¿Eliminar esta actividad?</Text>
-              <Text style={styles.meta}>Se conservará el registro de ejecuciones y la actividad quedará marcada como eliminada.</Text>
-              <View style={styles.actions}>
-                <AppButton label="Cancelar" variant="secondary" onPress={() => setConfirmDelete(false)} disabled={saving} />
-                <AppButton label="Eliminar" onPress={() => void remove()} loading={saving} />
-              </View>
-            </SurfaceCard>
-          ) : null}
+          <ConfirmActionModal
+            visible={confirmDelete && Boolean(task)}
+            title="¿Eliminar esta actividad?"
+            message="Se conservará el registro de ejecuciones y la actividad quedará marcada como eliminada."
+            busy={saving}
+            onCancel={() => setConfirmDelete(false)}
+            onConfirm={() => void remove()}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -194,7 +192,7 @@ const styles = StyleSheet.create({
   actions: { flexDirection: "row", alignItems: "center", flexWrap: "wrap", gap: spacing.sm },
   switchRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderTopWidth: 1, borderTopColor: colors.border, paddingTop: spacing.sm },
   card: { gap: spacing.md },
-  completeCard: { gap: spacing.md, backgroundColor: "#FFFEF7" },
+  completeCard: { gap: spacing.md, backgroundColor: colors.yellowSoft },
   section: { gap: spacing.md },
   sectionTitle: { color: colors.blueDark, fontSize: 16, fontWeight: "800" },
   body: { color: colors.text, fontSize: 14, lineHeight: 21, fontWeight: "600" },

@@ -17,6 +17,10 @@ export function createAuthRouter(store: AuthStore, secret: Uint8Array, logger: L
   router.post("/login", limit, controller.login);
   router.post("/refresh", limit, controller.refresh);
   router.get("/me", authenticate, controller.currentUser);
+  router.patch("/me", authenticate, controller.updateProfile);
+  router.post("/password", authenticate, controller.changePassword);
+  router.post("/deactivate", authenticate, controller.deactivateAccount);
+  router.post("/deletion-request", authenticate, controller.requestPermanentDeletion);
   router.post("/logout", authenticate, controller.logout);
 
   return router;

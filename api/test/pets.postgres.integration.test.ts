@@ -1,3 +1,4 @@
+import "dotenv/config";
 import assert from "node:assert/strict";
 import { createHash, randomUUID } from "node:crypto";
 import { once } from "node:events";
@@ -46,7 +47,7 @@ test(
   },
   async () => {
     assert.equal(
-      new URL(databaseUrl!).pathname.replace(/^\//, ""),
+      decodeURIComponent(new URL(databaseUrl!).pathname.replace(/^\//, "")),
       "petcare_test",
       "Refusing to connect unless PETCARE_TEST_DATABASE_URL names petcare_test.",
     );
@@ -54,9 +55,10 @@ test(
     const pool = createDatabasePool(databaseUrl!);
     let server: Server | undefined;
     let fixturesStarted = false;
+    const runId = randomUUID();
     const emails = [
-      `pets-integration-${randomUUID()}@example.test`,
-      `pets-integration-${randomUUID()}@example.test`,
+      `pets-integration-${runId}-a@example.test`,
+      `pets-integration-${runId}-b@example.test`,
     ];
 
     try {
@@ -290,33 +292,57 @@ test(
       );
       assert.ok(deletedRow.rows[0]?.deleted_at);
     } finally {
-      if (server) {
-        const closed = once(server, "close");
-        server.close();
-        await closed;
+      try {
+        if (server) {
+          const closed = once(server, "close");
+          server.close();
+          await closed;
+        }
+        if (fixturesStarted) {
+          const owners = await pool.query<{ id: string }>(
+            "SELECT id FROM users WHERE email = ANY($1::text[])",
+            [emails],
+          );
+          const ownerIds = owners.rows.map((owner) => owner.id);
+          await pool.query("DELETE FROM sync_changes WHERE owner_id = ANY($1::uuid[])", [ownerIds]);
+          await pool.query("DELETE FROM sync_operations WHERE user_id = ANY($1::uuid[])", [ownerIds]);
+          await pool.query("DELETE FROM sync_devices WHERE user_id = ANY($1::uuid[])", [ownerIds]);
+          await pool.query("DELETE FROM sync_cursors WHERE owner_id = ANY($1::uuid[])", [ownerIds]);
+          await pool.query("DELETE FROM pets WHERE owner_id = ANY($1::uuid[])", [ownerIds]);
+          await pool.query(
+            `DELETE FROM auth_refresh_tokens AS token
+             USING auth_sessions AS session, users
+             WHERE token.session_id = session.id
+               AND session.user_id = users.id
+               AND users.email = ANY($1::text[])`,
+            [emails],
+          );
+          await pool.query(
+            `DELETE FROM auth_sessions AS session
+             USING users
+             WHERE session.user_id = users.id AND users.email = ANY($1::text[])`,
+            [emails],
+          );
+          await pool.query("DELETE FROM users WHERE email = ANY($1::text[])", [emails]);
+          const residual = await pool.query<{ users: string; pets: string; sessions: string; refresh_tokens: string }>(
+            `SELECT
+               (SELECT count(*)::text FROM users WHERE email = ANY($1::text[])) AS users,
+               (SELECT count(*)::text FROM pets WHERE owner_id = ANY($2::uuid[])) AS pets,
+               (SELECT count(*)::text FROM auth_sessions AS session
+                 WHERE session.user_id = ANY($2::uuid[])) AS sessions,
+               (SELECT count(*)::text FROM auth_refresh_tokens AS token
+                 JOIN auth_sessions AS session ON session.id = token.session_id
+                 WHERE session.user_id = ANY($2::uuid[])) AS refresh_tokens`,
+            [emails, ownerIds],
+          );
+          assert.equal(Number(residual.rows[0].users), 0, `User fixture cleanup failed for run ${runId}.`);
+          assert.equal(Number(residual.rows[0].pets), 0, `Pet fixture cleanup failed for run ${runId}.`);
+          assert.equal(Number(residual.rows[0].sessions), 0, `Session fixture cleanup failed for run ${runId}.`);
+          assert.equal(Number(residual.rows[0].refresh_tokens), 0, `Refresh-token fixture cleanup failed for run ${runId}.`);
+        }
+      } finally {
+        await pool.end();
       }
-      if (fixturesStarted) {
-        await pool.query(
-          "DELETE FROM pets WHERE owner_id IN (SELECT id FROM users WHERE email = ANY($1::text[]))",
-          [emails],
-        );
-        await pool.query(
-          `DELETE FROM auth_refresh_tokens AS token
-           USING auth_sessions AS session, users
-           WHERE token.session_id = session.id
-             AND session.user_id = users.id
-             AND users.email = ANY($1::text[])`,
-          [emails],
-        );
-        await pool.query(
-          `DELETE FROM auth_sessions AS session
-           USING users
-           WHERE session.user_id = users.id AND users.email = ANY($1::text[])`,
-          [emails],
-        );
-        await pool.query("DELETE FROM users WHERE email = ANY($1::text[])", [emails]);
-      }
-      await pool.end();
     }
   },
 );

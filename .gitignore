@@ -4,6 +4,7 @@ node_modules/
 api/.env
 api/.env.*
 !api/.env.example
+/mobile/.env.local
 dist/
 coverage/
 *.db

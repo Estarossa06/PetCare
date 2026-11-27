@@ -7,6 +7,7 @@ export interface AppConfig {
   databaseUrl: string;
   corsOrigins: readonly string[];
   accessTokenSecret: Uint8Array;
+  r2?: { accountId: string; bucket: string; accessKeyId: string; secretAccessKey: string };
 }
 
 function requiredValue(value: string | undefined, name: string): string {
@@ -97,6 +98,11 @@ export function loadConfig(
     throw new Error("HOST must be a valid hostname or IP address.");
   }
 
+  const r2Values = [env.R2_ACCOUNT_ID, env.R2_BUCKET, env.R2_ACCESS_KEY_ID, env.R2_SECRET_ACCESS_KEY].map((value) => value?.trim() ?? "");
+  if (r2Values.some(Boolean) && r2Values.some((value) => !value)) {
+    throw new Error("R2_ACCOUNT_ID, R2_BUCKET, R2_ACCESS_KEY_ID and R2_SECRET_ACCESS_KEY must be configured together.");
+  }
+
   return {
     nodeEnv,
     port: parsePort(env.PORT),
@@ -104,5 +110,6 @@ export function loadConfig(
     databaseUrl: loadDatabaseUrl(env),
     corsOrigins: parseCorsOrigins(env.CORS_ORIGINS),
     accessTokenSecret: parseAccessTokenSecret(env.AUTH_ACCESS_TOKEN_SECRET),
+    ...(r2Values.every(Boolean) ? { r2: { accountId: r2Values[0]!, bucket: r2Values[1]!, accessKeyId: r2Values[2]!, secretAccessKey: r2Values[3]! } } : {}),
   };
 }

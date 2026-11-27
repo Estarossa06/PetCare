@@ -267,6 +267,7 @@ test("CORS allows configured origins and rejects disallowed preflights", async (
       headers: {
         Origin: "https://petcare.example",
         "Access-Control-Request-Method": "GET",
+        "Access-Control-Request-Headers": "authorization,x-upload-id,x-checksum-sha256,x-file-name,x-pet-id",
       },
     });
     assert.equal(allowed.status, 204);
@@ -274,6 +275,8 @@ test("CORS allows configured origins and rejects disallowed preflights", async (
       allowed.headers.get("access-control-allow-origin"),
       "https://petcare.example",
     );
+    assert.match(allowed.headers.get("access-control-allow-headers") ?? "", /X-Checksum-Sha256/i);
+    assert.match(allowed.headers.get("access-control-expose-headers") ?? "", /X-Content-SHA256/i);
 
     const noOrigin = await fetch(`${running.baseUrl}/health`, {
       method: "OPTIONS",

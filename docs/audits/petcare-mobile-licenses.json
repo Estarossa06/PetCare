@@ -1,0 +1,4610 @@
+[
+  {
+    "name": "@babel/code-frame",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/code-frame"
+  },
+  {
+    "name": "@babel/compat-data",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/compat-data"
+  },
+  {
+    "name": "@babel/core",
+    "version": "7.29.13",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/core"
+  },
+  {
+    "name": "semver",
+    "version": "6.3.2",
+    "scope": "required",
+    "license": "ISC",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/core/node_modules/semver"
+  },
+  {
+    "name": "@babel/generator",
+    "version": "7.29.13",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/generator"
+  },
+  {
+    "name": "@babel/helper-annotate-as-pure",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/helper-annotate-as-pure"
+  },
+  {
+    "name": "@babel/helper-compilation-targets",
+    "version": "7.29.13",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/helper-compilation-targets"
+  },
+  {
+    "name": "semver",
+    "version": "6.3.2",
+    "scope": "required",
+    "license": "ISC",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/helper-compilation-targets/node_modules/semver"
+  },
+  {
+    "name": "@babel/helper-create-class-features-plugin",
+    "version": "7.29.13",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/helper-create-class-features-plugin"
+  },
+  {
+    "name": "semver",
+    "version": "6.3.2",
+    "scope": "required",
+    "license": "ISC",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/helper-create-class-features-plugin/node_modules/semver"
+  },
+  {
+    "name": "@babel/helper-create-regexp-features-plugin",
+    "version": "7.29.10",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/helper-create-regexp-features-plugin"
+  },
+  {
+    "name": "semver",
+    "version": "6.3.2",
+    "scope": "required",
+    "license": "ISC",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/helper-create-regexp-features-plugin/node_modules/semver"
+  },
+  {
+    "name": "@babel/helper-define-polyfill-provider",
+    "version": "0.6.8",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/helper-define-polyfill-provider"
+  },
+  {
+    "name": "@babel/helper-globals",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/helper-globals"
+  },
+  {
+    "name": "@babel/helper-member-expression-to-functions",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/helper-member-expression-to-functions"
+  },
+  {
+    "name": "@babel/helper-module-imports",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/helper-module-imports"
+  },
+  {
+    "name": "@babel/helper-module-transforms",
+    "version": "7.29.13",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/helper-module-transforms"
+  },
+  {
+    "name": "@babel/helper-optimise-call-expression",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/helper-optimise-call-expression"
+  },
+  {
+    "name": "@babel/helper-plugin-utils",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/helper-plugin-utils"
+  },
+  {
+    "name": "@babel/helper-remap-async-to-generator",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/helper-remap-async-to-generator"
+  },
+  {
+    "name": "@babel/helper-replace-supers",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/helper-replace-supers"
+  },
+  {
+    "name": "@babel/helper-skip-transparent-expression-wrappers",
+    "version": "7.29.13",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/helper-skip-transparent-expression-wrappers"
+  },
+  {
+    "name": "@babel/helper-string-parser",
+    "version": "7.29.13",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/helper-string-parser"
+  },
+  {
+    "name": "@babel/helper-validator-identifier",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/helper-validator-identifier"
+  },
+  {
+    "name": "@babel/helper-validator-option",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/helper-validator-option"
+  },
+  {
+    "name": "@babel/helper-wrap-function",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/helper-wrap-function"
+  },
+  {
+    "name": "@babel/helpers",
+    "version": "7.29.13",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/helpers"
+  },
+  {
+    "name": "@babel/parser",
+    "version": "7.29.13",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/parser"
+  },
+  {
+    "name": "@babel/plugin-proposal-decorators",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-proposal-decorators"
+  },
+  {
+    "name": "@babel/plugin-proposal-export-default-from",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-proposal-export-default-from"
+  },
+  {
+    "name": "@babel/plugin-syntax-decorators",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-syntax-decorators"
+  },
+  {
+    "name": "@babel/plugin-syntax-dynamic-import",
+    "version": "7.8.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-syntax-dynamic-import"
+  },
+  {
+    "name": "@babel/plugin-syntax-export-default-from",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-syntax-export-default-from"
+  },
+  {
+    "name": "@babel/plugin-syntax-flow",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-syntax-flow"
+  },
+  {
+    "name": "@babel/plugin-syntax-jsx",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-syntax-jsx"
+  },
+  {
+    "name": "@babel/plugin-syntax-nullish-coalescing-operator",
+    "version": "7.8.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-syntax-nullish-coalescing-operator"
+  },
+  {
+    "name": "@babel/plugin-syntax-optional-chaining",
+    "version": "7.8.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-syntax-optional-chaining"
+  },
+  {
+    "name": "@babel/plugin-syntax-typescript",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-syntax-typescript"
+  },
+  {
+    "name": "@babel/plugin-transform-arrow-functions",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-arrow-functions"
+  },
+  {
+    "name": "@babel/plugin-transform-async-generator-functions",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-async-generator-functions"
+  },
+  {
+    "name": "@babel/plugin-transform-async-to-generator",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-async-to-generator"
+  },
+  {
+    "name": "@babel/plugin-transform-block-scoping",
+    "version": "7.29.13",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-block-scoping"
+  },
+  {
+    "name": "@babel/plugin-transform-class-properties",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-class-properties"
+  },
+  {
+    "name": "@babel/plugin-transform-class-static-block",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-class-static-block"
+  },
+  {
+    "name": "@babel/plugin-transform-classes",
+    "version": "7.29.11",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-classes"
+  },
+  {
+    "name": "@babel/plugin-transform-destructuring",
+    "version": "7.29.13",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-destructuring"
+  },
+  {
+    "name": "@babel/plugin-transform-export-namespace-from",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-export-namespace-from"
+  },
+  {
+    "name": "@babel/plugin-transform-flow-strip-types",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-flow-strip-types"
+  },
+  {
+    "name": "@babel/plugin-transform-for-of",
+    "version": "7.29.13",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-for-of"
+  },
+  {
+    "name": "@babel/plugin-transform-logical-assignment-operators",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-logical-assignment-operators"
+  },
+  {
+    "name": "@babel/plugin-transform-modules-commonjs",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-modules-commonjs"
+  },
+  {
+    "name": "@babel/plugin-transform-named-capturing-groups-regex",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-named-capturing-groups-regex"
+  },
+  {
+    "name": "@babel/plugin-transform-nullish-coalescing-operator",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-nullish-coalescing-operator"
+  },
+  {
+    "name": "@babel/plugin-transform-object-rest-spread",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-object-rest-spread"
+  },
+  {
+    "name": "@babel/plugin-transform-optional-catch-binding",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-optional-catch-binding"
+  },
+  {
+    "name": "@babel/plugin-transform-optional-chaining",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-optional-chaining"
+  },
+  {
+    "name": "@babel/plugin-transform-parameters",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-parameters"
+  },
+  {
+    "name": "@babel/plugin-transform-private-methods",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-private-methods"
+  },
+  {
+    "name": "@babel/plugin-transform-private-property-in-object",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-private-property-in-object"
+  },
+  {
+    "name": "@babel/plugin-transform-react-display-name",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-react-display-name"
+  },
+  {
+    "name": "@babel/plugin-transform-react-jsx",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-react-jsx"
+  },
+  {
+    "name": "@babel/plugin-transform-react-jsx-development",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-react-jsx-development"
+  },
+  {
+    "name": "@babel/plugin-transform-react-jsx-self",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-react-jsx-self"
+  },
+  {
+    "name": "@babel/plugin-transform-react-jsx-source",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-react-jsx-source"
+  },
+  {
+    "name": "@babel/plugin-transform-react-pure-annotations",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-react-pure-annotations"
+  },
+  {
+    "name": "@babel/plugin-transform-regenerator",
+    "version": "7.29.8",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-regenerator"
+  },
+  {
+    "name": "@babel/plugin-transform-runtime",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-runtime"
+  },
+  {
+    "name": "semver",
+    "version": "6.3.2",
+    "scope": "required",
+    "license": "ISC",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-runtime/node_modules/semver"
+  },
+  {
+    "name": "@babel/plugin-transform-shorthand-properties",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-shorthand-properties"
+  },
+  {
+    "name": "@babel/plugin-transform-template-literals",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-template-literals"
+  },
+  {
+    "name": "@babel/plugin-transform-typescript",
+    "version": "7.29.9",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-typescript"
+  },
+  {
+    "name": "@babel/plugin-transform-unicode-regex",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/plugin-transform-unicode-regex"
+  },
+  {
+    "name": "@babel/preset-typescript",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/preset-typescript"
+  },
+  {
+    "name": "@babel/runtime",
+    "version": "7.29.13",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/runtime"
+  },
+  {
+    "name": "@babel/template",
+    "version": "7.29.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/template"
+  },
+  {
+    "name": "@babel/traverse",
+    "version": "7.29.13",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/traverse"
+  },
+  {
+    "name": "@babel/types",
+    "version": "7.29.11",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@babel/types"
+  },
+  {
+    "name": "@expo/code-signing-certificates",
+    "version": "0.0.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/code-signing-certificates"
+  },
+  {
+    "name": "@expo/config",
+    "version": "58.0.11",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/config"
+  },
+  {
+    "name": "@expo/config-plugins",
+    "version": "58.0.12",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/config-plugins"
+  },
+  {
+    "name": "@expo/config-types",
+    "version": "58.0.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/config-types"
+  },
+  {
+    "name": "@expo/devcert",
+    "version": "1.2.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/devcert"
+  },
+  {
+    "name": "debug",
+    "version": "3.2.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/devcert/node_modules/debug"
+  },
+  {
+    "name": "@expo/devtools",
+    "version": "58.0.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/devtools"
+  },
+  {
+    "name": "@expo/dom-webview",
+    "version": "58.0.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/dom-webview"
+  },
+  {
+    "name": "@expo/env",
+    "version": "2.5.4",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/env"
+  },
+  {
+    "name": "@expo/fingerprint",
+    "version": "0.21.9",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/fingerprint"
+  },
+  {
+    "name": "@expo/image-utils",
+    "version": "0.12.6",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/image-utils"
+  },
+  {
+    "name": "@expo/inline-modules",
+    "version": "0.2.9",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/inline-modules"
+  },
+  {
+    "name": "@expo/json-file",
+    "version": "11.2.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/json-file"
+  },
+  {
+    "name": "@expo/local-build-cache-provider",
+    "version": "58.0.11",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/local-build-cache-provider"
+  },
+  {
+    "name": "@expo/log-box",
+    "version": "58.0.15",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/log-box"
+  },
+  {
+    "name": "@expo/log-box-utils",
+    "version": "58.0.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/log-box-utils"
+  },
+  {
+    "name": "@expo/metro",
+    "version": "58.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/metro"
+  },
+  {
+    "name": "@expo/metro-config",
+    "version": "58.0.21",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/metro-config"
+  },
+  {
+    "name": "@expo/metro-file-map",
+    "version": "58.0.5",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/metro-file-map"
+  },
+  {
+    "name": "@expo/metro-runtime",
+    "version": "58.0.17",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/metro-runtime"
+  },
+  {
+    "name": "@expo/modules-macros-linux-arm64",
+    "version": "0.29.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "https://github.com/expo/expo-modules-macros/blob/main/LICENSE",
+    "lockfilePath": "node_modules/@expo/modules-macros-linux-arm64"
+  },
+  {
+    "name": "@expo/modules-macros-linux-x64",
+    "version": "0.29.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "https://github.com/expo/expo-modules-macros/blob/main/LICENSE",
+    "lockfilePath": "node_modules/@expo/modules-macros-linux-x64"
+  },
+  {
+    "name": "@expo/modules-macros-win32-arm64",
+    "version": "0.29.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "https://github.com/expo/expo-modules-macros/blob/main/LICENSE",
+    "lockfilePath": "node_modules/@expo/modules-macros-win32-arm64"
+  },
+  {
+    "name": "@expo/modules-macros-win32-x64",
+    "version": "0.29.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/modules-macros-win32-x64"
+  },
+  {
+    "name": "@expo/osascript",
+    "version": "2.8.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/osascript"
+  },
+  {
+    "name": "@expo/package-manager",
+    "version": "1.14.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/package-manager"
+  },
+  {
+    "name": "@expo/platforms",
+    "version": "58.0.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/platforms"
+  },
+  {
+    "name": "@expo/plist",
+    "version": "0.10.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/plist"
+  },
+  {
+    "name": "@expo/prebuild-config",
+    "version": "58.0.19",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/prebuild-config"
+  },
+  {
+    "name": "@expo/require-utils",
+    "version": "58.0.5",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/require-utils"
+  },
+  {
+    "name": "@expo/router-server",
+    "version": "58.0.21",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/router-server"
+  },
+  {
+    "name": "@expo/schema-utils",
+    "version": "58.0.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/schema-utils"
+  },
+  {
+    "name": "@expo/sdk-runtime-versions",
+    "version": "1.0.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/sdk-runtime-versions"
+  },
+  {
+    "name": "@expo/spawn-async",
+    "version": "1.8.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/spawn-async"
+  },
+  {
+    "name": "@expo/sudo-prompt",
+    "version": "9.3.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/sudo-prompt"
+  },
+  {
+    "name": "@expo/xcpretty",
+    "version": "4.4.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@expo/xcpretty"
+  },
+  {
+    "name": "@isaacs/ttlcache",
+    "version": "1.4.1",
+    "scope": "required",
+    "license": "ISC",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@isaacs/ttlcache"
+  },
+  {
+    "name": "@jest/schemas",
+    "version": "29.6.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@jest/schemas"
+  },
+  {
+    "name": "@jest/types",
+    "version": "29.6.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@jest/types"
+  },
+  {
+    "name": "@jridgewell/gen-mapping",
+    "version": "0.3.13",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@jridgewell/gen-mapping"
+  },
+  {
+    "name": "@jridgewell/remapping",
+    "version": "2.3.5",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@jridgewell/remapping"
+  },
+  {
+    "name": "@jridgewell/resolve-uri",
+    "version": "3.1.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@jridgewell/resolve-uri"
+  },
+  {
+    "name": "@jridgewell/source-map",
+    "version": "0.3.11",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@jridgewell/source-map"
+  },
+  {
+    "name": "@jridgewell/sourcemap-codec",
+    "version": "1.6.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@jridgewell/sourcemap-codec"
+  },
+  {
+    "name": "@jridgewell/trace-mapping",
+    "version": "0.3.31",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@jridgewell/trace-mapping"
+  },
+  {
+    "name": "@noxcturnal/noxcturnal-darwin-arm64",
+    "version": "0.1.12",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "https://github.com/expo/noxcturnal/blob/main/LICENSE",
+    "lockfilePath": "node_modules/@noxcturnal/noxcturnal-darwin-arm64"
+  },
+  {
+    "name": "@noxcturnal/noxcturnal-darwin-x64",
+    "version": "0.1.12",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "https://github.com/expo/noxcturnal/blob/main/LICENSE",
+    "lockfilePath": "node_modules/@noxcturnal/noxcturnal-darwin-x64"
+  },
+  {
+    "name": "@noxcturnal/noxcturnal-linux-arm64-gnu",
+    "version": "0.1.12",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "https://github.com/expo/noxcturnal/blob/main/LICENSE",
+    "lockfilePath": "node_modules/@noxcturnal/noxcturnal-linux-arm64-gnu"
+  },
+  {
+    "name": "@noxcturnal/noxcturnal-linux-arm64-musl",
+    "version": "0.1.12",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "https://github.com/expo/noxcturnal/blob/main/LICENSE",
+    "lockfilePath": "node_modules/@noxcturnal/noxcturnal-linux-arm64-musl"
+  },
+  {
+    "name": "@noxcturnal/noxcturnal-linux-x64-gnu",
+    "version": "0.1.12",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "https://github.com/expo/noxcturnal/blob/main/LICENSE",
+    "lockfilePath": "node_modules/@noxcturnal/noxcturnal-linux-x64-gnu"
+  },
+  {
+    "name": "@noxcturnal/noxcturnal-linux-x64-musl",
+    "version": "0.1.12",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "https://github.com/expo/noxcturnal/blob/main/LICENSE",
+    "lockfilePath": "node_modules/@noxcturnal/noxcturnal-linux-x64-musl"
+  },
+  {
+    "name": "@noxcturnal/noxcturnal-win32-arm64-msvc",
+    "version": "0.1.12",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "https://github.com/expo/noxcturnal/blob/main/LICENSE",
+    "lockfilePath": "node_modules/@noxcturnal/noxcturnal-win32-arm64-msvc"
+  },
+  {
+    "name": "@noxcturnal/noxcturnal-win32-x64-msvc",
+    "version": "0.1.12",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@noxcturnal/noxcturnal-win32-x64-msvc"
+  },
+  {
+    "name": "@oxc-project/types",
+    "version": "0.154.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@oxc-project/types"
+  },
+  {
+    "name": "@radix-ui/primitive",
+    "version": "1.2.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@radix-ui/primitive"
+  },
+  {
+    "name": "@radix-ui/react-collection",
+    "version": "1.2.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@radix-ui/react-collection"
+  },
+  {
+    "name": "@radix-ui/react-compose-refs",
+    "version": "1.1.5",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@radix-ui/react-compose-refs"
+  },
+  {
+    "name": "@radix-ui/react-context",
+    "version": "1.3.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@radix-ui/react-context"
+  },
+  {
+    "name": "@radix-ui/react-direction",
+    "version": "1.2.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@radix-ui/react-direction"
+  },
+  {
+    "name": "@radix-ui/react-id",
+    "version": "1.1.4",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@radix-ui/react-id"
+  },
+  {
+    "name": "@radix-ui/react-presence",
+    "version": "1.1.11",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@radix-ui/react-presence"
+  },
+  {
+    "name": "@radix-ui/react-primitive",
+    "version": "2.2.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@radix-ui/react-primitive"
+  },
+  {
+    "name": "@radix-ui/react-roving-focus",
+    "version": "1.2.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@radix-ui/react-roving-focus"
+  },
+  {
+    "name": "@radix-ui/react-slot",
+    "version": "1.5.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@radix-ui/react-slot"
+  },
+  {
+    "name": "@radix-ui/react-tabs",
+    "version": "1.2.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@radix-ui/react-tabs"
+  },
+  {
+    "name": "@radix-ui/react-use-callback-ref",
+    "version": "1.1.5",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@radix-ui/react-use-callback-ref"
+  },
+  {
+    "name": "@radix-ui/react-use-controllable-state",
+    "version": "1.3.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@radix-ui/react-use-controllable-state"
+  },
+  {
+    "name": "@radix-ui/react-use-effect-event",
+    "version": "0.0.5",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@radix-ui/react-use-effect-event"
+  },
+  {
+    "name": "@radix-ui/react-use-is-hydrated",
+    "version": "0.1.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@radix-ui/react-use-is-hydrated"
+  },
+  {
+    "name": "@radix-ui/react-use-layout-effect",
+    "version": "1.1.4",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@radix-ui/react-use-layout-effect"
+  },
+  {
+    "name": "@react-native-masked-view/masked-view",
+    "version": "0.3.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@react-native-masked-view/masked-view"
+  },
+  {
+    "name": "@react-native/asset-utils",
+    "version": "0.88.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@react-native/asset-utils"
+  },
+  {
+    "name": "@react-native/babel-plugin-codegen",
+    "version": "0.88.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@react-native/babel-plugin-codegen"
+  },
+  {
+    "name": "@react-native/babel-preset",
+    "version": "0.88.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@react-native/babel-preset"
+  },
+  {
+    "name": "@react-native/codegen",
+    "version": "0.88.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@react-native/codegen"
+  },
+  {
+    "name": "@react-native/community-cli-plugin",
+    "version": "0.88.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@react-native/community-cli-plugin"
+  },
+  {
+    "name": "commander",
+    "version": "12.1.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@react-native/community-cli-plugin/node_modules/commander"
+  },
+  {
+    "name": "@react-native/debugger-frontend",
+    "version": "0.88.1",
+    "scope": "required",
+    "license": "BSD-3-Clause",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@react-native/debugger-frontend"
+  },
+  {
+    "name": "@react-native/debugger-shell",
+    "version": "0.88.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@react-native/debugger-shell"
+  },
+  {
+    "name": "@react-native/dev-middleware",
+    "version": "0.88.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@react-native/dev-middleware"
+  },
+  {
+    "name": "@react-native/gradle-plugin",
+    "version": "0.88.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@react-native/gradle-plugin"
+  },
+  {
+    "name": "@react-native/js-polyfills",
+    "version": "0.88.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@react-native/js-polyfills"
+  },
+  {
+    "name": "@react-native/metro-babel-transformer",
+    "version": "0.88.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@react-native/metro-babel-transformer"
+  },
+  {
+    "name": "@react-native/metro-config",
+    "version": "0.88.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@react-native/metro-config"
+  },
+  {
+    "name": "@react-native/normalize-colors",
+    "version": "0.88.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@react-native/normalize-colors"
+  },
+  {
+    "name": "@react-native/virtualized-lists",
+    "version": "0.88.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@react-native/virtualized-lists"
+  },
+  {
+    "name": "@sinclair/typebox",
+    "version": "0.27.12",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@sinclair/typebox"
+  },
+  {
+    "name": "@types/istanbul-lib-coverage",
+    "version": "2.0.6",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@types/istanbul-lib-coverage"
+  },
+  {
+    "name": "@types/istanbul-lib-report",
+    "version": "3.0.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@types/istanbul-lib-report"
+  },
+  {
+    "name": "@types/istanbul-reports",
+    "version": "3.0.4",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@types/istanbul-reports"
+  },
+  {
+    "name": "@types/node",
+    "version": "26.6.6",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@types/node"
+  },
+  {
+    "name": "@types/react",
+    "version": "19.3.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@types/react"
+  },
+  {
+    "name": "@types/react-test-renderer",
+    "version": "19.3.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@types/react-test-renderer"
+  },
+  {
+    "name": "@types/yargs",
+    "version": "17.0.35",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@types/yargs"
+  },
+  {
+    "name": "@types/yargs-parser",
+    "version": "21.0.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@types/yargs-parser"
+  },
+  {
+    "name": "@ungap/structured-clone",
+    "version": "1.4.0",
+    "scope": "required",
+    "license": "ISC",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@ungap/structured-clone"
+  },
+  {
+    "name": "@xmldom/xmldom",
+    "version": "0.8.15",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/@xmldom/xmldom"
+  },
+  {
+    "name": "2g",
+    "version": "1.0.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/2g"
+  },
+  {
+    "name": "abort-controller",
+    "version": "3.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/abort-controller"
+  },
+  {
+    "name": "accepts",
+    "version": "2.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/accepts"
+  },
+  {
+    "name": "acorn",
+    "version": "8.19.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/acorn"
+  },
+  {
+    "name": "agent-base",
+    "version": "7.1.4",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/agent-base"
+  },
+  {
+    "name": "agent-cli-detector",
+    "version": "0.1.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/agent-cli-detector"
+  },
+  {
+    "name": "anser",
+    "version": "1.4.10",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/anser"
+  },
+  {
+    "name": "ansi-escapes",
+    "version": "4.3.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/ansi-escapes"
+  },
+  {
+    "name": "type-fest",
+    "version": "0.21.3",
+    "scope": "required",
+    "license": "(MIT OR CC0-1.0)",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/ansi-escapes/node_modules/type-fest"
+  },
+  {
+    "name": "ansi-regex",
+    "version": "5.0.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/ansi-regex"
+  },
+  {
+    "name": "ansi-styles",
+    "version": "4.3.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/ansi-styles"
+  },
+  {
+    "name": "arg",
+    "version": "5.0.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/arg"
+  },
+  {
+    "name": "argparse",
+    "version": "2.0.1",
+    "scope": "required",
+    "license": "Python-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/argparse"
+  },
+  {
+    "name": "asap",
+    "version": "2.0.6",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/asap"
+  },
+  {
+    "name": "await-lock",
+    "version": "2.2.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/await-lock"
+  },
+  {
+    "name": "babel-plugin-polyfill-corejs2",
+    "version": "0.4.17",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/babel-plugin-polyfill-corejs2"
+  },
+  {
+    "name": "semver",
+    "version": "6.3.2",
+    "scope": "required",
+    "license": "ISC",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/babel-plugin-polyfill-corejs2/node_modules/semver"
+  },
+  {
+    "name": "babel-plugin-polyfill-corejs3",
+    "version": "0.13.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/babel-plugin-polyfill-corejs3"
+  },
+  {
+    "name": "babel-plugin-polyfill-regenerator",
+    "version": "0.6.8",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/babel-plugin-polyfill-regenerator"
+  },
+  {
+    "name": "babel-plugin-react-compiler",
+    "version": "1.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/babel-plugin-react-compiler"
+  },
+  {
+    "name": "babel-plugin-react-native-web",
+    "version": "0.21.4",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/babel-plugin-react-native-web"
+  },
+  {
+    "name": "babel-plugin-syntax-hermes-parser",
+    "version": "0.36.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/babel-plugin-syntax-hermes-parser"
+  },
+  {
+    "name": "babel-plugin-transform-flow-enums",
+    "version": "0.0.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/babel-plugin-transform-flow-enums"
+  },
+  {
+    "name": "babel-preset-expo",
+    "version": "58.0.24",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/babel-preset-expo"
+  },
+  {
+    "name": "badgin",
+    "version": "1.2.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/badgin"
+  },
+  {
+    "name": "balanced-match",
+    "version": "4.0.4",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/balanced-match"
+  },
+  {
+    "name": "base64-js",
+    "version": "1.5.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/base64-js"
+  },
+  {
+    "name": "baseline-browser-mapping",
+    "version": "2.11.35",
+    "scope": "required",
+    "license": "Apache-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/baseline-browser-mapping"
+  },
+  {
+    "name": "big-integer",
+    "version": "1.6.52",
+    "scope": "required",
+    "license": "Unlicense",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/big-integer"
+  },
+  {
+    "name": "boolbase",
+    "version": "1.0.0",
+    "scope": "required",
+    "license": "ISC",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/boolbase"
+  },
+  {
+    "name": "bplist-creator",
+    "version": "0.1.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/bplist-creator"
+  },
+  {
+    "name": "bplist-parser",
+    "version": "0.3.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/bplist-parser"
+  },
+  {
+    "name": "brace-expansion",
+    "version": "5.0.12",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/brace-expansion"
+  },
+  {
+    "name": "braces",
+    "version": "3.0.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/braces"
+  },
+  {
+    "name": "browserslist",
+    "version": "4.29.5",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/browserslist"
+  },
+  {
+    "name": "bser",
+    "version": "2.1.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/bser"
+  },
+  {
+    "name": "buffer-from",
+    "version": "1.1.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/buffer-from"
+  },
+  {
+    "name": "bytes",
+    "version": "3.1.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/bytes"
+  },
+  {
+    "name": "camelcase",
+    "version": "6.3.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/camelcase"
+  },
+  {
+    "name": "caniuse-lite",
+    "version": "1.0.30001823",
+    "scope": "required",
+    "license": "CC-BY-4.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/caniuse-lite"
+  },
+  {
+    "name": "chalk",
+    "version": "4.1.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/chalk"
+  },
+  {
+    "name": "ci-info",
+    "version": "3.9.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/ci-info"
+  },
+  {
+    "name": "cli-cursor",
+    "version": "2.1.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/cli-cursor"
+  },
+  {
+    "name": "cli-spinners",
+    "version": "2.9.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/cli-spinners"
+  },
+  {
+    "name": "client-only",
+    "version": "0.0.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/client-only"
+  },
+  {
+    "name": "cliui",
+    "version": "8.0.1",
+    "scope": "required",
+    "license": "ISC",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/cliui"
+  },
+  {
+    "name": "clone",
+    "version": "1.0.4",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/clone"
+  },
+  {
+    "name": "color",
+    "version": "4.2.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/color"
+  },
+  {
+    "name": "color-convert",
+    "version": "2.0.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/color-convert"
+  },
+  {
+    "name": "color-name",
+    "version": "1.1.4",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/color-name"
+  },
+  {
+    "name": "color-string",
+    "version": "1.9.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/color-string"
+  },
+  {
+    "name": "commander",
+    "version": "7.2.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/commander"
+  },
+  {
+    "name": "compressible",
+    "version": "2.0.18",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/compressible"
+  },
+  {
+    "name": "compression",
+    "version": "1.8.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/compression"
+  },
+  {
+    "name": "debug",
+    "version": "2.6.9",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/compression/node_modules/debug"
+  },
+  {
+    "name": "ms",
+    "version": "2.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/compression/node_modules/ms"
+  },
+  {
+    "name": "negotiator",
+    "version": "0.6.4",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/compression/node_modules/negotiator"
+  },
+  {
+    "name": "connect",
+    "version": "3.7.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/connect"
+  },
+  {
+    "name": "debug",
+    "version": "2.6.9",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/connect/node_modules/debug"
+  },
+  {
+    "name": "ms",
+    "version": "2.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/connect/node_modules/ms"
+  },
+  {
+    "name": "content-type",
+    "version": "2.1.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/content-type"
+  },
+  {
+    "name": "convert-source-map",
+    "version": "2.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/convert-source-map"
+  },
+  {
+    "name": "core-js-compat",
+    "version": "3.51.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/core-js-compat"
+  },
+  {
+    "name": "cross-fetch",
+    "version": "3.2.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/cross-fetch"
+  },
+  {
+    "name": "cross-spawn",
+    "version": "7.0.6",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/cross-spawn"
+  },
+  {
+    "name": "css-in-js-utils",
+    "version": "3.1.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/css-in-js-utils"
+  },
+  {
+    "name": "css-select",
+    "version": "5.2.2",
+    "scope": "required",
+    "license": "BSD-2-Clause",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/css-select"
+  },
+  {
+    "name": "css-tree",
+    "version": "1.1.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/css-tree"
+  },
+  {
+    "name": "source-map",
+    "version": "0.6.1",
+    "scope": "required",
+    "license": "BSD-3-Clause",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/css-tree/node_modules/source-map"
+  },
+  {
+    "name": "css-what",
+    "version": "6.2.2",
+    "scope": "required",
+    "license": "BSD-2-Clause",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/css-what"
+  },
+  {
+    "name": "csstype",
+    "version": "3.2.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/csstype"
+  },
+  {
+    "name": "debug",
+    "version": "4.4.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/debug"
+  },
+  {
+    "name": "defaults",
+    "version": "1.0.4",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/defaults"
+  },
+  {
+    "name": "define-lazy-prop",
+    "version": "2.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/define-lazy-prop"
+  },
+  {
+    "name": "depd",
+    "version": "2.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/depd"
+  },
+  {
+    "name": "destroy",
+    "version": "1.2.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/destroy"
+  },
+  {
+    "name": "detect-libc",
+    "version": "2.1.2",
+    "scope": "required",
+    "license": "Apache-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/detect-libc"
+  },
+  {
+    "name": "dnssd-advertise",
+    "version": "1.1.6",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/dnssd-advertise"
+  },
+  {
+    "name": "dom-serializer",
+    "version": "2.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/dom-serializer"
+  },
+  {
+    "name": "domelementtype",
+    "version": "2.3.0",
+    "scope": "required",
+    "license": "BSD-2-Clause",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/domelementtype"
+  },
+  {
+    "name": "domhandler",
+    "version": "5.0.3",
+    "scope": "required",
+    "license": "BSD-2-Clause",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/domhandler"
+  },
+  {
+    "name": "domutils",
+    "version": "3.2.2",
+    "scope": "required",
+    "license": "BSD-2-Clause",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/domutils"
+  },
+  {
+    "name": "ee-first",
+    "version": "1.1.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/ee-first"
+  },
+  {
+    "name": "electron-to-chromium",
+    "version": "1.5.478",
+    "scope": "required",
+    "license": "ISC",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/electron-to-chromium"
+  },
+  {
+    "name": "emoji-regex",
+    "version": "8.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/emoji-regex"
+  },
+  {
+    "name": "encodeurl",
+    "version": "1.0.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/encodeurl"
+  },
+  {
+    "name": "entities",
+    "version": "4.5.0",
+    "scope": "required",
+    "license": "BSD-2-Clause",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/entities"
+  },
+  {
+    "name": "error-stack-parser",
+    "version": "2.1.4",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/error-stack-parser"
+  },
+  {
+    "name": "es-errors",
+    "version": "1.3.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/es-errors"
+  },
+  {
+    "name": "escalade",
+    "version": "3.2.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/escalade"
+  },
+  {
+    "name": "escape-html",
+    "version": "1.0.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/escape-html"
+  },
+  {
+    "name": "escape-string-regexp",
+    "version": "1.0.5",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/escape-string-regexp"
+  },
+  {
+    "name": "etag",
+    "version": "1.8.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/etag"
+  },
+  {
+    "name": "event-target-shim",
+    "version": "5.0.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/event-target-shim"
+  },
+  {
+    "name": "expo",
+    "version": "58.0.23",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo"
+  },
+  {
+    "name": "expo-application",
+    "version": "58.1.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo-application"
+  },
+  {
+    "name": "expo-constants",
+    "version": "58.0.15",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo-constants"
+  },
+  {
+    "name": "expo-crypto",
+    "version": "58.0.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo-crypto"
+  },
+  {
+    "name": "expo-document-picker",
+    "version": "58.0.4",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo-document-picker"
+  },
+  {
+    "name": "expo-file-system",
+    "version": "58.0.13",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo-file-system"
+  },
+  {
+    "name": "expo-font",
+    "version": "58.0.11",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo-font"
+  },
+  {
+    "name": "expo-glass-effect",
+    "version": "58.0.5",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo-glass-effect"
+  },
+  {
+    "name": "expo-image-loader",
+    "version": "58.0.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo-image-loader"
+  },
+  {
+    "name": "expo-image-picker",
+    "version": "58.0.10",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo-image-picker"
+  },
+  {
+    "name": "expo-linking",
+    "version": "58.0.16",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo-linking"
+  },
+  {
+    "name": "expo-modules-autolinking",
+    "version": "58.0.17",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo-modules-autolinking"
+  },
+  {
+    "name": "expo-modules-cli",
+    "version": "0.4.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo-modules-cli"
+  },
+  {
+    "name": "expo-modules-core",
+    "version": "58.0.30",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo-modules-core"
+  },
+  {
+    "name": "expo-modules-jsi",
+    "version": "58.0.22",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo-modules-jsi"
+  },
+  {
+    "name": "expo-modules-macros",
+    "version": "0.29.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo-modules-macros"
+  },
+  {
+    "name": "expo-notifications",
+    "version": "58.1.8",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo-notifications"
+  },
+  {
+    "name": "expo-router",
+    "version": "58.0.30",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo-router"
+  },
+  {
+    "name": "react-is",
+    "version": "19.3.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo-router/node_modules/react-is"
+  },
+  {
+    "name": "expo-secure-store",
+    "version": "58.0.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo-secure-store"
+  },
+  {
+    "name": "expo-server",
+    "version": "58.0.6",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo-server"
+  },
+  {
+    "name": "expo-sqlite",
+    "version": "58.0.15",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo-sqlite"
+  },
+  {
+    "name": "expo-status-bar",
+    "version": "58.0.4",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo-status-bar"
+  },
+  {
+    "name": "expo-system-ui",
+    "version": "58.0.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo-system-ui"
+  },
+  {
+    "name": "@expo/cli",
+    "version": "58.1.19",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo/node_modules/@expo/cli"
+  },
+  {
+    "name": "@expo/ws-tunnel",
+    "version": "2.0.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo/node_modules/@expo/ws-tunnel"
+  },
+  {
+    "name": "accepts",
+    "version": "1.3.8",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo/node_modules/accepts"
+  },
+  {
+    "name": "expo-asset",
+    "version": "58.0.20",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo/node_modules/expo-asset"
+  },
+  {
+    "name": "expo-keep-awake",
+    "version": "58.0.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo/node_modules/expo-keep-awake"
+  },
+  {
+    "name": "mime-db",
+    "version": "1.52.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo/node_modules/mime-db"
+  },
+  {
+    "name": "mime-types",
+    "version": "2.1.35",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo/node_modules/mime-types"
+  },
+  {
+    "name": "negotiator",
+    "version": "0.6.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo/node_modules/negotiator"
+  },
+  {
+    "name": "ws",
+    "version": "8.22.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/expo/node_modules/ws"
+  },
+  {
+    "name": "exponential-backoff",
+    "version": "3.1.3",
+    "scope": "required",
+    "license": "Apache-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/exponential-backoff"
+  },
+  {
+    "name": "fb-dotslash",
+    "version": "0.5.8",
+    "scope": "required",
+    "license": "(MIT OR Apache-2.0)",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/fb-dotslash"
+  },
+  {
+    "name": "fb-watchman",
+    "version": "2.0.4",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/fb-watchman"
+  },
+  {
+    "name": "fbjs",
+    "version": "3.0.5",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/fbjs"
+  },
+  {
+    "name": "fbjs-css-vars",
+    "version": "1.0.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/fbjs-css-vars"
+  },
+  {
+    "name": "promise",
+    "version": "7.3.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/fbjs/node_modules/promise"
+  },
+  {
+    "name": "fdir",
+    "version": "6.5.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/fdir"
+  },
+  {
+    "name": "fetch-nodeshim",
+    "version": "0.4.10",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/fetch-nodeshim"
+  },
+  {
+    "name": "fill-range",
+    "version": "7.1.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/fill-range"
+  },
+  {
+    "name": "finalhandler",
+    "version": "1.1.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/finalhandler"
+  },
+  {
+    "name": "debug",
+    "version": "2.6.9",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/finalhandler/node_modules/debug"
+  },
+  {
+    "name": "ms",
+    "version": "2.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/finalhandler/node_modules/ms"
+  },
+  {
+    "name": "flow-enums-runtime",
+    "version": "0.0.6",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/flow-enums-runtime"
+  },
+  {
+    "name": "flow-estree",
+    "version": "0.327.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/flow-estree"
+  },
+  {
+    "name": "flow-parser",
+    "version": "0.327.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/flow-parser"
+  },
+  {
+    "name": "fresh",
+    "version": "0.5.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/fresh"
+  },
+  {
+    "name": "function-bind",
+    "version": "1.1.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/function-bind"
+  },
+  {
+    "name": "gensync",
+    "version": "1.0.0-beta.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/gensync"
+  },
+  {
+    "name": "get-caller-file",
+    "version": "2.0.5",
+    "scope": "required",
+    "license": "ISC",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/get-caller-file"
+  },
+  {
+    "name": "getenv",
+    "version": "2.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/getenv"
+  },
+  {
+    "name": "glob",
+    "version": "13.0.7",
+    "scope": "required",
+    "license": "BlueOak-1.0.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/glob"
+  },
+  {
+    "name": "graceful-fs",
+    "version": "4.2.11",
+    "scope": "required",
+    "license": "ISC",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/graceful-fs"
+  },
+  {
+    "name": "has-flag",
+    "version": "4.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/has-flag"
+  },
+  {
+    "name": "hasown",
+    "version": "2.0.4",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/hasown"
+  },
+  {
+    "name": "hermes-compiler",
+    "version": "260318099.0.5",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/hermes-compiler"
+  },
+  {
+    "name": "hermes-estree",
+    "version": "0.36.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/hermes-estree"
+  },
+  {
+    "name": "hermes-parser",
+    "version": "0.36.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/hermes-parser"
+  },
+  {
+    "name": "hosted-git-info",
+    "version": "7.0.2",
+    "scope": "required",
+    "license": "ISC",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/hosted-git-info"
+  },
+  {
+    "name": "lru-cache",
+    "version": "10.4.3",
+    "scope": "required",
+    "license": "ISC",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/hosted-git-info/node_modules/lru-cache"
+  },
+  {
+    "name": "http-errors",
+    "version": "2.0.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/http-errors"
+  },
+  {
+    "name": "statuses",
+    "version": "2.0.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/http-errors/node_modules/statuses"
+  },
+  {
+    "name": "https-proxy-agent",
+    "version": "7.0.6",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/https-proxy-agent"
+  },
+  {
+    "name": "hyphenate-style-name",
+    "version": "1.1.0",
+    "scope": "required",
+    "license": "BSD-3-Clause",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/hyphenate-style-name"
+  },
+  {
+    "name": "ignore",
+    "version": "5.3.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/ignore"
+  },
+  {
+    "name": "inherits",
+    "version": "2.0.4",
+    "scope": "required",
+    "license": "ISC",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/inherits"
+  },
+  {
+    "name": "inline-style-prefixer",
+    "version": "7.0.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/inline-style-prefixer"
+  },
+  {
+    "name": "invariant",
+    "version": "2.2.4",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/invariant"
+  },
+  {
+    "name": "is-arrayish",
+    "version": "0.3.4",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/is-arrayish"
+  },
+  {
+    "name": "is-core-module",
+    "version": "2.18.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/is-core-module"
+  },
+  {
+    "name": "is-docker",
+    "version": "2.2.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/is-docker"
+  },
+  {
+    "name": "is-fullwidth-code-point",
+    "version": "3.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/is-fullwidth-code-point"
+  },
+  {
+    "name": "is-number",
+    "version": "7.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/is-number"
+  },
+  {
+    "name": "is-wsl",
+    "version": "2.2.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/is-wsl"
+  },
+  {
+    "name": "isexe",
+    "version": "2.0.0",
+    "scope": "required",
+    "license": "ISC",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/isexe"
+  },
+  {
+    "name": "jest-get-type",
+    "version": "29.6.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/jest-get-type"
+  },
+  {
+    "name": "jest-util",
+    "version": "29.7.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/jest-util"
+  },
+  {
+    "name": "picomatch",
+    "version": "2.3.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/jest-util/node_modules/picomatch"
+  },
+  {
+    "name": "jest-validate",
+    "version": "29.7.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/jest-validate"
+  },
+  {
+    "name": "jest-worker",
+    "version": "29.7.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/jest-worker"
+  },
+  {
+    "name": "supports-color",
+    "version": "8.1.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/jest-worker/node_modules/supports-color"
+  },
+  {
+    "name": "jimp-compact",
+    "version": "0.16.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/jimp-compact"
+  },
+  {
+    "name": "js-tokens",
+    "version": "4.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/js-tokens"
+  },
+  {
+    "name": "js-yaml",
+    "version": "4.3.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/js-yaml"
+  },
+  {
+    "name": "jsc-safe-url",
+    "version": "0.2.4",
+    "scope": "required",
+    "license": "0BSD",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/jsc-safe-url"
+  },
+  {
+    "name": "jsesc",
+    "version": "3.1.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/jsesc"
+  },
+  {
+    "name": "json5",
+    "version": "2.2.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/json5"
+  },
+  {
+    "name": "kleur",
+    "version": "3.0.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/kleur"
+  },
+  {
+    "name": "lan-network",
+    "version": "0.2.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/lan-network"
+  },
+  {
+    "name": "leven",
+    "version": "3.1.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/leven"
+  },
+  {
+    "name": "lightningcss",
+    "version": "1.33.0",
+    "scope": "required",
+    "license": "MPL-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/lightningcss"
+  },
+  {
+    "name": "lightningcss-android-arm64",
+    "version": "1.33.0",
+    "scope": "required",
+    "license": "MPL-2.0",
+    "licenseEvidence": "https://github.com/parcel-bundler/lightningcss/blob/master/LICENSE",
+    "lockfilePath": "node_modules/lightningcss-android-arm64"
+  },
+  {
+    "name": "lightningcss-darwin-arm64",
+    "version": "1.33.0",
+    "scope": "required",
+    "license": "MPL-2.0",
+    "licenseEvidence": "https://github.com/parcel-bundler/lightningcss/blob/master/LICENSE",
+    "lockfilePath": "node_modules/lightningcss-darwin-arm64"
+  },
+  {
+    "name": "lightningcss-darwin-x64",
+    "version": "1.33.0",
+    "scope": "required",
+    "license": "MPL-2.0",
+    "licenseEvidence": "https://github.com/parcel-bundler/lightningcss/blob/master/LICENSE",
+    "lockfilePath": "node_modules/lightningcss-darwin-x64"
+  },
+  {
+    "name": "lightningcss-freebsd-x64",
+    "version": "1.33.0",
+    "scope": "required",
+    "license": "MPL-2.0",
+    "licenseEvidence": "https://github.com/parcel-bundler/lightningcss/blob/master/LICENSE",
+    "lockfilePath": "node_modules/lightningcss-freebsd-x64"
+  },
+  {
+    "name": "lightningcss-linux-arm-gnueabihf",
+    "version": "1.33.0",
+    "scope": "required",
+    "license": "MPL-2.0",
+    "licenseEvidence": "https://github.com/parcel-bundler/lightningcss/blob/master/LICENSE",
+    "lockfilePath": "node_modules/lightningcss-linux-arm-gnueabihf"
+  },
+  {
+    "name": "lightningcss-linux-arm64-gnu",
+    "version": "1.33.0",
+    "scope": "required",
+    "license": "MPL-2.0",
+    "licenseEvidence": "https://github.com/parcel-bundler/lightningcss/blob/master/LICENSE",
+    "lockfilePath": "node_modules/lightningcss-linux-arm64-gnu"
+  },
+  {
+    "name": "lightningcss-linux-arm64-musl",
+    "version": "1.33.0",
+    "scope": "required",
+    "license": "MPL-2.0",
+    "licenseEvidence": "https://github.com/parcel-bundler/lightningcss/blob/master/LICENSE",
+    "lockfilePath": "node_modules/lightningcss-linux-arm64-musl"
+  },
+  {
+    "name": "lightningcss-linux-x64-gnu",
+    "version": "1.33.0",
+    "scope": "required",
+    "license": "MPL-2.0",
+    "licenseEvidence": "https://github.com/parcel-bundler/lightningcss/blob/master/LICENSE",
+    "lockfilePath": "node_modules/lightningcss-linux-x64-gnu"
+  },
+  {
+    "name": "lightningcss-linux-x64-musl",
+    "version": "1.33.0",
+    "scope": "required",
+    "license": "MPL-2.0",
+    "licenseEvidence": "https://github.com/parcel-bundler/lightningcss/blob/master/LICENSE",
+    "lockfilePath": "node_modules/lightningcss-linux-x64-musl"
+  },
+  {
+    "name": "lightningcss-win32-arm64-msvc",
+    "version": "1.33.0",
+    "scope": "required",
+    "license": "MPL-2.0",
+    "licenseEvidence": "https://github.com/parcel-bundler/lightningcss/blob/master/LICENSE",
+    "lockfilePath": "node_modules/lightningcss-win32-arm64-msvc"
+  },
+  {
+    "name": "lightningcss-win32-x64-msvc",
+    "version": "1.33.0",
+    "scope": "required",
+    "license": "MPL-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/lightningcss-win32-x64-msvc"
+  },
+  {
+    "name": "lodash.debounce",
+    "version": "4.0.8",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/lodash.debounce"
+  },
+  {
+    "name": "lodash.throttle",
+    "version": "4.1.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/lodash.throttle"
+  },
+  {
+    "name": "log-symbols",
+    "version": "2.2.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/log-symbols"
+  },
+  {
+    "name": "ansi-styles",
+    "version": "3.2.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/log-symbols/node_modules/ansi-styles"
+  },
+  {
+    "name": "chalk",
+    "version": "2.4.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/log-symbols/node_modules/chalk"
+  },
+  {
+    "name": "color-convert",
+    "version": "1.9.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/log-symbols/node_modules/color-convert"
+  },
+  {
+    "name": "color-name",
+    "version": "1.1.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/log-symbols/node_modules/color-name"
+  },
+  {
+    "name": "has-flag",
+    "version": "3.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/log-symbols/node_modules/has-flag"
+  },
+  {
+    "name": "supports-color",
+    "version": "5.5.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/log-symbols/node_modules/supports-color"
+  },
+  {
+    "name": "loose-envify",
+    "version": "1.4.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/loose-envify"
+  },
+  {
+    "name": "lru-cache",
+    "version": "5.1.1",
+    "scope": "required",
+    "license": "ISC",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/lru-cache"
+  },
+  {
+    "name": "lucide-react-native",
+    "version": "1.70.0",
+    "scope": "required",
+    "license": "ISC",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/lucide-react-native"
+  },
+  {
+    "name": "makeerror",
+    "version": "1.0.12",
+    "scope": "required",
+    "license": "BSD-3-Clause",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/makeerror"
+  },
+  {
+    "name": "mdn-data",
+    "version": "2.0.14",
+    "scope": "required",
+    "license": "CC0-1.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/mdn-data"
+  },
+  {
+    "name": "memoize-one",
+    "version": "5.2.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/memoize-one"
+  },
+  {
+    "name": "merge-stream",
+    "version": "2.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/merge-stream"
+  },
+  {
+    "name": "metro",
+    "version": "0.87.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/metro"
+  },
+  {
+    "name": "metro-babel-transformer",
+    "version": "0.87.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/metro-babel-transformer"
+  },
+  {
+    "name": "flow-estree",
+    "version": "0.331.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/metro-babel-transformer/node_modules/flow-estree"
+  },
+  {
+    "name": "flow-parser",
+    "version": "0.331.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/metro-babel-transformer/node_modules/flow-parser"
+  },
+  {
+    "name": "metro-cache",
+    "version": "0.87.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/metro-cache"
+  },
+  {
+    "name": "metro-cache-key",
+    "version": "0.87.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/metro-cache-key"
+  },
+  {
+    "name": "metro-config",
+    "version": "0.87.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/metro-config"
+  },
+  {
+    "name": "metro-core",
+    "version": "0.87.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/metro-core"
+  },
+  {
+    "name": "metro-file-map",
+    "version": "0.87.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/metro-file-map"
+  },
+  {
+    "name": "metro-minify-terser",
+    "version": "0.87.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/metro-minify-terser"
+  },
+  {
+    "name": "metro-resolver",
+    "version": "0.87.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/metro-resolver"
+  },
+  {
+    "name": "metro-runtime",
+    "version": "0.87.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/metro-runtime"
+  },
+  {
+    "name": "metro-source-map",
+    "version": "0.87.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/metro-source-map"
+  },
+  {
+    "name": "metro-symbolicate",
+    "version": "0.87.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/metro-symbolicate"
+  },
+  {
+    "name": "metro-transform-plugins",
+    "version": "0.87.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/metro-transform-plugins"
+  },
+  {
+    "name": "metro-transform-worker",
+    "version": "0.87.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/metro-transform-worker"
+  },
+  {
+    "name": "flow-estree",
+    "version": "0.331.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/metro/node_modules/flow-estree"
+  },
+  {
+    "name": "flow-parser",
+    "version": "0.331.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/metro/node_modules/flow-parser"
+  },
+  {
+    "name": "micromatch",
+    "version": "4.0.8",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/micromatch"
+  },
+  {
+    "name": "picomatch",
+    "version": "2.3.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/micromatch/node_modules/picomatch"
+  },
+  {
+    "name": "mime",
+    "version": "1.6.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/mime"
+  },
+  {
+    "name": "mime-db",
+    "version": "1.54.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/mime-db"
+  },
+  {
+    "name": "mime-types",
+    "version": "3.0.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/mime-types"
+  },
+  {
+    "name": "mimic-fn",
+    "version": "1.2.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/mimic-fn"
+  },
+  {
+    "name": "minimatch",
+    "version": "10.2.6",
+    "scope": "required",
+    "license": "BlueOak-1.0.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/minimatch"
+  },
+  {
+    "name": "minipass",
+    "version": "7.1.3",
+    "scope": "required",
+    "license": "BlueOak-1.0.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/minipass"
+  },
+  {
+    "name": "ms",
+    "version": "2.1.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/ms"
+  },
+  {
+    "name": "multitars",
+    "version": "1.0.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/multitars"
+  },
+  {
+    "name": "nanoid",
+    "version": "3.3.20",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/nanoid"
+  },
+  {
+    "name": "negotiator",
+    "version": "1.1.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/negotiator"
+  },
+  {
+    "name": "node-fetch",
+    "version": "2.7.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/node-fetch"
+  },
+  {
+    "name": "node-forge",
+    "version": "1.4.3",
+    "scope": "required",
+    "license": "(BSD-3-Clause OR GPL-2.0)",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/node-forge"
+  },
+  {
+    "name": "node-int64",
+    "version": "0.4.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/node-int64"
+  },
+  {
+    "name": "node-releases",
+    "version": "2.0.63",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/node-releases"
+  },
+  {
+    "name": "noxcturnal",
+    "version": "0.1.12",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/noxcturnal"
+  },
+  {
+    "name": "npm-package-arg",
+    "version": "11.0.3",
+    "scope": "required",
+    "license": "ISC",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/npm-package-arg"
+  },
+  {
+    "name": "nth-check",
+    "version": "2.1.1",
+    "scope": "required",
+    "license": "BSD-2-Clause",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/nth-check"
+  },
+  {
+    "name": "nullthrows",
+    "version": "1.1.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/nullthrows"
+  },
+  {
+    "name": "ob1",
+    "version": "0.87.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/ob1"
+  },
+  {
+    "name": "object-assign",
+    "version": "4.1.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/object-assign"
+  },
+  {
+    "name": "on-finished",
+    "version": "2.3.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/on-finished"
+  },
+  {
+    "name": "on-headers",
+    "version": "1.1.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/on-headers"
+  },
+  {
+    "name": "onetime",
+    "version": "2.0.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/onetime"
+  },
+  {
+    "name": "open",
+    "version": "8.4.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/open"
+  },
+  {
+    "name": "ora",
+    "version": "3.4.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/ora"
+  },
+  {
+    "name": "ansi-regex",
+    "version": "4.1.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/ora/node_modules/ansi-regex"
+  },
+  {
+    "name": "ansi-styles",
+    "version": "3.2.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/ora/node_modules/ansi-styles"
+  },
+  {
+    "name": "chalk",
+    "version": "2.4.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/ora/node_modules/chalk"
+  },
+  {
+    "name": "color-convert",
+    "version": "1.9.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/ora/node_modules/color-convert"
+  },
+  {
+    "name": "color-name",
+    "version": "1.1.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/ora/node_modules/color-name"
+  },
+  {
+    "name": "has-flag",
+    "version": "3.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/ora/node_modules/has-flag"
+  },
+  {
+    "name": "strip-ansi",
+    "version": "5.2.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/ora/node_modules/strip-ansi"
+  },
+  {
+    "name": "supports-color",
+    "version": "5.5.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/ora/node_modules/supports-color"
+  },
+  {
+    "name": "parse-png",
+    "version": "2.1.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/parse-png"
+  },
+  {
+    "name": "parseurl",
+    "version": "1.3.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/parseurl"
+  },
+  {
+    "name": "path-key",
+    "version": "3.1.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/path-key"
+  },
+  {
+    "name": "path-parse",
+    "version": "1.0.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/path-parse"
+  },
+  {
+    "name": "path-scurry",
+    "version": "2.0.2",
+    "scope": "required",
+    "license": "BlueOak-1.0.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/path-scurry"
+  },
+  {
+    "name": "lru-cache",
+    "version": "11.5.3",
+    "scope": "required",
+    "license": "BlueOak-1.0.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/path-scurry/node_modules/lru-cache"
+  },
+  {
+    "name": "picocolors",
+    "version": "1.1.1",
+    "scope": "required",
+    "license": "ISC",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/picocolors"
+  },
+  {
+    "name": "picomatch",
+    "version": "4.0.7",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/picomatch"
+  },
+  {
+    "name": "plist",
+    "version": "3.1.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/plist"
+  },
+  {
+    "name": "@xmldom/xmldom",
+    "version": "0.9.12",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/plist/node_modules/@xmldom/xmldom"
+  },
+  {
+    "name": "pngjs",
+    "version": "3.4.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/pngjs"
+  },
+  {
+    "name": "postcss",
+    "version": "8.5.32",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/postcss"
+  },
+  {
+    "name": "postcss-value-parser",
+    "version": "4.2.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/postcss-value-parser"
+  },
+  {
+    "name": "pretty-format",
+    "version": "29.7.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/pretty-format"
+  },
+  {
+    "name": "ansi-styles",
+    "version": "5.2.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/pretty-format/node_modules/ansi-styles"
+  },
+  {
+    "name": "proc-log",
+    "version": "4.2.0",
+    "scope": "required",
+    "license": "ISC",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/proc-log"
+  },
+  {
+    "name": "progress",
+    "version": "2.0.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/progress"
+  },
+  {
+    "name": "promise",
+    "version": "8.3.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/promise"
+  },
+  {
+    "name": "prompts",
+    "version": "2.4.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/prompts"
+  },
+  {
+    "name": "range-parser",
+    "version": "1.2.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/range-parser"
+  },
+  {
+    "name": "react",
+    "version": "19.3.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/react"
+  },
+  {
+    "name": "react-devtools-core",
+    "version": "6.1.5",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/react-devtools-core"
+  },
+  {
+    "name": "react-dom",
+    "version": "19.3.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/react-dom"
+  },
+  {
+    "name": "react-fast-compare",
+    "version": "3.2.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/react-fast-compare"
+  },
+  {
+    "name": "react-freeze",
+    "version": "1.0.4",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/react-freeze"
+  },
+  {
+    "name": "react-is",
+    "version": "18.3.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/react-is"
+  },
+  {
+    "name": "react-native",
+    "version": "0.88.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/react-native"
+  },
+  {
+    "name": "react-native-drawer-layout",
+    "version": "4.2.12",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/react-native-drawer-layout"
+  },
+  {
+    "name": "react-native-gesture-handler",
+    "version": "3.5.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/react-native-gesture-handler"
+  },
+  {
+    "name": "react-native-is-edge-to-edge",
+    "version": "1.3.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/react-native-is-edge-to-edge"
+  },
+  {
+    "name": "react-native-reanimated",
+    "version": "4.7.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/react-native-reanimated"
+  },
+  {
+    "name": "react-native-safe-area-context",
+    "version": "5.11.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/react-native-safe-area-context"
+  },
+  {
+    "name": "react-native-screens",
+    "version": "4.30.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/react-native-screens"
+  },
+  {
+    "name": "react-native-svg",
+    "version": "15.16.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/react-native-svg"
+  },
+  {
+    "name": "react-native-web",
+    "version": "0.21.4",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/react-native-web"
+  },
+  {
+    "name": "@react-native/normalize-colors",
+    "version": "0.74.89",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/react-native-web/node_modules/@react-native/normalize-colors"
+  },
+  {
+    "name": "memoize-one",
+    "version": "6.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/react-native-web/node_modules/memoize-one"
+  },
+  {
+    "name": "react-native-worklets",
+    "version": "0.13.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/react-native-worklets"
+  },
+  {
+    "name": "react-refresh",
+    "version": "0.14.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/react-refresh"
+  },
+  {
+    "name": "regenerate",
+    "version": "1.5.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/regenerate"
+  },
+  {
+    "name": "regenerate-unicode-properties",
+    "version": "10.3.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/regenerate-unicode-properties"
+  },
+  {
+    "name": "regenerator-runtime",
+    "version": "0.13.11",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/regenerator-runtime"
+  },
+  {
+    "name": "regexpu-core",
+    "version": "6.5.4",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/regexpu-core"
+  },
+  {
+    "name": "regjsgen",
+    "version": "0.8.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/regjsgen"
+  },
+  {
+    "name": "regjsparser",
+    "version": "0.14.1",
+    "scope": "required",
+    "license": "BSD-2-Clause",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/regjsparser"
+  },
+  {
+    "name": "require-directory",
+    "version": "2.1.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/require-directory"
+  },
+  {
+    "name": "resolve",
+    "version": "1.22.14",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/resolve"
+  },
+  {
+    "name": "resolve-from",
+    "version": "5.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/resolve-from"
+  },
+  {
+    "name": "resolve-workspace-root",
+    "version": "2.0.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/resolve-workspace-root"
+  },
+  {
+    "name": "restore-cursor",
+    "version": "2.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/restore-cursor"
+  },
+  {
+    "name": "safe-buffer",
+    "version": "5.2.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/safe-buffer"
+  },
+  {
+    "name": "sandbox-cli-detector",
+    "version": "0.2.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/sandbox-cli-detector"
+  },
+  {
+    "name": "sax",
+    "version": "1.6.1",
+    "scope": "required",
+    "license": "BlueOak-1.0.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/sax"
+  },
+  {
+    "name": "scheduler",
+    "version": "0.28.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/scheduler"
+  },
+  {
+    "name": "semver",
+    "version": "7.8.6",
+    "scope": "required",
+    "license": "ISC",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/semver"
+  },
+  {
+    "name": "send",
+    "version": "0.19.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/send"
+  },
+  {
+    "name": "debug",
+    "version": "2.6.9",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/send/node_modules/debug"
+  },
+  {
+    "name": "ms",
+    "version": "2.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/send/node_modules/debug/node_modules/ms"
+  },
+  {
+    "name": "encodeurl",
+    "version": "2.0.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/send/node_modules/encodeurl"
+  },
+  {
+    "name": "on-finished",
+    "version": "2.4.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/send/node_modules/on-finished"
+  },
+  {
+    "name": "statuses",
+    "version": "2.0.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/send/node_modules/statuses"
+  },
+  {
+    "name": "serialize-error",
+    "version": "2.1.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/serialize-error"
+  },
+  {
+    "name": "serve-static",
+    "version": "1.16.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/serve-static"
+  },
+  {
+    "name": "encodeurl",
+    "version": "2.0.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/serve-static/node_modules/encodeurl"
+  },
+  {
+    "name": "server-only",
+    "version": "0.0.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/server-only"
+  },
+  {
+    "name": "setimmediate",
+    "version": "1.0.5",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/setimmediate"
+  },
+  {
+    "name": "setprototypeof",
+    "version": "1.2.0",
+    "scope": "required",
+    "license": "ISC",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/setprototypeof"
+  },
+  {
+    "name": "sf-symbols-typescript",
+    "version": "2.2.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/sf-symbols-typescript"
+  },
+  {
+    "name": "shebang-command",
+    "version": "2.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/shebang-command"
+  },
+  {
+    "name": "shebang-regex",
+    "version": "3.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/shebang-regex"
+  },
+  {
+    "name": "shell-quote",
+    "version": "1.12.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/shell-quote"
+  },
+  {
+    "name": "signal-exit",
+    "version": "3.0.7",
+    "scope": "required",
+    "license": "ISC",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/signal-exit"
+  },
+  {
+    "name": "simple-plist",
+    "version": "1.3.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/simple-plist"
+  },
+  {
+    "name": "simple-swizzle",
+    "version": "0.2.4",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/simple-swizzle"
+  },
+  {
+    "name": "sisteransi",
+    "version": "1.0.5",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/sisteransi"
+  },
+  {
+    "name": "slugify",
+    "version": "1.6.9",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/slugify"
+  },
+  {
+    "name": "source-map",
+    "version": "0.5.7",
+    "scope": "required",
+    "license": "BSD-3-Clause",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/source-map"
+  },
+  {
+    "name": "source-map-js",
+    "version": "1.2.2",
+    "scope": "required",
+    "license": "BSD-3-Clause",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/source-map-js"
+  },
+  {
+    "name": "source-map-support",
+    "version": "0.5.21",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/source-map-support"
+  },
+  {
+    "name": "source-map",
+    "version": "0.6.1",
+    "scope": "required",
+    "license": "BSD-3-Clause",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/source-map-support/node_modules/source-map"
+  },
+  {
+    "name": "stackframe",
+    "version": "1.3.4",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/stackframe"
+  },
+  {
+    "name": "stacktrace-parser",
+    "version": "0.1.11",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/stacktrace-parser"
+  },
+  {
+    "name": "standard-navigation",
+    "version": "0.0.5",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/standard-navigation"
+  },
+  {
+    "name": "statuses",
+    "version": "1.5.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/statuses"
+  },
+  {
+    "name": "stream-buffers",
+    "version": "2.2.0",
+    "scope": "required",
+    "license": "Unlicense",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/stream-buffers"
+  },
+  {
+    "name": "string-width",
+    "version": "4.2.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/string-width"
+  },
+  {
+    "name": "strip-ansi",
+    "version": "6.0.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/strip-ansi"
+  },
+  {
+    "name": "structured-headers",
+    "version": "0.4.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/structured-headers"
+  },
+  {
+    "name": "styleq",
+    "version": "0.1.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/styleq"
+  },
+  {
+    "name": "supports-color",
+    "version": "7.2.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/supports-color"
+  },
+  {
+    "name": "supports-hyperlinks",
+    "version": "2.3.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/supports-hyperlinks"
+  },
+  {
+    "name": "supports-preserve-symlinks-flag",
+    "version": "1.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/supports-preserve-symlinks-flag"
+  },
+  {
+    "name": "terminal-link",
+    "version": "2.1.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/terminal-link"
+  },
+  {
+    "name": "terser",
+    "version": "5.51.2",
+    "scope": "required",
+    "license": "BSD-2-Clause",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/terser"
+  },
+  {
+    "name": "commander",
+    "version": "2.20.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/terser/node_modules/commander"
+  },
+  {
+    "name": "throat",
+    "version": "5.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/throat"
+  },
+  {
+    "name": "tinyglobby",
+    "version": "0.2.17",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/tinyglobby"
+  },
+  {
+    "name": "tmpl",
+    "version": "1.0.5",
+    "scope": "required",
+    "license": "BSD-3-Clause",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/tmpl"
+  },
+  {
+    "name": "to-regex-range",
+    "version": "5.0.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/to-regex-range"
+  },
+  {
+    "name": "toidentifier",
+    "version": "1.0.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/toidentifier"
+  },
+  {
+    "name": "toqr",
+    "version": "0.1.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/toqr"
+  },
+  {
+    "name": "tr46",
+    "version": "0.0.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/tr46"
+  },
+  {
+    "name": "type-fest",
+    "version": "0.7.1",
+    "scope": "required",
+    "license": "(MIT OR CC0-1.0)",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/type-fest"
+  },
+  {
+    "name": "typescript",
+    "version": "6.0.3",
+    "scope": "required",
+    "license": "Apache-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/typescript"
+  },
+  {
+    "name": "ua-parser-js",
+    "version": "1.0.41",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/ua-parser-js"
+  },
+  {
+    "name": "undici-types",
+    "version": "8.9.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/undici-types"
+  },
+  {
+    "name": "unicode-canonical-property-names-ecmascript",
+    "version": "2.0.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/unicode-canonical-property-names-ecmascript"
+  },
+  {
+    "name": "unicode-match-property-ecmascript",
+    "version": "2.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/unicode-match-property-ecmascript"
+  },
+  {
+    "name": "unicode-match-property-value-ecmascript",
+    "version": "2.2.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/unicode-match-property-value-ecmascript"
+  },
+  {
+    "name": "unicode-property-aliases-ecmascript",
+    "version": "2.2.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/unicode-property-aliases-ecmascript"
+  },
+  {
+    "name": "unpipe",
+    "version": "1.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/unpipe"
+  },
+  {
+    "name": "update-browserslist-db",
+    "version": "1.3.4",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/update-browserslist-db"
+  },
+  {
+    "name": "use-latest-callback",
+    "version": "0.2.6",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/use-latest-callback"
+  },
+  {
+    "name": "utils-merge",
+    "version": "1.0.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/utils-merge"
+  },
+  {
+    "name": "validate-npm-package-name",
+    "version": "5.0.1",
+    "scope": "required",
+    "license": "ISC",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/validate-npm-package-name"
+  },
+  {
+    "name": "vary",
+    "version": "1.1.2",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/vary"
+  },
+  {
+    "name": "vlq",
+    "version": "1.0.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/vlq"
+  },
+  {
+    "name": "walker",
+    "version": "1.0.8",
+    "scope": "required",
+    "license": "Apache-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/walker"
+  },
+  {
+    "name": "warn-once",
+    "version": "0.1.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/warn-once"
+  },
+  {
+    "name": "wcwidth",
+    "version": "1.0.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/wcwidth"
+  },
+  {
+    "name": "webidl-conversions",
+    "version": "3.0.1",
+    "scope": "required",
+    "license": "BSD-2-Clause",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/webidl-conversions"
+  },
+  {
+    "name": "whatwg-fetch",
+    "version": "3.6.20",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/whatwg-fetch"
+  },
+  {
+    "name": "whatwg-url",
+    "version": "5.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/whatwg-url"
+  },
+  {
+    "name": "whatwg-url-minimum",
+    "version": "0.2.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/whatwg-url-minimum"
+  },
+  {
+    "name": "which",
+    "version": "2.0.2",
+    "scope": "required",
+    "license": "ISC",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/which"
+  },
+  {
+    "name": "wrap-ansi",
+    "version": "7.0.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/wrap-ansi"
+  },
+  {
+    "name": "ws",
+    "version": "7.5.13",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/ws"
+  },
+  {
+    "name": "xcode",
+    "version": "4.0.0",
+    "scope": "required",
+    "license": "Apache-2.0",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/xcode"
+  },
+  {
+    "name": "xml2js",
+    "version": "0.6.0",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/xml2js"
+  },
+  {
+    "name": "xmlbuilder",
+    "version": "11.0.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/xml2js/node_modules/xmlbuilder"
+  },
+  {
+    "name": "xmlbuilder",
+    "version": "15.1.1",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/xmlbuilder"
+  },
+  {
+    "name": "y18n",
+    "version": "5.0.8",
+    "scope": "required",
+    "license": "ISC",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/y18n"
+  },
+  {
+    "name": "yallist",
+    "version": "3.1.1",
+    "scope": "required",
+    "license": "ISC",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/yallist"
+  },
+  {
+    "name": "yargs",
+    "version": "17.7.3",
+    "scope": "required",
+    "license": "MIT",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/yargs"
+  },
+  {
+    "name": "yargs-parser",
+    "version": "21.1.1",
+    "scope": "required",
+    "license": "ISC",
+    "licenseEvidence": "installed package.json license field",
+    "lockfilePath": "node_modules/yargs-parser"
+  }
+]
