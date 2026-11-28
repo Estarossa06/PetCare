@@ -292,14 +292,7 @@ export default function ProfileScreen() {
               <SettingRow icon={Bell} title="Notificaciones" subtitle="Preferencias de este dispositivo" onPress={() => openPage("notifications")} />
               <View style={styles.divider} />
               <Text style={styles.groupTitle}>Preferencias</Text>
-              <SettingRow icon={Moon} title="Modo oscuro" subtitle="Apariencia de la aplicación" trailing={<Switch
-  value={mode === "dark"}
-  onValueChange={(value) => {
-    console.log("Cambio de tema solicitado:", value);
-    void toggleTheme(value);
-  }}
-  trackColor={{ true: colors.blue }}
-/>} />
+              <SettingRow icon={Moon} title="Modo oscuro" subtitle="Apariencia de la aplicación" trailing={<Switch value={mode === "dark"} onValueChange={(value) => void toggleTheme(value)} trackColor={{ true: colors.blue }} />} />
               <View style={styles.divider} />
               <Text style={styles.groupTitle}>Información</Text>
               <SettingRow icon={Info} title="Acerca de PetCare" onPress={() => openPage("about")} />

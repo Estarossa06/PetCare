@@ -45,15 +45,15 @@ const categories: { id: MedicalCategory | ""; label: string }[] = [
 
 const categoryVisuals: Record<MedicalCategory, { icon: LucideIcon; color: ColorValue; background: ColorValue }> = {
   consultation: { icon: ClipboardList, color: colors.blue, background: colors.blueSoft },
-  vaccination: { icon: Syringe, color: "#15803D", background: colors.greenSoft },
-  deworming: { icon: ShieldPlus, color: "#0F766E", background: colors.greenSoft },
-  medication: { icon: Pill, color: "#7C3AED", background: colors.lavenderSoft },
-  treatment: { icon: Activity, color: "#0369A1", background: colors.blueSoft },
-  surgery: { icon: Scissors, color: "#BE123C", background: colors.dangerSoft },
-  allergy: { icon: TriangleAlert, color: "#C2410C", background: colors.orangeSoft },
-  diagnosis: { icon: FileHeart, color: "#1D4ED8", background: colors.blueMuted },
-  examination: { icon: FlaskConical, color: "#6D28D9", background: colors.lavenderSoft },
-  observation: { icon: Tablets, color: "#475569", background: colors.blueSoft },
+  vaccination: { icon: Syringe, color: colors.green, background: colors.greenSoft },
+  deworming: { icon: ShieldPlus, color: colors.teal, background: colors.greenSoft },
+  medication: { icon: Pill, color: colors.purple, background: colors.lavenderSoft },
+  treatment: { icon: Activity, color: colors.blueDark, background: colors.blueSoft },
+  surgery: { icon: Scissors, color: colors.danger, background: colors.dangerSoft },
+  allergy: { icon: TriangleAlert, color: colors.orange, background: colors.orangeSoft },
+  diagnosis: { icon: FileHeart, color: colors.blueDark, background: colors.blueMuted },
+  examination: { icon: FlaskConical, color: colors.purple, background: colors.lavenderSoft },
+  observation: { icon: Tablets, color: colors.textMuted, background: colors.blueSoft },
 };
 
 function dateLabel(value: string): string {

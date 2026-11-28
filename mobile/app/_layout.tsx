@@ -78,10 +78,11 @@ function AuthenticatedNavigation() {
 }
 
 function RootContent() {
-  const { mode } = useTheme();
+  const { mode, ready } = useTheme();
   useEffect(() => {
     reportRuntimeInfo(Platform.OS, __DEV__);
   }, []);
+  if (!ready) return <View style={[styles.root, { backgroundColor: colors.background }]} />;
   return (
     <View style={styles.root}>
       <StatusBar barStyle={mode === "dark" ? "light-content" : "dark-content"} />

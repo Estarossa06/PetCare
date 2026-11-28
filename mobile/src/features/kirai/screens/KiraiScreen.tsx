@@ -356,7 +356,7 @@ const styles = StyleSheet.create({
   userBubble: { backgroundColor: colors.blue, borderBottomRightRadius: 5 },
   agentBubble: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderBottomLeftRadius: 5 },
   messageAuthor: { color: colors.blue, fontSize: 10, fontWeight: "800", letterSpacing: 0.3 },
-  userAuthor: { color: "#DBEAFE", textAlign: "right" },
+  userAuthor: { color: colors.onAccent, textAlign: "right" },
   messageText: { color: colors.text, fontSize: 14, lineHeight: 21 },
   userMessageText: { color: colors.onAccent },
   messageMeta: { color: colors.textMuted, fontSize: 10, lineHeight: 15 },

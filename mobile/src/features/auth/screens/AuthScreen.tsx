@@ -18,29 +18,7 @@ import { authErrorMessage } from "../authErrorMessage";
 import { useAuth } from "../AuthProvider";
 import { apiClient } from "../apiClient";
 import { useTheme } from "../../../theme/ThemeProvider";
-
-const palettes = {
-  light: {
-    background: "#F5F8FC",
-    surface: "#FFFFFF",
-    input: "#FFFFFF",
-    text: "#172033",
-    muted: "#64748B",
-    placeholder: "#7B8BA1",
-    border: "#D5E0ED",
-    error: "#B42318",
-  },
-  dark: {
-    background: "#0B1220",
-    surface: "#111827",
-    input: "#0F172A",
-    text: "#F1F5F9",
-    muted: "#AAB4C5",
-    placeholder: "#94A3B8",
-    border: "#334155",
-    error: "#FDA29B",
-  },
-} as const;
+import { themePalettes } from "../../../theme/palette";
 
 export default function AuthScreen() {
   const router = useRouter();
@@ -48,7 +26,7 @@ export default function AuthScreen() {
   const { width, height } = useWindowDimensions();
   const { login, register, error: restoreError, clearError } = useAuth();
   const { mode: themeMode } = useTheme();
-  const palette = palettes[themeMode];
+  const palette = themePalettes[themeMode];
   const [isRegister, setIsRegister] = useState(mode === "register");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -121,7 +99,7 @@ export default function AuthScreen() {
               />
               <View style={styles.brandCopy}>
                 <Text style={[styles.brandName, { color: palette.text }]}>PETCARE</Text>
-                <Text style={[styles.brandTagline, { color: palette.muted }]}>Cuidado diario, conectado</Text>
+                <Text style={[styles.brandTagline, { color: palette["text-muted"] }]}>Cuidado diario, conectado</Text>
               </View>
             </View>
 
@@ -129,7 +107,7 @@ export default function AuthScreen() {
               <Text style={[styles.title, { color: palette.text }]}>
                 {isRegister ? "Crea tu cuenta" : "Bienvenido de nuevo"}
               </Text>
-              <Text style={[styles.subtitle, { color: palette.muted }]}>
+              <Text style={[styles.subtitle, { color: palette["text-muted"] }]}>
                 {isRegister ? "Un mejor cuidado empieza aquí." : "Accede para continuar cuidando de tu mascota."}
               </Text>
             </View>
@@ -192,7 +170,7 @@ export default function AuthScreen() {
                   onPress={() => void submit()}
                 />
                 {Platform.OS === "web" ? <>
-                  <Text style={[styles.dividerLabel, { color: palette.muted }]}>o</Text>
+                  <Text style={[styles.dividerLabel, { color: palette["text-muted"] }]}>o</Text>
                   <AppButton
                     label="Continuar con Google"
                     variant="secondary"
@@ -206,7 +184,7 @@ export default function AuthScreen() {
                   label={isRegister ? "Ya tengo una cuenta" : "Necesito crear una cuenta"}
                   variant="quiet"
                   disabled={busy}
-                  labelColor={palette.muted}
+                  labelColor={palette["text-muted"]}
                   onPress={() => {
                     setIsRegister((current) => !current);
                     setError(null);
@@ -215,7 +193,7 @@ export default function AuthScreen() {
                 />
                 {googleErrorMessage ? <Text accessibilityRole="alert" style={[styles.error, { color: palette.error }]}>{googleErrorMessage}</Text> : null}
                 {restoreError ? <Text accessibilityRole="alert" style={[styles.error, { color: palette.error }]}>{restoreError}</Text> : null}
-                <Text style={[styles.note, { color: palette.muted }]}>
+                <Text style={[styles.note, { color: palette["text-muted"] }]}>
                   Los datos locales anteriores no se vinculan automáticamente. Cada cuenta mantiene un espacio local separado en este dispositivo.
                 </Text>
               </View>

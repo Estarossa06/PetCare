@@ -31,15 +31,15 @@ import { colors, radius, spacing } from "../../../theme/tokens";
 type HistoryItem = CareExecution & { task_title: string; category: CareCategory; timezone: string };
 
 const categoryVisuals: Record<CareCategory, { icon: LucideIcon; color: ColorValue; background: ColorValue }> = {
-  feeding: { icon: Utensils, color: "#A16207", background: colors.yellowSoft },
+  feeding: { icon: Utensils, color: colors.yellowText, background: colors.yellowSoft },
   walk: { icon: Footprints, color: colors.blue, background: colors.blueSoft },
-  bath: { icon: Bath, color: "#0369A1", background: colors.blueSoft },
-  hygiene: { icon: Droplets, color: "#0F766E", background: colors.greenSoft },
-  medication: { icon: Pill, color: "#7C3AED", background: colors.lavenderSoft },
-  vaccination: { icon: Syringe, color: "#15803D", background: colors.greenSoft },
-  deworming: { icon: ShieldPlus, color: "#0F766E", background: colors.greenSoft },
-  exercise: { icon: Dumbbell, color: "#0369A1", background: colors.blueSoft },
-  custom: { icon: Heart, color: "#BE123C", background: colors.dangerSoft },
+  bath: { icon: Bath, color: colors.blueDark, background: colors.blueSoft },
+  hygiene: { icon: Droplets, color: colors.teal, background: colors.greenSoft },
+  medication: { icon: Pill, color: colors.purple, background: colors.lavenderSoft },
+  vaccination: { icon: Syringe, color: colors.green, background: colors.greenSoft },
+  deworming: { icon: ShieldPlus, color: colors.teal, background: colors.greenSoft },
+  exercise: { icon: Dumbbell, color: colors.blueDark, background: colors.blueSoft },
+  custom: { icon: Heart, color: colors.danger, background: colors.dangerSoft },
 };
 
 const categoryFilters: { value: CareCategory | ""; label: string }[] = [
