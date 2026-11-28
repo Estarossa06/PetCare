@@ -40,14 +40,22 @@ function SettingRow({ icon: Icon, title, subtitle, onPress, danger = false, trai
   icon: LucideIcon; title: string; subtitle?: string; onPress?: () => void;
   danger?: boolean; trailing?: React.ReactNode;
 }) {
-  return (
-    <Pressable accessibilityRole="button" onPress={onPress} disabled={!onPress} style={({ pressed }) => [styles.row, pressed && styles.pressed]}>
+  const content = (
+    <>
       <View style={[styles.rowIcon, danger && styles.rowIconDanger]}><Icon size={19} color={danger ? colors.orange : colors.blue} /></View>
       <View style={styles.rowCopy}>
         <Text style={[styles.rowTitle, danger && styles.dangerText]}>{title}</Text>
         {subtitle ? <Text style={styles.rowSubtitle}>{subtitle}</Text> : null}
       </View>
       {trailing ?? (onPress ? <ChevronRight size={18} color={colors.textMuted} /> : null)}
+    </>
+  );
+
+  if (!onPress) return <View style={styles.row}>{content}</View>;
+
+  return (
+    <Pressable accessibilityRole="button" onPress={onPress} style={({ pressed }) => [styles.row, pressed && styles.pressed]}>
+      {content}
     </Pressable>
   );
 }
@@ -292,7 +300,7 @@ export default function ProfileScreen() {
               <SettingRow icon={Bell} title="Notificaciones" subtitle="Preferencias de este dispositivo" onPress={() => openPage("notifications")} />
               <View style={styles.divider} />
               <Text style={styles.groupTitle}>Preferencias</Text>
-              <SettingRow icon={Moon} title="Modo oscuro" subtitle="Apariencia de la aplicación" trailing={<Switch value={mode === "dark"} onValueChange={(value) => void toggleTheme(value)} trackColor={{ true: colors.blue }} />} />
+              <SettingRow icon={Moon} title="Modo oscuro" subtitle="Apariencia de la aplicación" trailing={<Switch accessibilityLabel="Modo oscuro" value={mode === "dark"} onValueChange={(value) => void toggleTheme(value)} trackColor={{ true: colors.blue }} />} />
               <View style={styles.divider} />
               <Text style={styles.groupTitle}>Información</Text>
               <SettingRow icon={Info} title="Acerca de PetCare" onPress={() => openPage("about")} />
